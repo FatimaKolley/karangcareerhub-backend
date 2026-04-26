@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>History | KarangCareerHub</title>
+
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="history.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">
+      <h2>KarangCareerHub</h2>
+    </div>
+    <div class="nav-right">
+      <button id="darkModeToggle" class="dark-btn">🌙</button>
+
+      <div class="profile-container">
+        <img id="userProfilePic" src="image/avatar-placeholder.png" class="avatar" />
+        <div id="dropdownMenu" class="profile-dropdown">
+          <ul>
+            <li><a href="profile.html">Profile</a></li>
+            <li><a href="history.html">History</a></li>
+            <li><a href="settings.html">Settings</a></li>
+            <li class="divider"></li>
+            <li><a href="#" id="logoutBtn">Logout</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- MAIN CONTENT -->
+  <main class="history-container">
+
+    <h2 class="section-title">📄 Application History</h2>
+    <div id="appliedJobs" class="history-grid"></div>
+
+    <h2 class="secti<!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <title>View History | KarangCareerHub</title>
+        <link rel="stylesheet" href="history.css">
+        <link rel="stylesheet" href="dashboard.css">
+      </head>
+      <body>
+      
+        <nav class="navbar">
+          <h2>KarangCareerHub</h2>
+          <div class="nav-links">
+            <a href="dashboardStudent.html">Dashboard</a>
+            <a href="index.html" id="logoutBtn">Logout</a>
+          </div>
+        </nav>
+      
+        <main class="history-container">
+          <h2>History — Viewed Jobs</h2>
+          <div id="historyList"></div>
+        </main>
+      
+        <script src="js/history.js"></script>
+        <script>
+          document.getElementById("logoutBtn").onclick = () => {
+            localStorage.clear();
+            window.location.href = "index.html";
+          };
+        </script>
+      
+      </body>
+      </html>
+      <h2><on-title" style="margin-top:35px;">👁 Viewed Jobs</h2>
+    <div id="viewedJobs" class="history-grid"></div>
+
+  </main>
+
+
+  <script src="history.js"></script>
+  <script src="studentTheme.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings | KarangCareerHub</title>
+
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="settings.css" />
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo"><h2>KarangCareerHub</h2></div>
+
+    <div class="nav-right">
+      <button id="darkModeToggle" class="dark-btn">🌙</button>
+      <div class="profile-container">
+        <img id="userProfilePic" src="image/avatar-placeholder.png" class="avatar" alt="">
+        
+        <div id="dropdownMenu" class="dropdown-menu">
+          <a href="profile.html">Profile</a>
+          <hr>
+          <a id="logoutBtn">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="settings-container">
+
+    <h2 class="page-title">Settings ⚙️</h2>
+
+    <!-- Notification Settings -->
+    <section class="settings-card">
+      <h3>Notifications</h3>
+
+      <label class="toggle-row">
+        <span>Email Notifications</span>
+        <input type="checkbox" id="emailNotif">
+      </label>
+
+      <label class="toggle-row">
+        <span>SMS Notifications</span>
+        <input type="checkbox" id="smsNotif">
+      </label>
+
+      <button id="saveSettings" class="save-btn">Save Notification Settings</button>
+    </section>
+
+    <!-- Change Password -->
+    <section class="settings-card">
+      <h3>Change Password</h3>
+
+      <input type="password" id="oldPass" placeholder="Old Password">
+      <input type="password" id="newPass" placeholder="New Password">
+
+      <button id="changePasswordBtn" class="save-btn red">Update Password</button>
+      
+    </section>
+
+  </main>
+
+  <script src="settings.js"></script>
+  <script src="studentTheme.js"></script>
+
+</body>
+</html>

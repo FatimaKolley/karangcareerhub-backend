@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register | KarangCareerHub</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="register.css">
+</head>
+<body>
+
+<div class="container">
+    <h2>Create Account</h2>
+    <p class="subtitle">Create your account in a second</p>
+    <form id="registerForm">
+        <div class="row">
+            <input type="text" id="first_name" placeholder="First Name" required>
+            <input type="text" id="last_name" placeholder="Last Name" required>
+        </div>
+        <input
+        type="date"
+        id="date_of_birth"
+        required
+        min="1900-01-01"
+        max="2025-12-31"
+      />
+      
+        <input type="email" id="email" placeholder="Email Address" required>
+        <div class="row">
+            <div class="password-field">
+              <input type="password" id="password" placeholder="Password" required>
+              <span class="toggle-password" data-target="password">👁</span>
+            </div>
+          
+            <div class="password-field">
+              <input type="password" id="confirm_password" placeholder="Confirm Password" required>
+              <span class="toggle-password" data-target="confirm_password">👁</span>
+            </div>
+          </div>
+
+        <select id="role" required>
+            <option value="">Select Role</option>
+            <option value="student">Student</option>
+            <option value="employer">Employer</option>
+        </select>
+
+        <button type="submit">Create Account</button>
+
+        <p class="login-link">
+            Already have an account? <a href="login.html">Login</a>
+        </p>
+    </form>
+</div>
+<script src="register.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>

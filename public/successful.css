@@ -1,0 +1,80 @@
+.success-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+    padding: 20px;
+  }
+  
+  .success-card {
+    width: 100%;
+    max-width: 700px;
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  }
+  
+  .success-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+  }
+  
+  .success-card h1 {
+    font-size: 2rem;
+    margin-bottom: 12px;
+    color: #0f172a;
+  }
+  
+  .success-message {
+    font-size: 1.05rem;
+    color: #334155;
+    margin-bottom: 12px;
+  }
+  
+  .success-note {
+    color: #475569;
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+  
+  .success-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  
+  .small-note {
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+  
+  .btn {
+    display: inline-block;
+    padding: 12px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  .btn-primary {
+    background: #2563eb;
+    color: white;
+  }
+  
+  .btn-outline {
+    border: 1px solid #2563eb;
+    color: #2563eb;
+    background: white;
+  }
+  
+  .btn-secondary {
+    background: #0f172a;
+    color: white;
+  }

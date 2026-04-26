@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KarangCareerHub</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+<header class="main-header">
+  <div class="nav-container">
+
+    <!-- Logo -->
+    <div class="logo">
+      <img src="image/logo.png" alt="KarangCareerHub Logo">
+    </div>
+
+    <!-- Auth Buttons -->
+    <div class="auth-buttons">
+      <a href="login.html" class="btn login-btn">Login</a>
+      <a href="register.html" class="btn signup-btn">Sign Up</a>
+    </div>
+
+  </div>
+</header>
+
+<!-- Hero Section -->
+<main class="hero">
+  <div class="hero-text">
+    <h1>Secure Career &<br>Internship Matching Platform</h1>
+    <p>
+      KarangCareerHub connects students and graduates <br>
+      with verified employers. Find internships and jobs <br>
+      securely and easily — anytime, anywhere.
+    </p>
+  </div>
+
+  <div class="hero-image">
+    <img src="image/images.png" alt="Illustration">
+  </div>
+</main>
+
+<!-- Jobs -->
+<section class="job-section">
+  <div id="recentJobs" class="job-grid"></div>
+</section>
+
+<section class="job-section">
+  <div id="popularJobs" class="job-grid"></div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-section">
+    <h3>Contact</h3>
+    <p>Email: <a href="mailto:hello@karangcareerhub.com">hello@karangcareerhub.com</a></p>
+  </div>
+
+  <div class="footer-section">
+    <h3>About</h3>
+    <p>KarangCareerHub helps students and graduates find internships and jobs securely.</p>
+  </div>
+
+  <p class="copyright">
+    ©2026 KarangCareerHub — Designed by Fa
+  </p>
+</footer>
+
+</div>
+
+<div id="applyModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Login Required</h3>
+    <p>You must be logged in to apply for this job.</p>
+
+    <div class="modal-actions">
+      <button id="goLogin">Go to Login</button>
+      <button id="goBack"><i>←</i>Back</button>
+    </div>
+  </div>
+</div>
+
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Chat | KarangCareerHub</title>
+  <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+
+  <div id="notificationBadge" style="
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  background: red;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 50%;
+ ">
+  0
+ </div>
+
+<div class="chat-container">
+
+  <!-- LEFT: CHAT LIST -->
+  <div class="chat-list">
+    <h3>Chats</h3>
+    <div id="chatUsers"></div>
+  </div>
+
+  <!-- RIGHT: CHAT AREA -->
+  <div class="chat-box">
+    <div id="chatHeader">Select a chat</div>
+
+    <div id="messages" class="messages"></div>
+
+    <div class="chat-input">
+      <input id="messageInput" oninput="handleTyping()" />
+      <div id="typingIndicator" style="font-size: 12px; color: gray;"></div>
+      <button onclick="sendMessage()">Send</button>    </div>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="chat.js"></script>
+
+</body>
+</html>

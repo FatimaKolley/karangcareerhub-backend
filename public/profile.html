@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile | KarangCareerHub</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">
+      <h2>KarangCareerHub</h2>
+    </div>
+
+    <div class="nav-right">
+      <div class="welcome-text">
+        Welcome, <span id="navStudentName">Student</span>
+      </div>
+      <button id="darkModeToggle" class="dark-btn">🌙</button>
+      <img id="userProfilePic" src="image/avatar-placeholder.png" class="avatar" alt="Profile">
+
+      <div id="dropdownMenu" class="profile-dropdown">
+        <ul>
+          <li><a href="dashboardStudent.html"><i>←</i>Dashboard</a></li>
+          <li><a href="history.html"><i>📄</i>History</a></li>
+          <li><a href="settings.html"><i>⚙️</i>Settings</a></li>
+          <li><a href="#" id="logoutBtn"><i>🚪</i>Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MAIN PROFILE PAGE -->
+  <div class="profile-page">
+    <div class="profile-header">
+      <img id="profilePicLarge" src="image/avatar-placeholder.png" alt="Profile Picture">
+      <div>
+        <h2 id="profileName">Loading...</h2>
+        <p id="profileEmail">email@example.com</p>
+      </div>
+      <!-- Hidden file input -->
+      <input type="file" id="uploadProfilePic" accept="image/*">
+    </div>
+
+    <hr>
+
+    <h3>Profile Information</h3>
+
+    <div class="info-grid">
+      <div class="info-card"><h4>First Name</h4><p id="infoFirstName"></p></div>
+      <div class="info-card"><h4>Last Name</h4><p id="infoLastName"></p></div>
+      <div class="info-card"><h4>Date of Birth</h4><p id="infoDateofBirth"></p></div>
+      <div class="info-card"><h4>Email</h4><p id="infoEmail"></p></div>
+    
+      <div class="info-card"><h4>Phone</h4><p id="infoPhone"></p></div>
+      <div class="info-card"><h4>Secondary Phone</h4><p id="infoOptionalPhone"></p></div>
+    
+      <div class="info-card"><h4>Gender</h4><p id="infoGender"></p></div>
+      <div class="info-card"><h4>Location</h4><p id="infoLocation"></p></div>
+    
+      <div class="info-card"><h4>Education</h4><p id="infoEducation"></p></div>
+    
+      <div class="info-card"><h4>Main Interest</h4><p id="infoMainInterest"></p></div>
+      <div class="info-card"><h4>Other Interest</h4><p id="infoOtherInterest"></p></div>
+    
+      <div class="info-card"><h4>Skills</h4><p id="infoSkills"></p></div>
+      <div class="info-card"><h4>Experience</h4><p id="infoExperience"></p></div>
+    
+      <div class="info-card"><h4>Bio</h4><p id="infoBio"></p></div>
+    
+      <div class="info-card">
+        <h4>Resume</h4>
+        <a id="infoResume" target="_blank">View Resume</a>
+      </div>
+    
+      <div class="info-card"><h4>Portfolio</h4><a id="infoPortfolio" target="_blank"></a></div>
+      <div class="info-card"><h4>LinkedIn</h4><a id="infoLinkedin" target="_blank"></a></div>
+      <div class="info-card"><h4>GitHub</h4><a id="infoGithub" target="_blank"></a></div>
+    
+      <div class="info-card"><h4>Account Created</h4><p id="infoCreatedAt"></p></div>
+    </div>
+
+    <button id="downloadProfileBtn" class="btn">
+     Download Profile 
+    </button>
+
+     <a href="editProfile.html" class="edit-btn">Edit Profile</a>
+  </div>
+
+  
+    <script src="studentTheme.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="profile.js"></script>
+  
+</body>
+</html>

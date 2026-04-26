@@ -1,0 +1,816 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: #f5f8ff;
+    margin: 0;
+    color: #333;
+  }
+  
+  .navbar {
+    background: white;
+    color: #0b3e91;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    box-shadow: 0 2px 8px #f3e7d0e3;
+    font-size: 120%;
+  }
+  
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  
+  .logo img {
+    height: 80px;
+    margin-right: 10px;
+  }
+  
+  .nav-links a {
+    color: black;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: bold;
+  }
+  .nav-links a:hover{
+    color:  #0b3e91;
+  }
+  
+  .dashboard {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 20px;
+  }
+  
+  section {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 10px #f3e7d0e3;
+  }
+  
+  h3 {
+    color: #0b3e91;
+    margin-bottom: 15px;
+  }
+  
+  .job-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+  }
+  
+  .job-card {
+    background: #f9fbff;
+    padding: 15px;
+    border: 1px solid #dce3f5;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .job-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+  }
+  
+  .job-card h4 {
+    color: #0b3e91;
+  }
+  
+  .job-card button {
+    background: #0b3e91;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .progress-bar {
+    background: #dbe5ff;
+    border-radius: 10px;
+    height: 10px;
+    width: 100%;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  
+  #progress-fill {
+    background: #0b3e91;
+    height: 100%;
+    width: 0%;
+    transition: width 0.5s ease-in-out;
+  }
+
+  #progress-fill {
+    height: 100%;
+    transition: width 0.7s ease;
+  }
+  
+  #progress-fill.red {
+    background: #ff4d4d; /* red */
+  }
+  
+  #progress-fill.yellow {
+    background: #ffcc00; /* yellow */
+  }
+  
+  #progress-fill.green {
+    background: #4CAF50; /* green */
+  }
+  
+  
+
+  .suggestion-section {
+    background: #fff8e6;
+    border-left: 6px solid #ffcc00;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 8px #f3e7d0e3;
+  }
+  
+  .suggestion-section h3 {
+    color: #b88600;
+    margin-bottom: 10px;
+  }
+  
+  #suggestionList li {
+    margin-bottom: 6px;
+    font-size: 15px;
+    color: #555;
+  }
+  
+  /* NAVBAR FIXES */
+.brand h2 {
+  color: #0b3e91;
+  margin: 0;
+}
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-container {
+  position: relative;
+}
+
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #e6eefc;
+  object-fit: cover;
+}
+
+/* DROPDOWN */
+
+.profile-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 300px;
+  background: rgb(250, 248, 248);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+  padding: 10px 0;
+  z-index: 1000;
+  display: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.25s ease;
+}
+
+.profile-dropdown.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.profile-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-dropdown li {
+  padding: 10px 16px;
+}
+
+.profile-dropdown li.divider {
+  height: 1px;
+  background: #e0e0e0;
+  margin: 5px 0;
+}
+.profile-dropdown li a {
+  text-decoration: none;
+  color: #222;
+  display: block;
+  font-size: 100%;
+}
+
+.profile-dropdown li:hover {
+  background: #f4f7ff;
+}
+
+/* Progress in dropdown */
+.progress-section {
+  padding: 2px 4px;
+}
+
+
+.progress-bar.small {
+  height: 5px;
+  margin-top: 4px;
+}
+
+#progress-fill-dropdown {
+  width: 0%;
+  height: 100%;
+  border-radius: 10px;
+  background: #007bff;
+}
+/* Slide dashboard sideways when dropdown opens */
+
+
+.dashboard {
+  transition: transform 0.3s ease;
+}
+.notif-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  position: relative;
+  margin-right: 8px;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+  background: red;
+  color: white;
+  font-size: 10px;
+  padding: 2px 5px;
+  border-radius: 50%;
+}
+/* =============================
+   GLOBAL STUDENT DARK MODE
+============================= */
+body.dark {
+  background: #1f2937;
+  color: #f3f4f6;
+}
+
+body.dark .navbar {
+  background: #111827;
+  color: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+body.dark .logo h2,
+body.dark .welcome-text,
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark p,
+body.dark label,
+body.dark li,
+body.dark small,
+body.dark strong,
+body.dark span {
+  color: #f3f4f6;
+}
+
+body.dark section,
+body .save-btn-red,
+body.dark .job-card,
+body.dark .profile-dropdown,
+body.dark .notification-dropdown,
+body.dark .confirm-dialog-box,
+body.dark .history-card,
+body.dark .profile-card {
+  background: #374151;
+  color: #f3f4f6;
+  border-color: #4b5563;
+}
+
+body.dark .job-card {
+  border: 1px solid #4b5563;
+}
+
+body.dark .profile-dropdown li a {
+  color: #f3f4f6;
+}
+
+body.dark .profile-dropdown li:hover {
+  background: #4b5563;
+}
+
+body.dark .notification-dropdown li {
+  border-bottom: 1px solid #4b5563;
+}
+
+body.dark .notification-dropdown li.unread {
+  background: #4b5563;
+}
+
+body.dark .suggestion-section {
+  background: #4b3f1c;
+  border-left-color: #facc15;
+}
+
+body.dark .progress-bar {
+  background: #4b5563;
+}
+
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #1f2937;
+  color: #f3f4f6;
+  border: 1px solid #4b5563;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #9ca3af;
+}
+
+body.dark table {
+  background: #374151;
+  color: #f3f4f6;
+}
+
+body.dark th {
+  background: #1f2937;
+  color: #f3f4f6;
+}
+
+body.dark td {
+  border-color: #4b5563;
+}
+
+body.dark .confirm-dialog-box h3,
+body.dark .confirm-dialog-box p {
+  color: #f3f4f6;
+}
+
+body.dark .confirm-cancel-btn {
+  background: #4b5563;
+  color: #f3f4f6;
+}
+
+body.dark .confirm-cancel-btn:hover {
+  background: #6b7280;
+}
+
+
+body.dark .btn {
+  background: #374151;
+  color: #f3f4f6;
+  border: 1px solid #4b5563;
+}
+
+body.dark .btn:hover {
+  background: #4b5563;
+}
+
+body.dark .details-btn,
+body.dark .job-card button,
+body.dark .save-btn,
+body.dark .secondary-btn {
+  background: #2563eb;
+  color: #fff;
+}
+
+body.dark .danger-btn,
+body.dark .delete-btn,
+body.dark .confirm-delete-btn {
+  background: #dc2626;
+  color: #fff;
+}
+
+body.dark footer {
+  background: #111827;
+  color: #f3f4f6;
+}
+
+.dark-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  margin-right: 10px;
+}
+
+
+  
+  
+  footer {
+    text-align: center;
+    padding: 15px;
+    background: #0b3e91;
+    color: white;
+  }
+  .notification-wrapper {
+    position: relative;
+    cursor: pointer;
+    margin-left: 15px;
+  }
+  
+  .bell {
+    font-size: 20px;
+  }
+  
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background: red;
+    color: white;
+    font-size: 11px;
+    padding: 2px 6px;
+    border-radius: 50%;
+  }
+  
+  .notification-dropdown {
+    position: absolute;
+    right: 0;
+    top: 30px;
+    width: 280px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    padding: 10px;
+    display: none;
+    z-index: 999;
+  }
+  
+  .notification-dropdown h4 {
+    margin: 0 0 8px;
+    font-size: 15px;
+  }
+  
+  .notification-dropdown ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .notification-dropdown li {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 13px;
+  }
+  
+  .notification-dropdown li.unread {
+    background: #f5f9ff;
+    font-weight: bold;
+  }
+  
+  .details-btn {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 8px 14px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+  
+  .details-btn:hover {
+    background: #0056b3;
+  }
+
+  .urgent-deadline {
+    color: #dc2626; /* red */
+    font-weight: bold;
+  }
+
+  .saved-job-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.delete-btn:hover {
+  background: #b91c1c;
+}
+
+.notification-dropdown {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  width: 280px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  padding: 10px;
+  display: none;
+  z-index: 999;
+}
+
+.notification-dropdown.show {
+  display: block;
+}
+
+.btn {
+  display: inline-block;
+  background: #f3e7d0e3;
+  color: #0b3e91;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.2s ease;
+  border: 1px solid #e8d8ba;
+}
+
+.btn:hover {
+  background: #ead8b5;
+  color: #0b3e91;
+}
+
+body.dark section {
+  background: #3f3f3f;
+  color: #eee;
+}
+
+body.dark .suggestion-section {
+  background: #4a4330;
+  border-left-color: #ffcc00;
+}
+
+body.dark .notification-dropdown {
+  background: #3f3f3f;
+  color: #eee;
+}
+
+body.dark footer {
+  background: #2f2f2f;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  position: relative;
+  padding: 0;
+}
+
+/* =============================
+   Confirm Dialog Modal
+============================= */
+.confirm-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+}
+
+.confirm-dialog.hidden {
+  display: none;
+}
+
+.confirm-dialog-box {
+  background: #fff;
+  width: 100%;
+  max-width: 420px;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.18);
+  animation: fadeInScale 0.2s ease;
+}
+
+.confirm-dialog-box h3 {
+  margin: 0 0 12px;
+  font-size: 1.25rem;
+  color: #222;
+}
+
+.confirm-dialog-box p {
+  margin: 0 0 20px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.confirm-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.confirm-cancel-btn,
+.confirm-delete-btn {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.confirm-cancel-btn {
+  background: #e5e7eb;
+  color: #222;
+}
+
+.confirm-cancel-btn:hover {
+  background: #d1d5db;
+}
+
+.confirm-delete-btn {
+  background: #dc2626;
+  color: #fff;
+}
+
+.confirm-delete-btn:hover {
+  background: #b91c1c;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* =============================
+   MOBILE RESPONSIVE NAVBAR
+============================= */
+
+@media (max-width: 900px) {
+  .navbar {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 12px 16px;
+    gap: 12px;
+    font-size: 100%;
+  }
+
+  .logo {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .logo h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    line-height: 1.3;
+    word-break: break-word;
+  }
+
+  .dashboard-actions {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .dashboard-actions .btn {
+    width: 100%;
+    max-width: 280px;
+    text-align: center;
+  }
+
+  .nav-right {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .welcome-text {
+    width: 100%;
+    text-align: center;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+
+  .notification-wrapper,
+  .dark-btn,
+  .profile-container {
+    flex-shrink: 0;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .profile-dropdown {
+    width: min(92vw, 300px);
+    right: 50%;
+    transform: translateX(50%) translateY(-10px);
+    top: 52px;
+  }
+
+  .profile-dropdown.show {
+    transform: translateX(50%) translateY(0);
+  }
+
+  .notification-dropdown {
+    width: min(92vw, 280px);
+    right: 50%;
+    transform: translateX(50%);
+  }
+
+  .dashboard {
+    margin: 20px auto;
+    padding: 12px;
+  }
+
+  section {
+    padding: 16px;
+  }
+
+  .job-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .job-card {
+    padding: 14px;
+  }
+
+  .saved-job-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .saved-job-actions .details-btn,
+  .saved-job-actions .delete-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px 12px;
+  }
+
+  .logo h2 {
+    font-size: 1rem;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .dark-btn,
+  .notification-btn {
+    font-size: 18px;
+  }
+
+  .welcome-text {
+    font-size: 0.9rem;
+  }
+
+  section {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .confirm-dialog-box {
+    padding: 18px;
+    border-radius: 14px;
+  }
+}

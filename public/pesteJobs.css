@@ -1,0 +1,313 @@
+/* ==============================
+   pesteJob.css
+   Styles for Post New Job Form
+============================== */
+
+/* Reset & Base Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+    color: #333;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Navbar */
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #6082b9;
+    color: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .navbar .logo img {
+    height: 40px;
+  }
+  
+  .navbar h2 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  
+  .navbar .nav-links a {
+    color: #fff;
+    font-weight: 500;
+    margin-left: 1rem;
+  }
+  
+  /* Main Form Container */
+  main.job-posting-form {
+    max-width: 900px;
+    margin: 2rem auto;
+    background-color: #fff;
+    padding: 2rem 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  /* Fieldsets & Legends */
+  fieldset {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  legend {
+    padding: 0 1rem;
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #1e293b;
+  }
+  
+  /* Labels */
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+  
+  label span {
+    color: red;
+  }
+  
+  /* Inputs & Textarea */
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="file"],
+  select,
+  textarea {
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+  }
+  
+  /* Textarea */
+  textarea {
+    resize: vertical;
+  }
+  
+  /* Form Actions */
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+  }
+  
+  .submit-btn,
+  .reset-btn {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+  }
+  
+  .submit-btn {
+    background-color: #3b82f6;
+    color: #fff;
+  }
+  
+  .submit-btn:hover {
+    background-color: #2563eb;
+  }
+  
+  .reset-btn {
+    background-color: #e5e7eb;
+    color: #374151;
+  }
+  
+  .reset-btn:hover {
+    background-color: #d1d5db;
+  }
+
+  /* ===============================
+   TOAST NOTIFICATION
+================================ */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  min-width: 250px;
+  max-width: 350px;
+  padding: 14px 18px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  z-index: 9999;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.success {
+  background: #28a745;
+}
+
+.toast.error {
+  background: #dc3545;
+}
+
+.toast.info {
+  background: #007bff;
+}
+
+  
+  /* Responsive */
+  @media screen and (max-width: 768px) {
+    main.job-posting-form {
+      padding: 1.5rem 1.5rem;
+    }
+  
+    .form-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .navbar {
+      flex-direction: column;
+      gap: 0.8rem;
+      text-align: center;
+      padding: 1rem;
+    }
+  
+    .navbar h2 {
+      font-size: 1.2rem;
+    }
+  
+    .navbar .nav-links {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+  
+    main.job-posting-form {
+      margin: 1rem;
+      padding: 1.25rem;
+    }
+  
+    .form-actions {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+  
+    .submit-btn,
+    .reset-btn {
+      width: 100%;
+    }
+  }
+  
+  /* =============================
+   EMPLOYER DARK MODE
+============================= */
+body.dark {
+  background: #111827;
+  color: #f3f4f6;
+}
+
+body.dark .navbar {
+  background: #0f172a;
+  color: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+body.dark .navbar h2,
+body.dark .navbar .nav-links a {
+  color: #f3f4f6;
+}
+
+body.dark main.job-posting-form {
+  background: #1f2937;
+  color: #f3f4f6;
+  border: 1px solid #374151;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+body.dark fieldset {
+  border: 1px solid #4b5563;
+}
+
+body.dark legend,
+body.dark label {
+  color: #f3f4f6;
+}
+
+body.dark input[type="text"],
+body.dark input[type="number"],
+body.dark input[type="date"],
+body.dark input[type="file"],
+body.dark select,
+body.dark textarea {
+  background: #111827;
+  color: #f3f4f6;
+  border: 1px solid #4b5563;
+}
+
+body.dark input::placeholder,
+body.dark textarea::placeholder {
+  color: #9ca3af;
+}
+
+body.dark input:focus,
+body.dark select:focus,
+body.dark textarea:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59,130,246,0.2);
+}
+
+body.dark .reset-btn {
+  background: #374151;
+  color: #f3f4f6;
+}
+
+body.dark .reset-btn:hover {
+  background: #4b5563;
+}
+
+body.dark .submit-btn {
+  background: #2563eb;
+  color: #fff;
+}
+
+body.dark .submit-btn:hover {
+  background: #1d4ed8;
+}
+body.dark small {
+  color: #cbd5e1;
+}

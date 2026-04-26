@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | KarangCareerHub</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+<div class="login-page">
+
+  <div class="login-container">
+    <h1>Welcome Back</h1>
+
+    <form id="loginForm">
+      <label>Email</label>
+      <input type="email" id="loginEmail" required>
+
+      <div class="row">
+        <div class="password-field">
+          <label>Password</label>
+          <input type="password" id="loginPassword" placeholder="Password" required>
+          <span class="toggle-password" data-target="loginPassword">👁</span>
+          </div>
+      </div>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <p class="forgot-password">
+      <a href="#" id="forgotPasswordLink">Forgot password?</a>
+    </p>
+
+    <p class="switch-link">
+      Don’t have an account?
+      <a href="register.html">Sign up</a>
+    </p>
+
+    <div id="loginMessage"></div>
+  </div>
+  <!-- FORGOT PASSWORD MODAL -->
+    <!-- FORGOT PASSWORD MODAL -->
+<div id="forgotPasswordOverlay" class="overlay">
+  <div class="modal">
+
+    <h2 class="modal-title">Reset Password</h2>
+
+    <p class="modal-subtitle">
+      Enter your email to receive a reset link
+    </p>
+
+    <form id="forgotPasswordForm">
+      <input 
+        type="email" 
+        id="forgotEmail" 
+        placeholder="Enter your email" 
+        required
+      >
+
+      <button type="submit">Send Reset Link</button>
+    </form>
+
+    <p id="forgotMessage"></p>
+
+    <button id="closeForgotModal" class="close-btn">
+      Close
+    </button>
+
+  </div>
+</div>
+
+</div>
+
+<script src="login.js"></script>
+<script src="script.js"></script>
+
+
+</body>
+</html>

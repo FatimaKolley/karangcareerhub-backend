@@ -1,0 +1,476 @@
+/* =========================
+   Browse Jobs Page Styles
+   KarangCareerHub
+========================= */
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #1f2937;
+}
+
+/* =========================
+   Navbar
+========================= */
+.navbar {
+  background: #2563eb;
+  color: #fff;
+  padding: 18px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.navbar h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+.dark-btn {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: inherit;
+}
+/* =========================
+   Main Page
+========================= */
+.browse-page {
+  max-width: 1250px;
+  margin: 0 auto;
+  padding: 30px 20px 50px;
+}
+
+.browse-header {
+  margin-bottom: 20px;
+}
+
+.browse-header h2 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: #111827;
+}
+
+.browse-header p {
+  color: #6b7280;
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* =========================
+   Controls Row
+========================= */
+.browse-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: 24px 0 30px;
+}
+
+.browse-left-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.browse-right-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-left: auto;
+  flex-wrap: wrap;
+}
+
+/* =========================
+   Buttons
+========================= */
+.btn {
+  display: inline-block;
+  padding: 11px 18px;
+  border: none;
+  border-radius: 12px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.dashboard-btn {
+  background: #2563eb;
+  color: #fff;
+}
+
+.dashboard-btn:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+}
+
+.logout-btn {
+  background: #ef4444;
+  color: #fff;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+}
+
+/* =========================
+   Search + Sort
+========================= */
+.search-input,
+.sort-select {
+  padding: 12px 14px;
+  border: 1px solid #d0d7de;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #fff;
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.search-input {
+  width: 300px;
+}
+
+.sort-select {
+  min-width: 180px;
+  cursor: pointer;
+}
+
+.search-input:focus,
+.sort-select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* =========================
+   Job Grid
+========================= */
+.browse-job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+  gap: 22px;
+}
+
+/* =========================
+   Job Card
+========================= */
+.browse-job-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  cursor: pointer;
+}
+
+.browse-job-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+
+.browse-job-title {
+  font-size: 1.2rem;
+  margin: 0 0 10px;
+  color: #111827;
+}
+
+.browse-job-desc {
+  font-size: 0.95rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.browse-job-employer {
+  font-size: 0.92rem;
+  color: #374151;
+  margin-bottom: 10px;
+}
+
+.browse-job-meta {
+  font-size: 0.88rem;
+  color: #6b7280;
+  margin: 6px 0;
+}
+
+/* =========================
+   Tags
+========================= */
+.browse-job-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.browse-tag {
+  display: inline-block;
+  background: #eff6ff;
+  color: #1d4ed8;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  font-weight: 700;
+}
+
+.type-tag {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+/* =========================
+   Deadline
+========================= */
+.browse-deadline {
+  display: inline-block;
+  margin-top: 8px;
+  background: #fef3c7;
+  color: #92400e;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.no-deadline {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* =========================
+   Apply Button
+========================= */
+.browse-apply-btn {
+  margin-top: 16px;
+  width: 100%;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.22);
+}
+
+.browse-apply-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 22px rgba(37, 99, 235, 0.28);
+}
+
+.browse-apply-btn:active {
+  transform: scale(0.98);
+}
+
+/* =========================
+   Empty State
+========================= */
+.browse-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 20px;
+  background: #f9fafb;
+  border: 1px dashed #d1d5db;
+  border-radius: 16px;
+  color: #6b7280;
+}
+.browse-job-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.browse-details-btn,
+.browse-apply-btn {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.browse-details-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.browse-details-btn:hover {
+  background: #5a6268;
+}
+/* =========================
+   Footer
+========================= */
+.browse-footer {
+  margin-top: 40px;
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* =========================
+   Mobile
+========================= */
+@media (max-width: 768px) {
+  .browse-header h2 {
+    font-size: 1.6rem;
+  }
+
+  .browse-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .browse-left-controls,
+  .browse-right-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .browse-right-controls {
+    flex-direction: column;
+    align-items: stretch;
+    margin-left: 0;
+  }
+
+  .search-input,
+  .sort-select {
+    width: 100%;
+  }
+
+  .search-input {
+    width: 100%;
+  }
+}
+
+/* =============================
+   GLOBAL STUDENT DARK MODE
+============================= */
+body.dark {
+  background: #111827;
+  color: #f3f4f6;
+}
+
+body.dark .navbar {
+  background: #0f172a;
+  color: #f3f4f6;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+body.dark .browse-header h2,
+body.dark .browse-header p,
+body.dark .navbar h1,
+body.dark .browse-footer,
+body.dark .browse-footer p {
+  color: #f3f4f6;
+}
+
+/* Controls area */
+body.dark .browse-controls {
+  background: transparent;
+}
+
+/* Correct class names for YOUR job cards */
+body.dark .browse-job-card {
+  background: #1f2937;
+  color: #f3f4f6;
+  border: 1px solid #374151;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+body.dark .browse-job-title,
+body.dark .browse-job-desc,
+body.dark .browse-job-employer,
+body.dark .browse-job-meta {
+  color: #f3f4f6;
+}
+
+/* Search + select */
+body.dark .search-input,
+body.dark .sort-select,
+body.dark input,
+body.dark textarea,
+body.dark select {
+  background: #111827;
+  color: #f3f4f6;
+  border: 1px solid #4b5563;
+}
+
+body.dark .search-input::placeholder,
+body.dark textarea::placeholder {
+  color: #9ca3af;
+}
+
+/* Buttons */
+body.dark .btn {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+body.dark .dashboard-btn {
+  background: #2563eb;
+  color: #fff;
+}
+
+body.dark .logout-btn {
+  background: #dc2626;
+  color: #fff;
+}
+
+body.dark .browse-details-btn {
+  background: #475569;
+  color: #fff;
+}
+
+body.dark .browse-apply-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+}
+
+/* Tags */
+body.dark .browse-tag {
+  background: #1e3a8a;
+  color: #dbeafe;
+}
+
+body.dark .type-tag {
+  background: #064e3b;
+  color: #d1fae5;
+}
+
+/* Deadline */
+body.dark .browse-deadline {
+  background: #78350f;
+  color: #fde68a;
+}
+
+body.dark .no-deadline {
+  background: #374151;
+  color: #e5e7eb;
+}
+
+/* Empty state */
+body.dark .browse-empty {
+  background: #1f2937;
+  border: 1px dashed #4b5563;
+  color: #d1d5db;
+}
+
+/* Footer */
+body.dark .browse-footer {
+  background: #0f172a;
+  color: #f3f4f6;
+}

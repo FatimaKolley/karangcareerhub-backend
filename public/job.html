@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Job Details</title>
+  <link rel="stylesheet" href="job.css">
+</head>
+
+<body>
+  <div class="logo">
+    <img src="image/logo.png" alt="KarangCareerHub Logo">
+  </div>
+  <header>
+    <h1>Job Details</h1>
+    </header>
+
+  <main>
+    
+    <div id="jobDetails" class="job-card">
+      <!-- Job details load here -->
+    </div>
+  
+    <div class="job-actions">
+      <button id="applyBtn" class="applybtn">Apply</button>
+      <button id="downloadPdfBtn" class="download-btn">Download Job </button>
+      <button id="saveJobBtn" class="save-btn">Save Job</button>    </div>
+    
+    
+  </main>
+  
+  <!-- LOGIN REQUIRED MODAL -->
+<div id="applyModal" class="modal hidden">
+  <div class="modal-content">
+    <h3>Login Required</h3>
+    <p>You must be logged in as a student to apply for or save this job.</p>
+    <div class="modal-actions">
+      <button id="goLogin">Go to Login</button>
+      <button id="goBack">Back</button>
+    </div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script src="studentTheme.js"></script>
+<script src="job.js"></script>
+
+  
+</body>
+</html>

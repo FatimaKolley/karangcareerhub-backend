@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employer Profile | KarangCareerHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Apply dark mode early to prevent flash -->
+  <script>
+    if (localStorage.getItem("employerTheme") === "dark") {
+      document.documentElement.classList.add("dark-mode");
+    }
+  </script>
+
+  <link rel="stylesheet" href="employerProfile.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="hamburger" id="hamburgerBtn">☰</button>
+      <div class="logo">KarangCareerHub</div>
+    </div>
+  
+    <div class="nav-center">
+      <h1 class="dashboard-title">Employer Panel</h1>
+    </div>
+  
+    <div class="nav-right">
+      <button class="notification-btn" id="notificationBtn">🔔</button>
+  
+      <!-- Dark Mode Toggle -->
+      <button class="dark-mode-btn" id="darkModeToggle" title="Toggle Dark Mode">🌙</button>
+  
+      <div class="profile-menu">
+        <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic" id="profileBtn">
+          
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="profile-dropdown-header">
+            <img src="https://via.placeholder.com/50" alt="Profile" class="dropdown-profile-pic">
+            <p id="dropdownEmployerName">Employer Name</p>
+          </div>
+          <a href="dashboardEmployer.html"><i>←</i>Dashboard</a>
+          <a href="employerHistory.html"><i>📄</i> History</a>
+          <a href="employerSetting.html"><i>⚙️</i> Settings</a>
+          <a href="#" id="logoutBtn"><i>🚪</i> Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="profile-page">
+
+    <h2>Employer Profile & Verification</h2>
+    <p class="subtitle">
+      Complete your profile to verify your company and unlock full recruitment access.
+    </p>
+    <div id="saveStatus" style="font-size:13px; color:gray; margin-bottom:10px;">
+      All changes saved
+    </div>
+    <form id="employerProfileForm">
+
+      <!-- PERSONAL INFORMATION -->
+      <section class="profile-section">
+        <h3>Personal Information</h3>
+
+        <div class="form-grid">
+          <div>
+            <label>First Name</label>
+            <input type="text" name="first_name" required>
+          </div>
+
+          <div>
+            <label>Last Name</label>
+            <input type="text" name="last_name" required>
+          </div>
+
+          <div>
+            <label>Email Address</label>
+            <input type="email" name="email" readonly>
+          </div>
+
+          <div>
+            <label>Phone Number</label>
+            <input type="tel" name="phone" required>
+          </div>
+
+          <div>
+            <label>Gender</label>
+            <select name="gender">
+              <option value="">Select</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Nationality</label>
+            <input type="text" name="nationality" required>
+          </div>
+
+          <div>
+            <label>Date of Birth</label>
+            <input type="date" name="date_of_birth">
+          </div>
+        </div>
+      </section>
+
+      <!-- COMPANY VERIFICATION -->
+      <section class="profile-section">
+        <h3>Company Information (Verification Required)</h3>
+
+        <div class="form-grid">
+          <div>
+            <label>Verified Company Name</label>
+            <input type="text" name="company_name" required>
+          </div>
+
+          <div>
+            <label>Business Registration Number</label>
+            <input type="text" name="registration_number" required>
+          </div>
+
+          <div>
+            <label>Company Email Address</label>
+            <input type="email" name="company_email" required>
+          </div>
+
+          <div>
+            <label>Company Website / LinkedIn</label>
+            <input type="url" name="company_website" placeholder="https://">
+          </div>
+
+          <div>
+            <label>Physical Business Address</label>
+            <textarea name="business_address" required></textarea>
+            <small>Must be a valid office address (no P.O. Box).</small>
+          </div>
+
+          <div>
+            <label>Company Logo</label>
+            <input type="file" name="company_logo" accept="image/*">
+          </div>
+        </div>
+      </section>
+
+      <!-- AUTHORIZED CONTACT -->
+      <section class="profile-section">
+        <h3>Authorized Recruitment Contact</h3>
+
+        <div class="form-grid">
+          <div>
+            <label>Contact Person Name</label>
+            <input type="text" name="contact_person" required>
+          </div>
+
+          <div>
+            <label>Job Title / Role</label>
+            <input type="text" name="contact_role" required>
+          </div>
+        </div>
+      </section>
+
+      <!-- BUSINESS DETAILS -->
+      <section class="profile-section">
+        <h3>Business Details</h3>
+
+        <div class="form-grid">
+          <div>
+            <label>Industry</label>
+            <select name="industry" required>
+              <option value="">Select Industry</option>
+              <option>Finance</option>
+             <option>Marketing</option>
+             <option>Design / Creative</option>
+             <option>Engineering</option>
+             <option>Healthcare</option>
+             <option>Education</option>
+             <option>Administration</option>
+             <option>Customer Service</option>
+             <option>Sales</option>
+             <option>Human Resources</option>
+             <option>Logistics / Supply Chain</option>
+             <option>IT / Software Engineerting</option>
+             <option >Other</option>
+            </select>
+          </div>
+
+          <div>
+            <label>Operating Since in (Years) </label>
+            <input type="number" name="operating_since" placeholder="e.g. 2018">
+          </div>
+
+          <div>
+            <label>Company Description</label>
+            <textarea name="company_description" rows="4" required></textarea>
+          </div>
+        </div>
+      </section>
+
+      <!-- ID VERIFICATION -->
+      <section class="profile-section">
+        <h3>Employer Identity Verification</h3>
+
+        <label>Upload Valid ID (National ID or Passport)</label>
+        <input type="file" name="id_document" accept="image/*,application/pdf" required>
+        <p class="note">
+          This document is used strictly for verification and fraud prevention.
+        </p>
+      </section>
+
+      <!-- TRUST & STATUS -->
+      <section class="profile-section status-section">
+        <h3>Verification & Trust Status</h3>
+
+        <p><strong>Verification Status:</strong> <span class="status pending">Pending Review</span></p>
+        <p><strong>Employer Rating:</strong> ⭐⭐⭐⭐⭐ (Visible after verification)</p>
+        <p><strong>Account Limits:</strong> New employers may have posting limits.</p>
+      </section>
+
+      <!-- AGREEMENT -->
+      <section class="profile-section">
+        <label class="checkbox">
+          <input type="checkbox" required>
+          I agree to the Platform Terms, Anti-Scam Policy, and Employer Code of Conduct.
+        </label>
+      </section>
+
+    </form>
+
+  </main>
+
+  <script src="employerTheme.js"></script>
+  <script src="employerProfile.js"></script>
+</body>
+</html>

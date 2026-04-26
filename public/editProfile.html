@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Profile | KarangCareerHub</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <link rel="stylesheet" href="editProfile.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="logo"><h2>KarangCareerHub</h2></div>
+    <div class="nav-right">
+      <a href="profile.html" class="btn primary">Back to Profile</a>
+    </div>
+  </nav>
+
+  <!-- EDIT FORM -->
+  <div class="edit-container">
+    <h2 class="h">Edit Your Profile</h2>
+
+    <div class="profile-pic-box">
+      <img id="previewPic" src="image/avatar-placeholder.png" alt="Profile Picture">
+      <input type="file" id="uploadPic" accept="image/*">
+    </div>
+    <div id="saveStatus" class="save-status">Saved ✔</div>
+    <form id="editProfileForm">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" id="first_name">
+        </div>
+
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" id="last_name">
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" id="email">
+        </div>
+
+        <div class="form-group">
+          <label>Date of Birth</label>
+          <input type="date" id="date_of_birth">
+        </div>
+
+        <div class="form-group">
+          <label>Phone</label>
+          <input type="text" id="phone">
+        </div>
+
+        <div class="form-group">
+          <label>Secondary Phone Number</label>
+          <input type="text" id="optional_phone">
+        </div>
+
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="gender">
+            <option value="">Select</option>
+            <option>Male</option>
+            <option>Female</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Current Location</label>
+          <input type="text" id="location">
+        </div>
+
+        <div class="form-group">
+          <label>Education</label>
+          <select id="education">
+            <option value="">Select</option>
+            <option>Lower</option>
+            <option>High School</option>
+            <option>Vocational Trainning</option>
+            <option>Certificate</option>
+            <option>Diploma</option>
+            <option>HND</option>
+            <option>Degree</option>
+            <option>Masters</option>
+            <option>PHD</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label>Main Interest</label>
+          <select id="main_interest">
+           <option value="">Select</option>
+           <option>IT / Software</option>
+           <option>Finance</option>
+           <option>Marketing</option>
+           <option>Design / Creative</option>
+           <option>Engineering</option>
+           <option>Healthcare</option>
+           <option>Education</option>
+           <option>Administration</option>
+           <option>Customer Service</option>
+           <option>Sales</option>
+           <option>Human Resources</option>
+           <option>Logistics / Supply Chain</option>
+           <option>Internship</option>
+           <option >Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Other Interest</label>
+          <select id="other_interest">
+           <option value="">Select</option>
+           <option>IT / Software</option>
+           <option>Finance</option>
+           <option>Marketing</option>
+           <option>Design / Creative</option>
+           <option>Engineering</option>
+           <option>Healthcare</option>
+           <option>Education</option>
+           <option>Administration</option>
+           <option>Customer Service</option>
+           <option>Sales</option>
+           <option>Human Resources</option>
+           <option>Logistics / Supply Chain</option>
+           <option>Internship</option>
+           <option >Other</option>
+          </select>
+        </div>
+
+
+        <div class="form-group">
+          <label>Skills</label>
+          <input type="text" id="skills" placeholder="Comma-separated">
+        </div>
+
+        <div class="form-group">
+          <label>Experience (years)</label>
+          <select id="experience">
+           <option value="">Select</option>
+           <option>Beginner</option>
+           <option>Intermediate</option>
+           <option>Expert</option>
+           </select>
+        </div>
+
+      <div class="form-group" style="margin-top:20px;">
+        <label>Bio</label>
+        <textarea id="bio" rows="10"></textarea>
+      </div>
+
+      <div class="form-group" style="margin-top:20px;">
+        <label>Upload CV / Resume</label>
+        <input type="file" id="resumeUpload" accept=".pdf,.doc,.docx">
+        <div class="file-name" id="resumeFileName">No file selected</div>
+      </div>
+      </div>  
+     <!-- Professional Links -->
+     <div class="section-title">
+      <h2>Professional Links</h2>
+    </div>
+    
+    <div class="links-box">
+      <div class="form-group">
+        <label>Portfolio / Personal Website</label>
+        <input type="url" id="portfolioLink" placeholder="https://yourportfolio.com" />
+      </div>
+    
+      <div class="form-row">
+        <div class="form-group">
+          <label>LinkedIn Profile</label>
+          <input type="url" id="linkedinLink" />
+        </div>
+    
+        <div class="form-group">
+          <label>GitHub</label>
+          <input type="url" id="githubLink" />
+        </div>
+      </div>
+    </div>
+    </form>
+  </div>
+  <script src="studentTheme.js"></script>
+  <script src="editProfile.js"></script>
+</body>
+</html>

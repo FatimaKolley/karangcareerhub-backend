@@ -1,0 +1,546 @@
+/* ===============================
+   GLOBAL RESET
+================================ */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  }
+  
+  body {
+    background: #f4f6f9;
+    color: #333;
+  }
+
+  /* =========================================
+   SHARED NAVBAR
+========================================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-left,
+.nav-center,
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.nav-left {
+  gap: 12px;
+}
+
+.nav-center {
+  flex: 1;
+  justify-content: center;
+}
+
+.nav-right {
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0b3e91;
+}
+
+.dashboard-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0b3e91;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.dark-mode-btn {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: #f1f5ff;
+  color: #0b3e91;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.15s ease, color 0.25s ease;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.dark-mode-btn:hover {
+  background: #dfe9ff;
+}
+
+.dark-mode-btn:active {
+  transform: scale(0.95);
+}
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-pic,
+.dropdown-profile-pic {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.dropdown-profile-pic {
+  width: 50px;
+  height: 50px;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: 220px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  display: none;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.profile-dropdown.show {
+  display: block;
+}
+
+.profile-dropdown-header {
+  padding: 16px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-dropdown-header p {
+  margin-top: 8px;
+  font-weight: 600;
+  color: #222;
+}
+
+.profile-dropdown a {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #222;
+  transition: background 0.2s ease;
+}
+
+.profile-dropdown a:hover {
+  background: #f8fafc;
+}
+  
+  /* ===============================
+     SETTINGS PAGE WRAPPER
+  ================================ */
+  .settings-page {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+  }
+  
+  /* ===============================
+     PAGE HEADER
+  ================================ */
+  .settings-header {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    margin-bottom: 30px;
+  }
+  
+  .settings-header h2 {
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+  
+  .settings-header p {
+    font-size: 14px;
+    color: #666;
+  }
+  
+  /* ===============================
+     SETTINGS SECTIONS
+  ================================ */
+  .settings-section {
+    background: #ffffff;
+    padding: 22px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  }
+  
+  .settings-section h3 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+  }
+  
+  /* ===============================
+     FORM GROUP
+  ================================ */
+  .form-group {
+    margin-bottom: 18px;
+  }
+  
+  .form-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+  
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+  }
+  
+  .form-group input:focus,
+  .form-group select:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  /* ===============================
+     TOGGLE SWITCH
+  ================================ */
+  .toggle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .toggle input {
+    width: 40px;
+    height: 20px;
+  }
+  
+  /* ===============================
+     BUTTONS
+  ================================ */
+  .btn {
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .btn-primary {
+    background: #007bff;
+    color: #fff;
+  }
+  
+  .btn-primary:hover {
+    background: #0056b3;
+  }
+  
+  .btn-danger {
+    background: #dc3545;
+    color: #fff;
+  }
+  
+  .btn-danger:hover {
+    background: #b52a37;
+  }
+  
+  .btn-secondary {
+    background: #6c757d;
+    color: #fff;
+  }
+  
+  .btn-secondary:hover {
+    background: #545b62;
+  }
+  
+  /* ===============================
+     SECURITY INFO BOX
+  ================================ */
+  .security-box {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #555;
+    border-left: 4px solid #007bff;
+  }
+  
+  /* ===============================
+     SESSION LIST
+  ================================ */
+  .session-list {
+    list-style: none;
+    margin-top: 10px;
+  }
+  
+  .session-list li {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+  
+  .session-list button {
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* ===============================
+     DANGER ZONE
+  ================================ */
+  .danger-zone {
+    background: #fff5f5;
+    border: 1px solid #f5c6cb;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  .danger-zone h3 {
+    color: #b52a37;
+  }
+  
+  .danger-zone p {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+  
+  /* ===============================
+     RESPONSIVE
+  ================================ */
+  @media (max-width: 768px) {
+    .settings-page {
+      padding: 15px;
+    }
+  }
+  
+
+  /* =========================================
+   DARK MODE - GLOBAL PAGE
+========================================= */
+body.dark-mode {
+  background: #121212;
+  color: #f5f5f5;
+}
+
+/* Navbar */
+body.dark-mode .navbar {
+  background: #1c1c1c;
+  border-bottom: 1px solid #333;
+}
+
+body.dark-mode .logo,
+body.dark-mode .dashboard-title {
+  color: #8fb8ff;
+}
+
+/* Buttons in navbar */
+body.dark-mode .dark-mode-btn {
+  background: #2f2f2f;
+  color: #ffd54f;
+}
+
+body.dark-mode .dark-mode-btn:hover {
+  background: #3a3a3a;
+}
+
+body.dark-mode .notification-btn {
+  color: #f5f5f5;
+}
+
+/* Profile dropdown */
+body.dark-mode .profile-dropdown {
+  background: #1f1f1f;
+  border: 1px solid #333;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .profile-dropdown-header {
+  background: #242424;
+  border-bottom: 1px solid #333;
+}
+
+body.dark-mode .profile-dropdown-header p {
+  color: #f5f5f5;
+}
+
+body.dark-mode .profile-dropdown a {
+  color: #f5f5f5;
+}
+
+body.dark-mode .profile-dropdown a:hover {
+  background: #333;
+}
+
+/* Main cards / sections */
+body.dark-mode .profile-section,
+body.dark-mode .history-section,
+body.dark-mode .summary-card,
+body.dark-mode .settings-section {
+  background: #1e1e1e;
+  color: #f5f5f5;
+  border: 1px solid #333;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Titles */
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4 {
+  color: #8fb8ff;
+}
+
+/* Subtitle / paragraph text */
+body.dark-mode .subtitle,
+body.dark-mode p,
+body.dark-mode label,
+body.dark-mode small,
+body.dark-mode .note,
+body.dark-mode li,
+body.dark-mode span {
+  color: #d6d6d6;
+}
+
+/* Inputs / selects / textareas */
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea {
+  background: #2a2a2a;
+  color: #f5f5f5;
+  border: 1px solid #444;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #b0b0b0;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+  border-color: #8fb8ff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(143, 184, 255, 0.15);
+}
+
+/* Disabled inputs */
+body.dark-mode input:disabled {
+  background: #232323;
+  color: #9c9c9c;
+}
+
+/* Tables */
+body.dark-mode .history-table {
+  background: #1e1e1e;
+  color: #f5f5f5;
+}
+
+body.dark-mode .history-table th {
+  background: #263248;
+  color: #ffffff;
+}
+
+body.dark-mode .history-table td {
+  border-color: #333;
+}
+
+body.dark-mode .history-table tr:nth-child(even) {
+  background: #222;
+}
+
+body.dark-mode .history-table tr:hover {
+  background: #2b2b2b;
+}
+
+/* Activity log */
+body.dark-mode .activity-log li {
+  background: #222;
+  border: 1px solid #333;
+}
+
+/* Status badges */
+body.dark-mode .status.pending {
+  background: #4a3b14;
+  color: #ffd54f;
+}
+
+/* Buttons */
+body.dark-mode .save-btn {
+  background: #0b3e91;
+  color: #fff;
+}
+
+body.dark-mode .save-btn:hover {
+  background: #0d4fb8;
+}
+
+body.dark-mode .secondary-btn {
+  background: #2c2c2c;
+  color: #f5f5f5;
+  border: 1px solid #444;
+}
+
+body.dark-mode .secondary-btn:hover {
+  background: #383838;
+}
+
+body.dark-mode .danger-btn {
+  background: #7f1d1d;
+  color: #fff;
+}
+
+body.dark-mode .danger-btn:hover {
+  background: #991b1b;
+}
+
+/* HR line */
+body.dark-mode hr {
+  border: none;
+  border-top: 1px solid #333;
+}

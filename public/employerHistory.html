@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employer History | KarangCareerHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="employerHistory.css">
+
+</head>
+
+<body>
+
+  <!-- NAVBAR (reuse employer navbar) -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="hamburger" id="hamburgerBtn">☰</button>
+      <div class="logo">KarangCareerHub</div>
+    </div>
+  
+    <div class="nav-center">
+      <h1 class="dashboard-title">Employer Panel</h1>
+    </div>
+  
+    <div class="nav-right">
+      <button class="notification-btn" id="notificationBtn">🔔</button>
+  
+      <!-- Dark Mode Toggle -->
+      <button class="dark-mode-btn" id="darkModeToggle" title="Toggle Dark Mode">🌙</button>
+  
+      <div class="profile-menu">
+        <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic" id="profileBtn">
+  
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="profile-dropdown-header">
+            <img src="https://via.placeholder.com/50" alt="Profile" class="dropdown-profile-pic">
+            <p id="dropdownEmployerName">Employer Name</p>
+          </div>
+          <a href="employerProfile.html"> <i>👤</i>Profile</a>
+          <a href="dashboardEmployer.html"><i>←</i>Dashboard</a>
+          <a href="employerSetting.html"><i>⚙️</i>Settings</a>
+          <a href="#" id="logoutBtn"><i>🚪</i>Logout</a>
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="history-page">
+
+    <section class="history-section">
+      <div class="history-header">
+        <h2>Job Posting History</h2>
+        <p>All jobs you have posted and their current status.</p>
+      </div>
+    
+      <!-- Dynamic Jobs Container -->
+      <div id="historyJobs" class="history-jobs-container">
+        <!-- Jobs will be injected here by pesteJob.js -->
+      </div>
+    </section>
+    
+
+    <!-- ================= SUMMARY ================= -->
+    <section class="history-summary">
+      <div class="summary-card">
+        <h3>0</h3>
+        <p>Total Jobs Posted</p>
+      </div>
+
+      <div class="summary-card">
+        <h3>0</h3>
+        <p>Total Applicants</p>
+      </div>
+
+      <div class="summary-card">
+        <h3>0</h3>
+        <p>Accepted Applicants</p>
+      </div>
+
+      <div class="summary-card">
+        <h3>0</h3>
+        <p>Rejected Applicants</p>
+      </div>
+      <div class="summary-card">
+        <h3>0</h3>
+        <p>Reviewed Applicants</p>
+      </div>
+      <div class="summary-card">
+        <h3>0</h3>
+        <p>Saved Applicants</p>
+      </div>
+    </section>
+
+    <!-- ================= JOB HISTORY TABLE ================= -->
+    <section class="history-section">
+      <h3>All Jobs Posted</h3>
+
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Job Title</th>
+            <th>Category</th>
+            <th>Posted On</th>
+            <th>Deadline</th>
+            <th>Status</th>
+            <th>Views</th>
+            <th>Applicants</th>
+            <th>Accepted</th>
+            <th>Rejected</th>
+            <th>Reviewed</th>
+            <th>Saved</th>
+
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- Loaded dynamically -->
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ================= APPLICATION HISTORY ================= -->
+    <section class="history-section">
+      <h3>Application History</h3>
+
+      <table class="history-table">
+        <thead>
+          <tr>
+            <th>Job Title</th>
+            <th>Applicant Name</th>
+            <th>Status</th>
+            <th>Applied On</th>
+            <th>Action Taken</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <!-- Loaded dynamically -->
+        </tbody>
+      </table>
+    </section>
+    <!--analytics-->
+    <section class="analytics">
+      <h3>Analytics</h3>
+      <canvas id="jobsChart"></canvas>
+    </section>
+    <!-- ================= EMPLOYER ACTION LOG ================= -->
+    <section class="history-section">
+      <h3>Employer Activity Log</h3>
+
+      <ul class="activity-log">
+        <li>
+          <strong>Job Posted:</strong> Software Developer  
+          <span>• 12 Jan 2026</span>
+        </li>
+
+        <li>
+          <strong>Application Accepted:</strong> John Doe  
+          <span>• 15 Jan 2026</span>
+        </li>
+
+        <li>
+          <strong>Job Closed:</strong> UI/UX Designer  
+          <span>• 20 Jan 2026</span>
+        </li>
+
+        <li>
+          <strong>Profile Verified:</strong> Employer account approved  
+          <span>• 25 Jan 2026</span>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ================= COMPLIANCE & TRUST ================= -->
+    <section class="history-section trust-section">
+      <h3>Compliance & Trust Record</h3>
+
+      <p><strong>Verification Status:</strong> Verified Employer</p>
+      <p><strong>Reports Against Account:</strong> 0</p>
+      <p><strong>Warnings Issued:</strong> None</p>
+      <p><strong>Account Standing:</strong> Good</p>
+    </section>
+
+  </main>
+<script src="employerTheme.js"></script>
+<script src="employerHistory.js"></script>
+</body>
+</html>

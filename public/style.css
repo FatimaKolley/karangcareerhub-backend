@@ -1,0 +1,424 @@
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0px;
+    font-family: Arial, sans-serif;
+    background-color: #f1a305; /* light yellow background */
+    color: #1a1a1a;
+    line-height: 1.5;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+  
+  .container {
+    background-color: #f3e7d0e3; /* light yellow background */
+    max-width: 95%;
+    margin: auto;
+    font-size: 100%;
+    padding: 5px;
+    box-shadow: 0px 2px 5px 1px gray;  
+  }
+    
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+   
+ 
+  .logo {
+    display: flex;
+    align-items: center;
+  }
+  .logo img {
+    height: 100px;
+    cursor: pointer;
+  }
+  /* NAVBAR STYLES */
+.main-header {
+  background-color: #f3e7d0e3; 
+  color: white;
+  padding: 0.8rem 2rem;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+.nav-container {
+  display: flex;
+  justify-content: space-between; 
+  align-items: center;
+  max-width: 1200px;
+  margin: auto;
+}
+.nav-links {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  flex: 1;
+}
+  
+  /* Hero Section */
+  .hero {
+    display: flex;               /* make a flexbox */
+    justify-content: space-between; /* push items apart */
+    align-items: center;          /* vertically center */
+  }
+  .hero-text {
+    text-align: left;             /* left-align text */
+  }
+  
+  .hero-text {
+    flex: 1 1 50%;
+    padding-right: 2rem;
+  }
+  
+  .hero-text h1 {
+    font-size: 48px;
+    color: #0b3e91;
+    margin-bottom: 1rem;
+    font-weight: bolder;
+    line-height: 1.5;
+  }
+  
+  .hero-text p {
+    font-size: 25px;
+    line-height: 1.4;
+  }
+  .auth-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  /* Button Styling */
+.nav-container .btn {
+  background-color: #f1a305;
+  color: black;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+.nav-container .btn:hover {
+  background-color:#f3e7d0e3;
+  color: #0b3e91;
+}
+/* Specific Button Colors */
+.login-btn {
+  background-color: #f3e7d0e3;
+}
+.login-btn:hover {
+  background-color: #f3e7d0e3;
+}
+.signup-btn {
+  background-color: #aaad00;
+}
+.signup-btn:hover {
+  background-color: #818304;
+}
+
+/* Make navbar responsive */
+@media (max-width: 800px) {
+  .nav-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .nav-links {
+    margin: 1rem 0;
+    flex-wrap: wrap;
+  }
+}
+  
+    .primary,
+    .secondary {
+     background-color: #0b3e91;
+     color: white;
+    }  
+  .email {
+    margin-top: 30px;
+    font-size: 15px;
+    margin-left: 30px;
+    text-align: left;
+    color: black;    
+  }
+  .hero-image img {
+    max-width: 500px; /* control size */
+    height: auto;
+    display: block;
+    opacity: 85%;
+    border-radius: 70%;
+    padding: 20px;
+    box-shadow: 0px 2px 7px 1px #1b1b19;
+    background-color: #0b3e91;
+  }
+
+
+
+/* =============================
+   JOB GRID
+============================= */
+.job-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* =============================
+   JOB CARD
+============================= */
+.job-card {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+  background-color: #f3e7d0e3;
+}
+
+/* =============================
+   JOB TITLE
+============================= */
+.job-card h3 {
+  color: #0b3e91;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+/* =============================
+   JOB DESCRIPTION (2 LINES)
+============================= */
+.job-desc {
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =============================
+   EMPLOYER INFO
+============================= */
+.job-employer {
+  font-size: 13px;
+  color: #555;
+}
+
+/* =============================
+   APPLY BUTTON
+============================= */
+.apply-btn {
+  background-color: #f1a305;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-weight: bold;
+}
+
+.apply-btn:hover {
+  background-color: #0b3e91;
+}
+
+/* =============================
+   MOBILE FIX
+============================= */
+@media (max-width: 700px) {
+  .job-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+  
+  /* Footer */
+  footer{
+    background-color: #c7880a;
+    border-radius: 20px;
+    font-weight: bolder;
+    height: auto;
+    width: 99%;
+    margin: auto;
+  }
+  .footer {
+    text-align: center;
+    padding: 5px;
+    font-size: 0.9rem;
+    color: #000;
+  }
+  footer p{
+    color: black;
+  }
+  /* Footer */
+  .footerfa {
+    padding: 2rem;
+    font-size: 0.9rem;
+    color:#aaad00;
+  }
+  @media (max-width: 700px) {
+    .hero {
+      flex-direction: column;
+      text-align: center;
+    }
+    .hero-text, .hero-image {
+      flex: 1 1 100%;
+      padding: 0.5rem;
+     }
+
+    .hero-image img {
+      max-width: 90%; /* control size */
+      height: auto;
+      display: block;
+      opacity: 70%;
+      border-radius: 70%;
+      padding: 20px;
+      box-shadow: 0px 2px 5px 1px gray;
+      margin: auto;
+    }
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 1rem;
+      border-radius: 20px 30px;
+      box-shadow: 3px 3px 3px 3px #818304;
+    }
+  }
+
+  /* Avatar + dropdown */
+.avatar-wrap { position: relative; display: inline-block; margin-left: 12px; }
+.avatar { width:44px; height:44px; border-radius:50%; object-fit:cover; cursor:pointer; border:2px solid #e8eefc; }
+.avatar-dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+  padding: 8px 0;
+  min-width: 160px;
+  display: none;
+  z-index: 1500;
+}
+.avatar-dropdown[aria-hidden="false"] { display: block; }
+.avatar-dropdown .dropdown-item {
+  display: block;
+  padding: 10px 14px;
+  color: #0b3e91;
+  text-decoration: none;
+  font-weight: 600;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+.avatar-dropdown .dropdown-item:hover { background: #f1f6ff; }
+.btn-link { background: none; border: none; width: 100%; cursor: pointer; }
+.brand img { height: 48px; vertical-align: middle; margin-right:8px; }
+.brand-text { font-weight:700; color:#0b3e91; vertical-align: middle; }
+
+  
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.hidden {
+  display: none;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.modal-actions button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#goLogin {
+  background: #0b3e91;
+  color: white;
+}
+
+#goBack {
+  background: #ccc;
+}
+
+
+/*---- browser--------*/
+.browse-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0;
+}
+
+.search-input,
+.sort-select {
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.search-input {
+  min-width: 260px;
+  flex: 1;
+}
+
+.job-meta {
+  margin: 6px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.job-deadline {
+  font-size: 0.9rem;
+  margin: 8px 0;
+  color: #555;
+}
+
+.urgent-deadline {
+  color: #d32f2f;
+  font-weight: 700;
+}
+
+.loading-text,
+.error-text,
+.empty-state {
+  padding: 12px;
+  text-align: center;
+  color: #666;
+}

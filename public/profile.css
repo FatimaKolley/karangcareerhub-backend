@@ -1,0 +1,273 @@
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+
+/* =============================
+DROPDOWN FIX
+============================= */
+.profile-dropdown {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  background: #fff;
+  border-radius: 10px;
+  width: 180px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  display: none;
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.profile-dropdown.show {
+  display: block;
+}
+
+.profile-dropdown ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-dropdown li {
+  padding: 12px 15px;
+  transition: 0.2s;
+}
+
+.profile-dropdown li:hover {
+  background: #f1f5f9;
+}
+
+.profile-dropdown a {
+  text-decoration: none;
+  color: #333;
+  display: block;
+}
+
+
+.profile-page {
+    max-width: 900px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 25px;
+    position: relative;
+  }
+
+  .profile-header img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #3498db;
+    cursor: pointer;
+  }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+  }
+
+  .info-card {
+    background: #f5f9ff;
+    padding: 15px 18px;
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+  }
+
+  .info-card h4 {
+    margin-bottom: 5px;
+    color: #3498db;
+    font-size: 1rem;
+  }
+
+  .info-card p, .info-card a {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #333;
+    word-break: break-word;
+  }
+
+  .edit-btn {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 12px 22px;
+    background: linear-gradient(135deg, #2563eb, #1e40af);
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s ease;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+  }
+  
+  .edit-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(37,99,235,0.4);
+  }
+
+  /* Hidden file input */
+  #uploadProfilePic {
+    display: none;
+  }
+  .btn {
+    margin-top: 20px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.3s;
+  }
+  
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(16,185,129,0.3);
+  }
+
+  .info-card {
+    background: #f5f9ff;
+    padding: 15px 18px;
+    border-radius: 10px;
+    border-left: 4px solid #3498db;
+    transition: 0.25s;
+  }
+  
+  .info-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  }
+
+  .nav-right {
+    position: relative; 
+  }
+
+  .info-card a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+    transition: 0.2s;
+  }
+  
+  .info-card a:hover {
+    text-decoration: underline;
+    color: #1e40af;
+  }
+  .notif {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #333;
+    color: #fff;
+    padding: 12px 18px;
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: 0.3s;
+    z-index: 9999;
+  }
+  
+  .notif.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .notif.success { background: #28a745; }
+  .notif.error { background: #dc3545; }
+  .notif.info { background: #007bff; }
+/* =============================
+   GLOBAL STUDENT DARK MODE
+============================= */
+body.dark {
+    background: #1f2937;
+    color: #f3f4f6;
+  }
+  
+  body.dark .navbar {
+    background: #111827;
+    color: #f3f4f6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  }
+  
+  body.dark .welcome-text,
+  body.dark h2,
+  body.dark p{
+    color: #f3f4f6;
+  }
+  
+  body.dark .profile-dropdown,
+  body.dark .history-card,
+  body.dark .settings-card,
+  body.dark .profile-card {
+    background: #374151;
+    color: #f3f4f6;
+    border-color: #4b5563;
+  }
+  
+  body.dark .profile-dropdown li a {
+    color: #f3f4f6;
+  }
+  
+  body.dark .profile-dropdown li:hover {
+    background: #4b5563;
+  }
+  
+
+  
+  body.dark .profile-page,
+  body.dark .profile-header,
+  body.dark .info-card {
+    background: #1f2937;
+    color: #f3f4f6;
+    border: 1px solid #4b5563;
+  }
+  
+  body.dark .edit-btn{
+    background: #374151;
+    color: #f3f4f6;
+  }
+  body.dark .edit-btn:hover {
+    background: #2563eb;
+    color: #fff;
+  }
+  
+  
+  body.dark .btn {
+    background: #374151;
+    color: #f3f4f6;
+    border: 1px solid #4b5563;
+  }
+  
+  body.dark .btn:hover {
+    background: #4b5563;
+  }
+  
+  body.dark footer {
+    background: #111827;
+    color: #f3f4f6;
+  }
+  
+  .dark-btn {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-right: 10px;
+  }

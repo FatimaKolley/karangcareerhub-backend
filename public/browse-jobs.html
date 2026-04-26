@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Browse Jobs | KarangCareerHub</title>
+  <link rel="stylesheet" href="browse-jobs.css" />
+</head>
+<body>
+  <div id="toast-container" class="toast-container"></div>
+  <header class="navbar">
+    <h1>KarangCareerHub</h1>
+    <button id="darkModeToggle" class="dark-btn" title="Toggle Dark Mode">🌙</button>
+
+  </header>
+
+  <main class="browse-page">
+    <section class="browse-header">
+      <h2>Browse Jobs & Internships</h2>
+      <p>Explore all active jobs and internships posted on KarangCareerHub.</p>
+    </section>
+
+    <!-- Controls Row -->
+    <section class="browse-controls">
+      <!-- LEFT SIDE BUTTONS -->
+      <div class="browse-left-controls">
+        <a href="dashboardStudent.html" class="btn dashboard-btn">Dashboard</a>
+        <button onclick="logout()" class="btn logout-btn">Logout</button>
+      </div>
+
+      <!-- RIGHT SIDE SEARCH + SORT -->
+      <div class="browse-right-controls">
+        <input
+          type="text"
+          id="searchInput"
+          class="search-input"
+          placeholder="Search by job title..."
+        />
+
+        <select id="sortSelect" class="sort-select">
+          <option value="best">Best Match</option>
+          <option value="latest">Last Posted</option>
+          <option value="oldest">First Posted</option>
+          <option value="az">A → Z</option>
+          <option value="za">Z → A</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Job Cards -->
+    <section id="browseJobList" class="browse-job-grid"></section>
+  </main>
+
+  <footer class="browse-footer">
+    <p>©2026 KarangCareerHub | Designed by Fa</p>
+  </footer>
+
+  <script src="studentTheme.js"></script>
+  <script src="browse-jobs.js"></script>
+
+</body>
+</html>

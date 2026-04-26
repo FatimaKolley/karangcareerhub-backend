@@ -1,0 +1,269 @@
+/* =============================
+BASE (MATCH DASHBOARD)
+============================= */
+body {
+  background: #f4f6fb;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* =============================
+CONTAINER
+============================= */
+.edit-container {
+  max-width: 900px;
+  margin: 40px auto;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+/* =============================
+TITLE
+============================= */
+h2 {
+  color: #1e3a8a;
+  text-align: center;
+  margin-bottom: 25px;
+  font-weight: 600;
+}
+
+/* =============================
+PROFILE IMAGE
+============================= */
+.profile-pic-box {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile-pic-box img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #2563eb;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.profile-pic-box img:hover {
+  transform: scale(1.05);
+}
+
+/* =============================
+FORM GRID
+============================= */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* =============================
+FORM ELEMENTS
+============================= */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #1e3a8a;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #dbe2f0;
+  font-size: 0.95rem;
+  transition: 0.2s;
+  background: #fff;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 6px rgba(37,99,235,0.2);
+  outline: none;
+}
+
+/* =============================
+FILE TEXT
+============================= */
+.file-name {
+  font-size: 0.85rem;
+  margin-top: 5px;
+  color: #6b7280;
+}
+
+/* =============================
+BUTTON
+============================= */
+.save-btn {
+  margin-top: 30px;
+  padding: 14px 20px;
+  background: #2563eb;
+  color: white;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  width: 100%;
+  font-size: 1rem;
+  transition: 0.25s;
+}
+
+.save-btn:hover {
+  background: #1e40af;
+  transform: translateY(-2px);
+}
+
+/* =============================
+PROFESSIONAL LINKS (UPGRADED)
+============================= */
+.section-title {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.section-title h2 {
+  font-size: 1.4rem;
+  position: relative;
+  display: inline-block;
+}
+
+.section-title h2::after {
+  content: "";
+  display: block;
+  width: 60%;
+  height: 3px;
+  background: #2563eb;
+  margin: 6px auto 0;
+  border-radius: 10px;
+}
+
+/* Card container */
+.links-box {
+  background: #f8fbff;
+  padding: 20px;
+  border-radius: 12px;
+  margin-top: 20px;
+  border: 1px solid #e5e7eb;
+}
+
+/* Row layout */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.form-group input {
+  background: #fff;
+}
+
+/* Hover effect */
+.links-box:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.section-title {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.section-title h2 {
+  font-size: 1.3rem;
+  color: #2563eb;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+#portfolioLink,
+#linkedinLink,
+#githubLink {
+  background: #f9fbff;
+  border: 1px solid #c7d2fe;
+}
+
+#portfolioLink:focus,
+#linkedinLink:focus,
+#githubLink:focus {
+  border-color: #2563eb;
+}
+
+@media (max-width: 600px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.save-status {
+  text-align: right;
+  font-size: 0.9rem;
+  color: #10b981;
+  margin-bottom: 10px;
+  opacity: 0;
+  transition: 0.3s;
+}
+/* =============================
+DARK MODE (FIXED)
+============================= */
+html.dark-mode body {
+  background: #111827;
+  color: #f3f4f6;
+}
+
+body.dark .edit-container .h {
+  color: #1f2937;
+}
+
+
+body.dark .edit-container .form-group label {
+  color: #1f2937;
+}
+
+body.dark .save-btn {
+  background: #374151;
+}
+
+body.dark .section-title h2 {
+  color: #333;
+}
+
+body.dark .links-box {
+  background: #1e1e1e;
+  border: 1px solid #333;
+}
+
+body.dark .links-box  input {
+  background: #2a2a2a;
+  color: #333;
+  border: 1px solid #444;
+}
+
+body.dark .links-box .form-group label {
+  color: #979797;
+}
+
+/* =============================
+BUTTON (NAV LINK FIX)
+============================= */
+.btn.primary {
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn.primary:hover {
+  background: #1e40af;
+}

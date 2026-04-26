@@ -1,0 +1,162 @@
+body {
+  background-color: #f3e7d0e3;
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+  
+.login-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+  
+  .login-container {
+    background: #fdfdfd;
+    padding: 30px;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    text-align: center;
+  }
+  
+  .login-container h1 {
+    color: #003e80;
+    margin-bottom: 1rem;
+  }
+  
+  .login-container input,
+  .login-container button {
+    width: 95%;
+    padding: 10px;
+    margin-top: 10px;
+  }
+  
+  .login-container button {
+    background: #043972;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .login-container button:hover {
+    background:  #f1a305;
+  }
+  
+  .forgot-password {
+    margin-top: 12px;
+  }
+  
+  #loginMessage {
+    margin-top: 10px;
+    color: red;
+  }
+  
+  .job-card ul li a {
+    color: #0b3e91;
+    text-decoration: underline;
+  }
+
+  .password-field {
+    position: relative;
+    width: 100%;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(0%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #555;
+}
+/* OVERLAY */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* MODAL BOX */
+.modal {
+  background: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  width: 350px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  animation: fadeIn 0.3s ease;
+}
+
+/* TITLE */
+.modal-title {
+  color: #003e80;
+  margin-bottom: 10px;
+}
+
+/* SUBTEXT */
+.modal-subtitle {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 15px;
+}
+
+/* INPUT */
+.modal input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* BUTTON */
+.modal button[type="submit"] {
+  width: 100%;
+  padding: 10px;
+  background: #043972;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.modal button[type="submit"]:hover {
+  background: #f1a305;
+}
+
+/* MESSAGE */
+#forgotMessage {
+  margin-top: 10px;
+  color: red;
+}
+
+/* CLOSE BUTTON */
+.close-btn {
+  margin-top: 15px;
+  padding: 8px 15px;
+  border: none;
+  background: #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.close-btn:hover {
+  background: #999;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}

@@ -1,0 +1,134 @@
+body {
+  font-family: "Poppins", sans-serif;
+  background: #f4f7fb;
+  margin: 0;
+}
+
+.history-container {
+  max-width: 900px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+h2 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.section-title {
+  margin-top: 40px;.history-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 20px;
+  }
+  
+  .history-card {
+    background: #fff;
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+    transition: 0.2s;
+  }
+  
+  .history-card:hover {
+    transform: scale(1.01);
+  }
+  
+  .history-card h3 {
+    margin: 0 0 8px;
+    color: #0b4fc2;
+  }
+  
+  .history-card p {
+    margin: 4px 0;
+  }
+  
+  .btn {
+    padding: 6px 14px;
+    background: #0b4fc2;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 8px;
+  }
+  
+  .btn:hover {
+    background: #073a8f;
+  }
+  
+  font-size: 20px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* Cards */
+.history-card {
+  background: #fff;
+  padding: 18px 22px;
+  border-radius: 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  transition: 0.2s;
+}
+
+.history-card:hover {
+  transform: translateY(-3px);
+}
+
+.history-card h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #34495e;
+}
+
+.history-card .employer {
+  color: #777;
+  margin-top: 4px;
+}
+
+.history-card .skills {
+  margin-top: 8px;
+  font-size: 14px;
+  color: #3498db;
+}
+
+/* Meta row */
+.history-meta {
+  margin-top: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.date {
+  font-size: 13px;
+  color: #888;
+}
+
+.view-btn {
+  padding: 6px 14px;
+  background: #3498db;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+/* Viewed job highlight */
+.history-card.viewed {
+  border-left: 5px solid #f1c40f;
+}
+
+/* Empty & error messages */
+.loading, .empty, .error {
+  padding: 20px;
+  text-align: center;
+  font-size: 15px;
+  color: #666;
+}
+
+.error {
+  color: #e74c3c;
+}

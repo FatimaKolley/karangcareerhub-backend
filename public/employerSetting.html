@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings | KarangCareerHub</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="employerSetting.css">
+</head>
+
+<body>
+
+  <!-- NAVBAR (reuse employer navbar) -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="hamburger" id="hamburgerBtn">☰</button>
+      <div class="logo">KarangCareerHub</div>
+    </div>
+  
+    <div class="nav-center">
+      <h1 class="dashboard-title">Employer Panel</h1>
+    </div>
+  
+    <div class="nav-right">
+      <button class="notification-btn" id="notificationBtn">🔔</button>
+  
+      <!-- Dark Mode Toggle -->
+      <button class="dark-mode-btn" id="darkModeToggle" title="Toggle Dark Mode">🌙</button>
+  
+      <div class="profile-menu">
+        <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic" id="profileBtn">
+  
+        <div class="profile-dropdown" id="profileDropdown">
+          <div class="profile-dropdown-header">
+            <img src="https://via.placeholder.com/50" alt="Profile" class="dropdown-profile-pic">
+            <p id="dropdownEmployerName">Employer Name</p>
+          </div>
+          <a href="employerProfile.html"><i>👤</i>Profile</a>
+          <a href="employerHistory.html"><i>📄</i>History</a>
+          <a href="dashboardEmployer.html"><i>←</i>Dashboard</a>
+          <a href="#" id="logoutBtn"><i>🚪</i>Logout</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="settings-page">
+
+    <h2>Account Settings</h2>
+    <p class="subtitle">
+      Manage your account preferences, security, and verification details.
+    </p>
+
+    <!-- ================= PROFILE SETTINGS ================= -->
+    <section class="settings-section">
+      <h3>Profile Settings</h3>
+
+      <div class="form-grid">
+        <div>
+          <label>First Name</label>
+          <input type="text" placeholder="First Name">
+        </div>
+
+        <div>
+          <label>Last Name</label>
+          <input type="text" placeholder="Last Name">
+        </div>
+
+        <div>
+          <label>Email Address</label>
+          <input type="email" disabled>
+        </div>
+
+        <div>
+          <label>Phone Number</label>
+          <input type="tel" placeholder="+220...">
+        </div>
+      </div>
+
+      <button class="save-btn">Save Changes</button>
+    </section>
+
+    <!-- ================= COMPANY SETTINGS ================= -->
+    <section class="settings-section">
+      <h3>Company Information</h3>
+
+      <div class="form-grid">
+        <div>
+          <label>Company Name</label>
+          <input type="text">
+        </div>
+
+        <div>
+          <label>Business Registration Number</label>
+          <input type="text">
+        </div>
+
+        <div>
+          <label>Company Website</label>
+          <input type="url">
+        </div>
+
+        <div>
+          <label>Company Address</label>
+          <input type="text">
+        </div>
+      </div>
+
+      <button class="save-btn">Update Company Info</button>
+    </section>
+
+    <!-- ================= SECURITY SETTINGS ================= -->
+    <section class="settings-section">
+      <h3>Security</h3>
+
+      <div class="form-grid">
+        <div>
+          <label>Current Password</label>
+          <input type="password">
+        </div>
+
+        <div>
+          <label>New Password</label>
+          <input type="password">
+        </div>
+
+        <div>
+          <label>Confirm New Password</label>
+          <input type="password">
+        </div>
+      </div>
+
+      <button class="save-btn">Change Password</button>
+
+      <hr>
+
+      <h4>Active Sessions</h4>
+      <p>You are currently logged in on 1 device.</p>
+      <button class="danger-btn">Log out from all devices</button>
+    </section>
+
+    <!-- ================= NOTIFICATION SETTINGS ================= -->
+    <section class="settings-section">
+      <h3>Notification Preferences</h3>
+
+      <div class="checkbox-group">
+        <label>
+          <input type="checkbox" checked>
+          New job application alerts
+        </label>
+
+        <label>
+          <input type="checkbox" checked>
+          Job expiration reminders
+        </label>
+
+        <label>
+          <input type="checkbox">
+          Platform announcements
+        </label>
+
+        <label>
+          <input type="checkbox" checked>
+          Employer verification updates
+        </label>
+      </div>
+
+      <button class="save-btn">Save Notification Settings</button>
+    </section>
+
+    <!-- ================= VERIFICATION STATUS ================= -->
+    <section class="settings-section verification-section">
+      <h3>Verification & Compliance</h3>
+
+      <p><strong>Status:</strong> Verified Employer ✅</p>
+      <p><strong>Documents Submitted:</strong> Company Registration, ID</p>
+      <p><strong>Last Review:</strong> 25 Jan 2026</p>
+
+      <button class="secondary-btn">View Submitted Documents</button>
+    </section>
+
+    <!-- ================= ACCOUNT LIMITS ================= -->
+    <section class="settings-section">
+      <h3>Account Limits</h3>
+
+      <p><strong>Maximum Active Jobs:</strong> 10</p>
+      <p><strong>Daily Job Posting Limit:</strong> 3</p>
+      <p><strong>Applicant Viewing:</strong> Unlimited</p>
+    </section>
+
+    <!-- ================= DANGER ZONE ================= -->
+    <section class="settings-section danger-zone">
+      <h3>Danger Zone</h3>
+
+      <p>
+        Deleting your account will permanently remove all jobs,
+        applicants, and history.
+      </p>
+
+      <button class="danger-btn">Deactivate Account</button>
+    </section>
+
+  </main>
+  <script src="employerTheme.js"></script>
+  <script src="employerSetting.js"></script>
+</body>
+</html>

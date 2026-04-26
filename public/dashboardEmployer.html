@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employer Dashboard | KarangCareerHub</title>
+  <link rel="stylesheet" href="dashboardEmployer.css">
+</head>
+
+<body>
+
+  <nav class="navbar">
+    <!-- Left: Logo -->
+    <div class="nav-left">
+      <div class="logo">
+        <img src="image/logo.png" alt="KarangCareerHub Logo">
+      </div>
+    </div>
+
+    <!-- Center: Titles -->
+    <div class="nav-center">
+      <h2 class="dashboard-title">Employer Dashboard</h2>
+      <p id="empName" class="welcome-text">Welcome, Employer 👋</p>
+    </div>
+
+    <!-- Right: Notification + Profile -->
+    <div class="nav-right">
+      <!-- Dark Mode Toggle -->
+
+      <!-- Notification -->
+      <div class="notification-wrapper" id="notificationWrap">
+        <button class="notification-btn" id="notificationBtn" type="button">
+          🔔
+          <span class="badge" id="notificationCount" hidden>0</span>
+        </button>
+
+        <div class="notification-dropdown" id="notificationDropdown" hidden>
+          <h4>Notifications</h4>
+          <ul id="notificationList"></ul>
+          <p class="empty" id="noNotifications">No notifications</p>
+        </div>
+      </div>
+      <button id="darkModeToggle" class="dark-mode-btn" title="Toggle Dark Mode">🌙</button>
+
+      <!-- Profile -->
+      <div class="profile-wrapper" id="profileMenu">
+        <img id="profileAvatar" src="image/avatar.png" class="profile-avatar" alt="Employer Avatar" /> 
+             
+        <div class="profile-dropdown">
+          <div class="profile-dropdown-header">
+            <strong id="profileEmployerName">Employer</strong>
+            <span id="profileEmployerEmail">employer@email.com</span>
+          </div>
+      
+          <a href="employerProfile.html"><i>👤</i> Profile</a>
+          <a href="employerHistory.html"><i>📄</i> History</a>
+          <a href="employerSetting.html"><i>⚙️</i> Settings</a>
+      
+          <div class="profile-divider"></div>
+      
+          <a href="#" class="logout" onclick="logout(event)">
+            <i>🚪</i> Logout
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </nav>
+
+  <main class="dashboard">
+
+    <!-- Welcome -->
+    <section class="welcome-section">
+      <p>Manage your posted jobs and track applicants easily.</p>
+    </section>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat-card">
+        <h3 id="totalJobs">0</h3>
+        <p>Total Jobs Posted</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="activeJobs">0</h3>
+        <p>Active Jobs</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="expiredJobs">0</h3>
+        <p>Expired Jobs</p>
+      </div>
+
+      <div class="stat-card">
+        <h3 id="totalApplicants">0</h3>
+        <p>Total Applicants</p>
+      </div>
+    </section>
+
+    <!-- Jobs Table -->
+    <section class="jobs-section">
+      <div class="jobs-header">
+        <h3>Your Posted Jobs</h3>      
+          <button onclick="window.location.href='pesteJobs.html'" class="add-btn">
+            + Post New Job
+          </button>
+        </div>
+      <div class="table-wrapper">
+        <table class="jobs-table">
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Views</th>
+              <th>Applicants</th>
+              <th>Deadline</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody id="jobsTableBody">
+            <tr>
+              <td colspan="7" style="text-align:center; padding:20px;">Loading jobs...</td>            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="deleteModal" class="modal hidden">
+        <div class="modal-content">
+          <h3>Delete Job</h3>
+          <p>Are you sure you want to delete this job?</p>
+      
+          <div class="modal-actions">
+            <button id="confirmDelete" class="delete-btn">Delete</button>
+            <button onclick="closeDeleteModal()" class="secondary-btn">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Applicants Section -->
+    <section id="applicantsSection" class="applicants-section hidden">
+
+      <!-- HEADER -->
+      <div class="applicants-header">
+        <div>
+          <h2>Applicants</h2>
+          <p class="sub-text">Job: <span id="jobTitle"></span></p>
+      
+          <div class="info-box">
+            Communicate with candidates and manage hiring decisions here.
+          </div>
+        </div>
+      
+        <button class="back-btn" onclick="hideApplicants()">← Back</button>
+      </div>
+    
+      <!-- STATUS TABS -->
+      <div class="status-tabs">
+        <button onclick="filterByStatus('')">All</button>
+        <button onclick="filterByStatus('Pending')">Pending</button>
+        <button onclick="filterByStatus('shortlisted')">Shortlisted</button>
+        <button onclick="filterByStatus('accepted')">Accepted</button>
+        <button onclick="filterByStatus('rejected')">Rejected</button>
+      </div>
+    
+      <!-- MAIN LAYOUT -->
+      <div class="applicants-container">
+    
+        <!-- LEFT: LIST -->
+        <div id="applicantsList" class="applicants-list"></div>
+    
+        <!-- RIGHT: DETAILS -->
+        <div id="applicantDetails" class="applicant-details">
+          <p>Select a candidate</p>
+        </div>
+        
+      </div>
+    
+    </section>
+
+    <!-- All Applications Cards -->
+    <section class="jobs-section applications-section-spacing">
+      <h3>Applicants</h3>
+      <div class="applicant-filters">
+
+        <input type="text" id="filterSkills" placeholder="Search by skills..." />
+          
+        <select id="filterEducation">
+          <option value="">All Levels</option>
+          <option>Lower</option>
+          <option>High School</option>
+          <option>Vocational Trainning</option>
+          <option>Certificate</option>
+          <option>Diploma</option>
+          <option>HND</option>
+          <option>Degree</option>
+          <option>Masters</option>
+          <option>PHD</option>
+        </select>
+
+        <select id="filterCategory">
+          <option value="">All Category</option>
+          <option>IT / Software</option>
+        <option>Finance</option>
+        <option>Marketing</option>
+        <option>Design / Creative</option>
+        <option>Engineering</option>
+        <option>Healthcare</option>
+        <option>Education</option>
+        <option>Administration</option>
+        <option>Customer Service</option>
+        <option>Sales</option>
+        <option>Human Resources</option>
+        <option>Logistics / Supply Chain</option>
+        <option>Internship</option>
+        <option >Other</option>
+        </select>
+
+        <select id="filterGender">
+          <option value="">All Gender</option>
+          <option>Male</option>
+          <option>Female</option>
+        </select>
+      
+        <input type="text" id="filterLocation" placeholder="Location" />
+      
+        <select id="filterExperience">
+          <option value="">All Experience</option>
+          <option>Beginner</option>
+          <option>Intermediate</option>
+          <option>Expert</option>
+        </select>
+      
+        <select id="filterJobType">
+          <option value="">All Types</option>
+          <option>Full-time</option>
+          <option>Part-time</option>
+          <option>Contract</option>
+          <option>Temporary</option>
+          <option>Internship</option>
+          <option>Remote</option>
+        </select>
+      
+      </div>
+      <div id="applications" class="applications-grid"></div>
+    </section>
+
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="dashboardEmployer.js"></script>
+</body>
+</html>

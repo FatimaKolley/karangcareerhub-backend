@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Apply for Job | KarangCareerHub</title>
+  <link rel="stylesheet" href="apply.css" />
+</head>
+<body>
+  <div id="toast-container" class="toast-container"></div>
+
+  <main class="apply-page">
+    <section class="apply-card">
+      <div class="apply-header">
+        <h1>Apply for Job</h1>
+        <p>Complete your application details and submit to the employer.</p>
+      </div>
+
+      <!-- Job Preview (context only) -->
+      <div id="jobPreview" class="job-preview">
+        <p>Loading job details...</p>
+      </div>
+
+      <form id="applicationForm" class="application-form">
+        <!-- Personal Information -->
+        <div class="section-title">
+          <h2>Personal Information</h2>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="firstName">First Name <span>*</span></label>
+            <input type="text" id="firstName" required />
+          </div>
+
+          <div class="form-group">
+            <label for="lastName">Last Name <span>*</span></label>
+            <input type="text" id="lastName" required />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="email">Email Address <span>*</span></label>
+            <input type="email" id="email" required />
+          </div>
+
+          <div class="form-group">
+            <label for="phonePrimary">Primary Phone Number <span>*</span></label>
+            <input type="tel" id="phonePrimary" required placeholder="+220 xxx xxx xxx" />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="phoneSecondary">Secondary Phone Number</label>
+            <input type="tel" id="phoneSecondary" placeholder="Optional backup number" />
+          </div>
+
+          <div class="form-group">
+            <label for="location">Current Location</label>
+            <input type="text" id="location" placeholder="e.g. Kanifing, Banjul" />
+          </div>
+        </div>
+
+        <!-- Professional Links -->
+        <div class="section-title">
+          <h2>Professional Links</h2>
+        </div>
+
+        <div class="form-group">
+          <label for="portfolioLink">Portfolio / Personal Website</label>
+          <input type="url" id="portfolioLink" placeholder="https://yourportfolio.com" />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="linkedinLink">LinkedIn Profile</label>
+            <input type="url" id="linkedinLink" placeholder="https://linkedin.com/in/yourprofile" />
+          </div>
+
+          <div class="form-group">
+            <label for="githubLink">GitHub / Other Professional Link</label>
+            <input type="url" id="githubLink" placeholder="https://github.com/yourusername" />
+          </div>
+        </div>
+
+        <!-- Application Details -->
+        <div class="section-title">
+          <h2>Application Details</h2>
+        </div>
+
+        <div class="form-group">
+          <label for="resume">Upload Resume / CV <span>*</span></label>
+          <input type="file" id="resume" accept=".pdf,.doc,.docx" required />
+          <small>Accepted formats: PDF, DOC, DOCX</small>
+        </div>
+
+        <div class="form-group">
+          <label for="message">
+            Cover Letter / Why are you a good fit?
+            <span class="optional-note">(Maximum 2000 characters)</span>
+          </label>
+        
+          <textarea
+            id="message"
+            name="message"
+            rows="6"
+            maxlength="2000"
+            placeholder="Write a short cover letter explaining why you are a good fit for this job..."
+          ></textarea>
+        
+          <div class="textarea-meta">
+            <small id="messageHelp">Maximum 2000 characters allowed</small>
+            <small id="messageCounter">0 / 2000 characters</small>
+            <small id="messageRemaining">2000 characters remaining</small>
+          </div>
+        </div>
+          <!-- Review Application -->
+        <!-- Review Button -->
+<div class="review-trigger">
+  <button type="button" id="reviewApplicationBtn" class="btn btn-secondary">
+    Review Application
+  </button>
+</div>
+
+<!-- Review Application Panel -->
+<div id="reviewSection" class="review-section hidden">
+  <div class="section-title">
+    <h2>Review Your Application</h2>
+  </div>
+
+  <div id="reviewApplicationCard" class="review-card">
+    <p class="review-placeholder">
+      Your application details will appear here.
+    </p>
+  </div>
+
+  <div class="review-actions">
+    <button type="button" id="backToEditBtn" class="btn btn-outline">
+      Back to Edit
+    </button>
+
+    <button type="button" id="backToJobBtn" class="btn btn-outline">
+      Back to Job
+    </button>
+
+    <button type="submit" id="submitApplicationBtn" class="btn btn-primary">
+      Submit Application
+    </button>
+  </div>
+</div>
+      
+      </form>
+    </section>
+  </main>
+
+  <script src="studentTheme.js"></script>
+  <script src="apply.js"></script>
+</body>
+</html>

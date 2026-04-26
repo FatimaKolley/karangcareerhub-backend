@@ -1,0 +1,338 @@
+/* =========================
+   GLOBAL
+========================= */
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    background: #f5f7fb;
+    color: #333;
+  }
+  
+  a {
+    text-decoration: none;
+  }
+  
+  /* =========================
+     LOGO
+  ========================= */
+  .logo {
+    padding: 15px 20px;
+  }
+  
+  .logo img {
+    height: 45px;
+  }
+  
+  /* =========================
+     HEADER
+  ========================= */
+  header {
+    background: #0b3e91;
+    color: white;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  header h1 {
+    margin: 0;
+    font-size: 22px;
+  }
+  
+  .back-btn {
+    background: rgba(255,255,255,0.15);
+    padding: 8px 14px;
+    border-radius: 6px;
+    color: white;
+    font-size: 14px;
+  }
+  
+  .back-btn:hover {
+    background: rgba(255,255,255,0.3);
+  }
+  
+  /* =========================
+     MAIN
+  ========================= */
+  main {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 0 20px;
+  }
+  
+  /* =========================
+     JOB CARD
+  ========================= */
+  .job-card {
+    background: white;
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  }
+  
+  .job-card h2 {
+    color: #0b3e91;
+    margin-top: 0;
+  }
+  
+  .job-card p {
+    line-height: 1.6;
+    margin: 10px 0;
+  }
+  
+  .job-card strong {
+    color: #444;
+  }
+  
+  .job-card ul {
+    padding-left: 20px;
+  }
+  
+  .job-card ul li {
+    margin-bottom: 6px;
+  }
+  
+  /* =========================
+     ACTION BUTTONS
+  ========================= */
+  .job-actions {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+  .save-btn{
+    background: #f1a305;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.3s;
+  }
+  .save-btn:hover {
+    background: #0b3e91;
+  }
+
+  .applybtn {
+    background: #f1a305;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.3s;
+  }
+  
+  .applybtn:hover {
+    background: #0b3e91;
+  }
+  
+  .download-btn {
+    background: #0b3e91;
+    color: white;
+    border: none;
+    padding: 12px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: 0.3s;
+  }
+  
+  .download-btn:hover {
+    background: #062c68;
+  }
+  /*notifications*/
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal.hidden {
+    display: none;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 30px;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0,0,0,.4);
+  }
+  
+  .modal-content h3 {
+    margin-bottom: 10px;
+    color: #0a3d62;
+  }
+  
+  .modal-actions {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  
+  .modal-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  
+  #goLogin {
+    background: #0a3d62;
+    color: white;
+  }
+  
+  #goBack {
+    background: #ddd;
+  }
+  /* Toast Notification */
+.toast {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background: #222;
+  color: white;
+  padding: 14px 22px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,.35);
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all .4s ease;
+  z-index: 3000;
+  font-size: 14px;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast.success { background:#27ae60; }
+.toast.error { background:#c0392b; }
+.toast.info { background:#2980b9; }
+
+
+  
+  /* =========================
+     MOBILE
+  ========================= */
+  @media (max-width: 600px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+    }
+  
+    .job-actions {
+      flex-direction: column;
+    }
+  
+    .applybtn,
+    .download-btn {
+      width: 100%;
+    }
+  }
+  /* ATTACHMENT BUTTONS */
+.attachment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.attachment-btn {
+  display: inline-block;
+  background: #0b3e91;
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  width: fit-content;
+  transition: 0.3s ease;
+}
+
+.attachment-btn:hover {
+  background: #082f6b;
+  transform: translateY(-1px);
+}
+
+.attachment-btn:active {
+  transform: scale(0.98);
+}
+
+#saveJobBtn.saved {
+  background-color: #28a745;
+  color: white;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
+
+/* =============================
+   GLOBAL STUDENT DARK MODE
+============================= */
+body.dark {
+  background: #1f2937;
+  color: #f3f4f6;
+}
+
+body.dark .navbar {
+  background: #111827;
+  color: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+body.dark .welcome-text,
+body.dark h1,
+body.dark h3{
+  color: #f3f4f6;
+}
+
+body.dark .job-card {
+  background: #1f2937;
+  color: #f3f4f6;
+  border: 1px solid #4b5563;
+}
+
+body.dark .applybtn{
+  background: #374151;
+  color: #f3f4f6;
+}
+body.dark .applybtn:hover {
+  background: #2563eb;
+  color: #fff;
+}
+body.dark .download-btn{
+  background: #374151;
+  color: #f3f4f6;
+}
+body.dark .download-btn:hover {
+  background: #f8eb32;
+  color: #fff;
+}
+
+body.dark .save-btn{
+  background: #374151;
+  color: #f3f4f6;
+}
+body.dark .save-btn:hover {
+  background: #fa2003;
+  color: #fff;
+}

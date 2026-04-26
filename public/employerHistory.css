@@ -1,0 +1,729 @@
+/* ===============================
+   GLOBAL RESET & BASE
+================================ */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  background: #f4f6f9;
+  color: #333;
+  line-height: 1.5;
+}
+
+/* =========================================
+   SHARED NAVBAR
+========================================= */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.nav-left,
+.nav-center,
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.nav-left {
+  gap: 12px;
+}
+
+.nav-center {
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.nav-right {
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0b3e91;
+  white-space: nowrap;
+}
+
+.dashboard-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #0b3e91;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.notification-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: inherit;
+}
+
+.dark-mode-btn {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  min-height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: #f1f5ff;
+  color: #0b3e91;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.25s ease, transform 0.15s ease, color 0.25s ease;
+  flex-shrink: 0;
+  padding: 0;
+  line-height: 1;
+}
+
+.dark-mode-btn:hover {
+  background: #dfe9ff;
+}
+
+.dark-mode-btn:active {
+  transform: scale(0.95);
+}
+
+.profile-menu {
+  position: relative;
+}
+
+.profile-pic,
+.dropdown-profile-pic {
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.dropdown-profile-pic {
+  width: 50px;
+  height: 50px;
+}
+
+.profile-dropdown {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: 220px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  display: none;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+.profile-dropdown.show {
+  display: block;
+}
+
+.profile-dropdown-header {
+  padding: 16px;
+  text-align: center;
+  border-bottom: 1px solid #eee;
+}
+
+.profile-dropdown-header p {
+  margin-top: 8px;
+  font-weight: 600;
+  color: #222;
+}
+
+.profile-dropdown a {
+  display: block;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: #222;
+  transition: background 0.2s ease;
+}
+
+.profile-dropdown a:hover {
+  background: #f8fafc;
+}
+
+/* ===============================
+   PAGE LAYOUT
+================================ */
+.history-page {
+  max-width: 1200px;
+  margin: 30px auto;
+  padding: 0 20px 50px;
+}
+
+/* ===============================
+   SECTION STYLING
+================================ */
+.history-section {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 25px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.history-section h3 {
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #222;
+}
+
+/* ===============================
+   HEADER
+================================ */
+.history-header h2 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.history-header p {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* ===============================
+   DYNAMIC JOB CARDS CONTAINER
+================================ */
+.history-jobs-container {
+  margin-top: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.history-job-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 15px;
+  background: #fafafa;
+}
+
+.history-job-card h4 {
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.history-job-card p {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 4px;
+  word-break: break-word;
+}
+
+.history-job-card .status {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  border-radius: 20px;
+  background: #e8f1ff;
+  color: #2563eb;
+  font-weight: 600;
+}
+
+/* ===============================
+   SUMMARY CARDS
+================================ */
+.history-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.summary-card {
+  background: #ffffff;
+  padding: 20px;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.summary-card h3 {
+  font-size: 1.8rem;
+  color: #2563eb;
+}
+
+.summary-card p {
+  margin-top: 5px;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+/* ===============================
+   TABLES
+================================ */
+.history-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+.history-table thead {
+  background: #f1f5f9;
+}
+
+.history-table th,
+.history-table td {
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  text-align: left;
+  vertical-align: top;
+}
+
+.history-table th {
+  font-weight: 600;
+  color: #333;
+}
+
+.history-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.history-table tbody tr:hover {
+  background: #eef4ff;
+}
+
+/* ===============================
+   ACTIVITY LOG
+================================ */
+.activity-log {
+  list-style: none;
+}
+
+.activity-log li {
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 0.95rem;
+}
+
+.activity-log li:last-child {
+  border-bottom: none;
+}
+
+.activity-log strong {
+  color: #697ba1;
+}
+
+.activity-log span {
+  color: #777;
+  font-size: 0.85rem;
+  margin-left: 6px;
+}
+
+/* ===============================
+   TRUST / COMPLIANCE SECTION
+================================ */
+.trust-section p {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+
+.trust-section strong {
+  color: #697ba1;
+}
+
+/* ===============================
+   TABLE CARD VIEW (MOBILE)
+   IMPORTANT:
+   Add data-label="" in JS or HTML for each td
+================================ */
+@media (max-width: 768px) {
+  .history-table,
+  .history-table thead,
+  .history-table tbody,
+  .history-table th,
+  .history-table td,
+  .history-table tr {
+    display: block;
+    width: 100%;
+  }
+
+  .history-table thead {
+    display: none;
+  }
+
+  .history-table tbody tr {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 14px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .history-table tbody tr:nth-child(even),
+  .history-table tbody tr:nth-child(odd) {
+    background: #ffffff;
+  }
+
+  .history-table tbody tr:hover {
+    background: #ffffff;
+  }
+
+  .history-table td {
+    border: none;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 10px 0;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: right;
+    font-size: 0.9rem;
+  }
+
+  .history-table td:last-child {
+    border-bottom: none;
+  }
+
+  .history-table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    color: #0b3e91;
+    text-align: left;
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .history-table td {
+    flex-wrap: wrap;
+    word-break: break-word;
+  }
+
+  .history-page {
+    padding: 0 14px 40px;
+  }
+
+  .history-section {
+    padding: 18px;
+    margin-bottom: 20px;
+  }
+
+  .history-summary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+
+  .summary-card {
+    padding: 16px;
+  }
+
+  .summary-card h3 {
+    font-size: 1.4rem;
+  }
+
+  .history-jobs-container {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .history-job-card {
+    padding: 14px;
+  }
+}
+
+/* ===============================
+   SMALL PHONES
+================================ */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+
+  .logo {
+    font-size: 15px;
+  }
+
+  .dashboard-title {
+    font-size: 14px;
+  }
+
+  .nav-right {
+    gap: 8px;
+  }
+
+  .dark-mode-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    min-height: 38px;
+    font-size: 18px;
+  }
+
+  .profile-pic {
+    width: 36px;
+    height: 36px;
+  }
+
+  .history-page {
+    margin: 18px auto;
+    padding: 0 12px 30px;
+  }
+
+  .history-section {
+    padding: 14px;
+    border-radius: 10px;
+  }
+
+  .history-header h2 {
+    font-size: 1.2rem;
+  }
+
+  .history-header p {
+    font-size: 0.88rem;
+  }
+
+  .history-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .summary-card {
+    padding: 14px;
+  }
+
+  .summary-card h3 {
+    font-size: 1.3rem;
+  }
+
+  .history-table td {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    gap: 4px;
+  }
+
+  .history-table td::before {
+    min-width: auto;
+  }
+
+  .profile-dropdown {
+    width: 200px;
+    right: -6px;
+  }
+}
+
+/* =========================================
+   DARK MODE - EMPLOYER HISTORY PAGE
+========================================= */
+body.dark-mode {
+  background: #121212;
+  color: #f5f5f5;
+}
+
+/* Navbar */
+body.dark-mode .navbar {
+  background: #1c1c1c;
+  border-bottom: 1px solid #333;
+}
+
+body.dark-mode .logo,
+body.dark-mode .dashboard-title {
+  color: #8fb8ff;
+}
+
+body.dark-mode .hamburger,
+body.dark-mode .notification-btn {
+  color: #f5f5f5;
+}
+
+/* Dark mode button */
+body.dark-mode .dark-mode-btn {
+  background: #2f2f2f;
+  color: #ffd54f;
+}
+
+body.dark-mode .dark-mode-btn:hover {
+  background: #3a3a3a;
+}
+
+/* Profile dropdown */
+body.dark-mode .profile-dropdown {
+  background: #1f1f1f;
+  border: 1px solid #333;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .profile-dropdown-header {
+  background: #242424;
+  border-bottom: 1px solid #333;
+}
+
+body.dark-mode .profile-dropdown-header p {
+  color: #f5f5f5;
+}
+
+body.dark-mode .profile-dropdown a {
+  color: #f5f5f5;
+}
+
+body.dark-mode .profile-dropdown a:hover {
+  background: #333;
+}
+
+/* Main sections */
+body.dark-mode .history-section,
+body.dark-mode .summary-card {
+  background: #1e1e1e;
+  color: #f5f5f5;
+  border: 1px solid #333;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Headers */
+body.dark-mode .history-header h2,
+body.dark-mode .history-section h3,
+body.dark-mode .summary-card h3 {
+  color: #8fb8ff;
+}
+
+/* Paragraphs / labels */
+body.dark-mode .history-header p,
+body.dark-mode .summary-card p,
+body.dark-mode .trust-section p,
+body.dark-mode .activity-log li,
+body.dark-mode .history-job-card p {
+  color: #d6d6d6;
+}
+
+/* Dynamic job cards */
+body.dark-mode .history-job-card {
+  background: #232323;
+  border: 1px solid #333;
+}
+
+body.dark-mode .history-job-card h4 {
+  color: #f5f5f5;
+}
+
+/* Status badge */
+body.dark-mode .history-job-card .status {
+  background: #1f3b63;
+  color: #8fb8ff;
+}
+
+/* Summary numbers */
+body.dark-mode .summary-card h3 {
+  color: #60a5fa;
+}
+
+/* Tables */
+body.dark-mode .history-table {
+  background: #1e1e1e;
+  color: #f5f5f5;
+}
+
+body.dark-mode .history-table thead {
+  background: #263248;
+}
+
+body.dark-mode .history-table th {
+  background: #263248;
+  color: #ffffff;
+  border-color: #3a3a3a;
+}
+
+body.dark-mode .history-table td {
+  border-color: #333;
+  color: #e5e7eb;
+}
+
+body.dark-mode .history-table tbody tr:nth-child(even) {
+  background: #222;
+}
+
+body.dark-mode .history-table tbody tr:nth-child(odd) {
+  background: #1b1b1b;
+}
+
+body.dark-mode .history-table tbody tr:hover {
+  background: #2b2b2b;
+}
+
+/* Mobile card view in dark mode */
+@media (max-width: 768px) {
+  body.dark-mode .history-table tbody tr,
+  body.dark-mode .history-table tbody tr:nth-child(even),
+  body.dark-mode .history-table tbody tr:nth-child(odd),
+  body.dark-mode .history-table tbody tr:hover {
+    background: #1f1f1f;
+    border: 1px solid #333;
+  }
+
+  body.dark-mode .history-table td {
+    border-bottom: 1px solid #333;
+  }
+
+  body.dark-mode .history-table td::before {
+    color: #8fb8ff;
+  }
+}
+
+/* Activity log */
+body.dark-mode .activity-log li {
+  border-bottom: 1px solid #333;
+  color: #e5e7eb;
+}
+
+body.dark-mode .activity-log strong,
+body.dark-mode .trust-section strong {
+  color: #8fb8ff;
+}
+
+body.dark-mode .activity-log span {
+  color: #bdbdbd;
+}
+
+/* Trust section */
+body.dark-mode .trust-section {
+  background: #1e1e1e;
+}
+
+/* Horizontal rules if any */
+body.dark-mode hr {
+  border: none;
+  border-top: 1px solid #333;
+}
