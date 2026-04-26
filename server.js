@@ -25,7 +25,9 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // MIDDLEWARES
-app.use(cors());
+app.use(cors({
+  origin: "*"
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -181,8 +183,10 @@ io.on("connection", (socket) => {
   
 });
 
-// START SERVER
-httpServer.listen(5000, () => {
-  console.log("🚀 Server running on http://localhost:5000");
-});
 
+// START SERVER
+const PORT = process.env.PORT || 5000;
+
+httpServer.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
