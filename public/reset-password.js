@@ -86,9 +86,12 @@ document.addEventListener("DOMContentLoaded", () => {
         message.classList.add("error");
       }
 
-    } catch (err) {
-      message.textContent = "Server error";
+    }
+    catch (err) {
+      console.error(err);
+      message.textContent = "Server error: " + err.message;
       message.classList.add("error");
+
     }
   });
   const strengthBar = document.getElementById("strengthBar");
@@ -122,5 +125,26 @@ document.addEventListener("DOMContentLoaded", () => {
       strengthText.textContent = "Strong";
     }
   });
+      // Match Password//
+  const confirmInput = document.getElementById("resetConfirmPassword");
+
+  confirmInput.addEventListener("input", () => {
+  const password = passwordInput.value;
+  const confirm = confirmInput.value;
+
+  if (!confirm) {
+    message.textContent = "";
+    return;
+  }
+
+  if (password === confirm) {
+    message.textContent = "✅ Passwords match";
+    message.className = "success";
+  } else {
+    message.textContent = "❌ Passwords do not match";
+    message.className = "error";
+  }
+});
+ 
 
 });

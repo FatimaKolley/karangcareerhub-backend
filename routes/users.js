@@ -2,16 +2,22 @@ import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import db from "../db.js";
-import dotenv from "dotenv";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
+import dotenv from "dotenv";
 import nodemailer from "nodemailer";
-
 
 dotenv.config();
 
 const router = express.Router();
 
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 /* =============================
     JWT TOKEN
 ============================= */
@@ -22,13 +28,6 @@ function generateToken(user) {
     { expiresIn: "2h" }
   );
 }
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
 
 /* =============================
     SIGNUP
@@ -384,15 +383,16 @@ router.post("/forgot-password", async (req, res) => {
       html: `
         <h2>Password Reset</h2>
         <p>You requested to reset your password.</p>
-        <p>Click the link below to reset it:</p>
-
-        <a href="${resetLink}" 
-           style="display:inline-block;padding:10px 20px;
-                  background:#043972;color:white;
-                  text-decoration:none;border-radius:6px;">
-          Reset Password
-        </a>
-
+        <p>
+          <a href="${resetLink}" 
+             style="padding:10px 20px;
+                    background:#043972;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:6px;">
+            Reset Password
+          </a>
+        </p>
         <p>This link expires in 30 minutes.</p>
       `
     });

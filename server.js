@@ -149,6 +149,8 @@ io.on("connection", (socket) => {
       [receiverId]
     );
   
+    const unread = rows[0].unread;
+  
     io.to(String(receiverId)).emit("unreadCount", rows[0].unread);
   });
 
