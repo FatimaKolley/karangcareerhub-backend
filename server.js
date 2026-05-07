@@ -49,16 +49,29 @@ app.use("/api/chat", chatRoutes);
 =================================*/
 app.get("/api/jobs/search", async (req, res) => {
   const { title, type, category } = req.query;
-  let sql = "SELECT * FROM jobs WHERE 1=1";
 
-  if (title) sql += ` AND (title LIKE '%${title}%' OR company LIKE '%${title}%')`;
-  if (type) sql += ` AND type='${type}'`;
-  if (category) sql += ` AND category='${category}'`;
+  let sql = "SELECT * FROM jobs WHERE 1=1";
+  let params = [];
+
+  if (title) {
+    sql += " AND (title LIKE ? OR company LIKE ?)";
+    params.push(`%${title}%`, `%${title}%`);
+  }
+
+  if (type) {
+    sql += " AND type = ?";
+    params.push(type);
+  }
+
+  if (category) {
+    sql += " AND category = ?";
+    params.push(category);
+  }
 
   sql += " ORDER BY created_at DESC";
 
   try {
-    const [rows] = await db.execute(sql);
+    const [rows] = await db.execute(sql, params);
     res.json(rows);
   } catch (err) {
     res.status(500).json({ error: "Error fetching jobs" });
@@ -102,9 +115,26 @@ import { Server } from "socket.io";
 
 const httpServer = createServer(app);
 
+// =====================
+// CORS
+// =====================
+const allowedOrigins = [
+  "https://karangcareerhub.onrender.com",
+  "http://localhost:5500",
+  "http://127.0.0.1:5500"
+];
+
+// Express CORS
+app.use(cors({
+  origin: allowedOrigins,
+  credentials: true
+}));
+
+// Socket.IO
 const io = new Server(httpServer, {
   cors: {
-    origin: "*",
+    origin: allowedOrigins,
+    credentials: true
   }
 });
 

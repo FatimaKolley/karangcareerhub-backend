@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
 const token = localStorage.getItem("token");
 const downloadBtn = document.getElementById("downloadApplicationBtn");

@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
 // =============================
 // Helper: compute profile %
@@ -499,7 +499,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const avatar = document.getElementById("userProfilePic");
   if (avatar) {
     avatar.src = user.profile_image
-    ? `http://localhost:5000${user.profile_image}?t=${Date.now()}`
+    ? `https://karangcareerhub-api.onrender.com${user.profile_image}?t=${Date.now()}`
     : "image/avatar-placeholder.png";
   
   avatar.onerror = () => {
@@ -517,12 +517,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function refreshUser() {
-    const res = await fetch("http://localhost:5000/api/users/me", {
-      headers: {
+    const res = await fetch(`${API_URL}/users/me`, {
+       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`
       }
     });
-  
+
     const data = await res.json();
   
     localStorage.setItem("user", JSON.stringify(data.user));
@@ -639,14 +639,45 @@ function openChatInbox() {
   window.location.href = "chat.html";
 }
 
-const socket = io("http://localhost:5000");
-const chatUser = JSON.parse(localStorage.getItem("user"));
+const socket = io("https://karangcareerhub-api.onrender.com", {
+  transports: ["websocket", "polling"]
+});
+const chatUser = JSON.parse(localStorage.getItem("user") || "{}");
+
+if (!chatUser.id) {
+  console.warn("No chat user found");
+} else {
+
+  socket.on("connect", () => {
+    socket.emit("joinRoom", { userId: String(chatUser.id) });
+
+    loadUnread();
+  });
+
+  socket.on("unreadCount", (count) => {
+    const badge = document.getElementById("notificationBadge");
+
+    if (badge) {
+      badge.textContent = count;
+      badge.style.display = count > 0 ? "inline-block" : "none";
+    }
+  });
+
+}  
+
 
 socket.on("connect", () => {
   socket.emit("joinRoom", { userId: String(chatUser.id) });
 
   // ✅ load unread after joining
   loadUnread();
+});
+socket.on("connect_error", (err) => {
+  console.error("Socket connection error:", err.message);
+});
+
+socket.on("disconnect", (reason) => {
+  console.log("Socket disconnected:", reason);
 });
 
 // 🔔 Listen for unread count (REAL-TIME)
@@ -661,7 +692,7 @@ socket.on("unreadCount", (count) => {
 
 // ✅ Fetch unread count
 async function loadUnread() {
-  const res = await fetch(`http://localhost:5000/api/chat/unread`, {
+  const res = await fetch(`${API_URL}/chat/unread`, {
     headers: {
       Authorization: `Bearer ${localStorage.getItem("token")}`
     }

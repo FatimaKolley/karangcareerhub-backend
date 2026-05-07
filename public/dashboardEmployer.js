@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
 /* ===============================
    INITIALIZATION
@@ -141,7 +141,7 @@ async function loadEmployerJobs() {
 async function fetchUser() {
   const token = localStorage.getItem("token");
 
-  const res = await fetch("http://localhost:5000/api/users/me", {
+  const res = await fetch(`${API_URL}/users/me`, {
     headers: {
       Authorization: `Bearer ${token}`
     }
@@ -152,6 +152,7 @@ async function fetchUser() {
   localStorage.setItem("user", JSON.stringify(user));
 
   return user;
+
 }
 /* ===============================
    RENDER JOBS TABLE & STATS
@@ -493,8 +494,7 @@ async function downloadApplicantProfile(id) {
       try {
         const imageUrl = data.profile_image.startsWith("http")
           ? data.profile_image
-          : "http://localhost:5000" + data.profile_image;
-
+          : "https://karangcareerhub-api.onrender.com" + data.profile_image;
         const base64 = await toBase64(imageUrl);
 
         doc.addImage(base64, "JPEG", 150, 35, 40, 40);
@@ -943,7 +943,8 @@ function escapeHTML(str) {
 function formatImage(path) {
   if (!path) return "https://via.placeholder.com/40";
   if (path.startsWith("http")) return path;
-  return "http://localhost:5000" + path;
+
+  return "https://karangcareerhub-api.onrender.com" + path;
 }
 
 

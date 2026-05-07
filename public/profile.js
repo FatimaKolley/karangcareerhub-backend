@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
 document.addEventListener("DOMContentLoaded", () => {
   loadUserFromBackend();
@@ -18,7 +18,7 @@ function loadUserProfile(user) {
   document.getElementById("navStudentName").textContent = fullName || "Student";
 
   const img = user.profile_image
-  ? "http://localhost:5000" + user.profile_image + "?t=" + Date.now()
+  ? "http://karangcareerhub-api.onrender.com/api" + user.profile_image + "?t=" + Date.now()
   : "image/avatar-placeholder.png";
 
   document.getElementById("userProfilePic").src = img;
@@ -49,7 +49,7 @@ function loadUserProfile(user) {
   // Resume
   const resume = document.getElementById("infoResume");
   if (user.resume) {
-    resume.href = "http://localhost:5000" + user.resume;
+    resume.href = "http://karangcareerhub-api.onrender.com/api" + user.resume;
     resume.textContent = "Download Resume";
   } else {
     resume.textContent = "No file";
@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // =========================
     if (user.profile_image) {
       try {
-        const imgData = await toBase64("http://localhost:5000" + user.profile_image);
+        const imgData = await toBase64("http://karangcareerhub-api.onrender.com/api" + user.profile_image);
         doc.addImage(imgData, "JPEG", 150, 5, 40, 40);
       } catch {}
     }

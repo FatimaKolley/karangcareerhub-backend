@@ -1,6 +1,5 @@
 (() => {
-  const API_URL = "http://localhost:5000/api";
-
+  const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
 const JOBS_API = `${API_URL}/jobs`;
 
@@ -277,7 +276,7 @@ function disableNotificationsInPublicMode() {
 document.addEventListener("DOMContentLoaded", async () => {
 
   // ONLY run on homepage
-  if (window.location.pathname.includes("index.html") || window.location.pathname === "/") {
+  if (window.location.pathname.endsWith("index.html") || window.location.pathname === "/" || window.location.pathname === "")   {
     forcePublicMode();
   }
 

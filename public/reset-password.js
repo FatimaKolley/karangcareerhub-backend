@@ -1,4 +1,6 @@
+// config.js
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
+export default API_URL;
 
 document.addEventListener("DOMContentLoaded", () => {
 

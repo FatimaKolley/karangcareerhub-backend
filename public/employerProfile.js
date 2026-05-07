@@ -4,7 +4,7 @@ async function fetchUser() {
   if (!token) return null;
 
   try {
-    const res = await fetch("http://localhost:5000/api/users/me", {
+    const res = await fetch("http://karangcareerhub-api.onrender.com/api/users/me", {
       headers: {
         Authorization: `Bearer ${token}`
       }
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 function formatImage(path) {
   if (!path) return "https://via.placeholder.com/60";
   if (path.startsWith("http")) return path;
-  return "http://localhost:5000" + path;
+  return "http://karangcareerhub-api.onrender.com" + path;
 }
 
 /*====================== GET PROFILE IMAGE =======================*/
@@ -143,7 +143,7 @@ async function autoSave() {
   const formData = new FormData(form);
 
   try {
-    const res = await fetch("http://localhost:5000/api/users/update-profile", {
+    const res = await fetch("http://karangcareerhub-api.onrender.com/api/users/update-profile", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`

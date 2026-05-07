@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
    // =============================
 // LOAD USER FROM BACKEND
@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const previewPic = document.getElementById("previewPic");
 
   previewPic.src = user.profile_image
-    ? "http://localhost:5000" + user.profile_image + "?t=" + Date.now()
+    ? "karangcareerhub-api.onrender.com" + user.profile_image + "?t=" + Date.now()
     : "image/avatar-placeholder.png";
 
 

@@ -1,8 +1,17 @@
-const socket = io("http://localhost:5000");
+const API_URL = "https://karangcareerhub-api.onrender.com/api";
+const SOCKET_URL = "https://karangcareerhub-api.onrender.com";
 
-const user = JSON.parse(localStorage.getItem("user"));
+const socket = io(SOCKET_URL, {
+  transports: ["websocket", "polling"]
+});
+
+const user = JSON.parse(localStorage.getItem("user") || "{}");
+
+if (!user.id) {
+  window.location.href = "login.html";
+}
+
 const senderId = user.id;
-
 let receiverId = null;
 
 // JOIN ROOM
@@ -30,6 +39,12 @@ socket.on("receiveMessage", (data) => {
   }
 });
 
+document.addEventListener("click", () => {
+  if ("Notification" in window && Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+}, { once: true });
+
 // 🔔 UNREAD COUNT
 socket.on("unreadCount", (count) => {
   const badge = document.getElementById("notificationBadge");
@@ -53,7 +68,7 @@ async function loadChatUsers() {
   const token = localStorage.getItem("token");
 
   const res = await fetch(
-    `http://localhost:5000/api/chat/users/${senderId}`,
+    `${API_URL}/chat/users/${senderId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -98,7 +113,7 @@ async function selectUser(u) {
 
   // mark as read
   await fetch(
-    `http://localhost:5000/api/chat/messages/read/${receiverId}/${senderId}`,
+    `${API_URL}/chat/messages/read/${receiverId}/${senderId}`,
     {
       method: "PUT",
       headers: {
@@ -109,7 +124,7 @@ async function selectUser(u) {
 
   // load messages
   const res = await fetch(
-    `http://localhost:5000/api/chat/messages/${senderId}/${receiverId}`,
+    `${API_URL}/chat/messages/${senderId}/${receiverId}`,
     {
       headers: {
         Authorization: `Bearer ${token}`
@@ -120,8 +135,8 @@ async function selectUser(u) {
   const messages = await res.json();
 
   messages.forEach(msg => {
-    displayMessage(msg, msg.sender_id == senderId);
-  });
+    displayMessage(msg, (msg.sender_id || msg.senderId) == senderId);
+    });
 
   loadUnread();
 }
@@ -152,12 +167,31 @@ function sendMessage() {
 function displayMessage(data, isMe) {
   const div = document.createElement("div");
   div.className = isMe ? "me" : "them";
-  div.textContent = data.message;
+
+  const time = new Date().toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  div.innerHTML = `
+    <p>${escapeHTML(data.message)}</p>
+    <small>${time}</small>
+  `;
 
   const container = document.getElementById("messages");
   container.appendChild(div);
 
   container.scrollTop = container.scrollHeight;
+}
+
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[m]);
 }
 
 // TYPING
@@ -196,8 +230,8 @@ socket.on("userOffline", (userId) => {
 async function loadUnread() {
   const token = localStorage.getItem("token");
 
-  const res = await fetch("http://localhost:5000/api/chat/unread", {
-    headers: {
+  const res = await fetch(`${API_URL}/chat/unread`, {
+      headers: {
       Authorization: `Bearer ${token}`
     }
   });
@@ -216,6 +250,14 @@ async function loadUnread() {
 if ("Notification" in window) {
   Notification.requestPermission();
 }
+
+socket.on("connect_error", (err) => {
+  console.error("Socket connection error:", err.message);
+});
+
+socket.on("disconnect", (reason) => {
+  console.log("Socket disconnected:", reason);
+});
 
 // INIT
 loadChatUsers();
