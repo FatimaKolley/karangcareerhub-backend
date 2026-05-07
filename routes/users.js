@@ -284,8 +284,9 @@ router.post(
         `UPDATE users SET ${fields.join(", ")} WHERE id=?`,
         values
       );
-
-      const [updated] = await db.execute(
+      
+      // FORCE FRESH USER FETCH
+      const [updated] = await db.query(
         "SELECT * FROM users WHERE id=? LIMIT 1",
         [id]
       );

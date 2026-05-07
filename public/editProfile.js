@@ -27,7 +27,7 @@ async function loadUser() {
     const data = await res.json();
 
     localStorage.setItem("user", JSON.stringify(data.user));
-
+    
     return data.user;
 
   } catch (err) {
@@ -119,6 +119,11 @@ function showNotification(msg, type = "info") {
 const form = document.getElementById("editProfileForm");
 
 form.addEventListener("input", debounce(autoSave, 1000));
+document.getElementById("uploadPic")
+  .addEventListener("change", autoSave);
+
+document.getElementById("resumeUpload")
+  .addEventListener("change", autoSave);
 
 function debounce(fn, delay) {
   let timeout;
