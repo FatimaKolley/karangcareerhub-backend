@@ -4,8 +4,8 @@ async function fetchUser() {
   if (!token) return null;
 
   try {
-    const res = await fetch("http://karangcareerhub-api.onrender.com/api/users/me", {
-      headers: {
+    const res = await fetch("https://karangcareerhub-api.onrender.com/api/users/me", {
+    headers: {
         Authorization: `Bearer ${token}`
       }
     });
@@ -50,6 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const form = document.getElementById("employerProfileForm");
   if (form) {
     form.addEventListener("input", debounce(autoSave, 1000));
+    form.addEventListener("change", debounce(autoSave, 1000));
   }
 });
 
@@ -57,7 +58,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 function formatImage(path) {
   if (!path) return "https://via.placeholder.com/60";
   if (path.startsWith("http")) return path;
-  return "http://karangcareerhub-api.onrender.com" + path;
+  return "https://karangcareerhub-api.onrender.com" + path;
 }
 
 /*====================== GET PROFILE IMAGE =======================*/
@@ -143,8 +144,8 @@ async function autoSave() {
   const formData = new FormData(form);
 
   try {
-    const res = await fetch("http://karangcareerhub-api.onrender.com/api/users/update-profile", {
-      method: "POST",
+    const res = await fetch("https://karangcareerhub-api.onrender.com/api/users/update-profile", {
+    method: "POST",
       headers: {
         Authorization: `Bearer ${token}`
       },

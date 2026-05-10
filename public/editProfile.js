@@ -51,8 +51,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const previewPic = document.getElementById("previewPic");
 
   previewPic.src = user.profile_image
-    ? "karangcareerhub-api.onrender.com" + user.profile_image + "?t=" + Date.now()
-    : "image/avatar-placeholder.png";
+  ? "https://karangcareerhub-api.onrender.com" + user.profile_image + "?t=" + Date.now()
+  : "image/avatar-placeholder.png";
 
 
   // =============================
@@ -96,11 +96,15 @@ document.getElementById("uploadPic").addEventListener("change", (e) => {
 // =============================
 // RESUME FILE NAME
 // =============================
-document.getElementById("resumeUpload").addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  document.getElementById("resumeFileName").textContent =
-    file ? file.name : "No file selected";
-});
+const resumeInput = document.getElementById("resumeUpload");
+
+if (resumeInput) {
+  resumeInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    document.getElementById("resumeFileName").textContent =
+      file ? file.name : "No file selected";
+  });
+}
 
 
 
@@ -118,12 +122,18 @@ function showNotification(msg, type = "info") {
 // =============================
 const form = document.getElementById("editProfileForm");
 
-form.addEventListener("input", debounce(autoSave, 1000));
-document.getElementById("uploadPic")
-  .addEventListener("change", autoSave);
+if (form) {
+  form.addEventListener("input", debounce(autoSave, 1000));
+}
+const uploadPic = document.getElementById("uploadPic");
+if (uploadPic) {
+  uploadPic.addEventListener("change", autoSave);
+}
 
-document.getElementById("resumeUpload")
-  .addEventListener("change", autoSave);
+const resumeUpload = document.getElementById("resumeUpload");
+if (resumeUpload) {
+  resumeUpload.addEventListener("change", autoSave);
+}
 
 function debounce(fn, delay) {
   let timeout;
@@ -194,25 +204,34 @@ async function autoSave() {
     console.log("RESPONSE DATA:", data);
 
     if (res.ok) {
-      // ✅ SAVE UPDATED USER
       localStorage.setItem("user", JSON.stringify(data.user));
-
-      // ✅ FORCE IMAGE REFRESH
+    
       const img = document.getElementById("previewPic");
+    
       if (data.user.profile_image) {
-        img.src = "http://localhost:5000" + data.user.profile_image + "?t=" + Date.now();
+        img.src =
+          "https://karangcareerhub-api.onrender.com" +
+          data.user.profile_image +
+          "?t=" +
+          Date.now();
       }
-
+    
       showSaved();
+    
+      if (picInput) picInput.value = "";
+      if (resumeInput) resumeInput.value = "";
+    
       window.dispatchEvent(new Event("profileUpdated"));
-
-    } else {
+    
+    }
+     else {
       showNotification(data.error || "Save failed", "error");
       console.error("SERVER ERROR:", data.error);
     }
 
   } catch (err) {
     console.error("FETCH ERROR:", err);
+    showNotification("Network error. Try again.", "error");
   }
 }
 /*SHOWSAVED*/

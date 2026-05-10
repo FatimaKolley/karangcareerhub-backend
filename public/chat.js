@@ -2,186 +2,50 @@ const API_URL = "https://karangcareerhub-api.onrender.com/api";
 const SOCKET_URL = "https://karangcareerhub-api.onrender.com";
 
 const socket = io(SOCKET_URL, {
-  transports: ["websocket", "polling"]
+  transports: ["websocket", "polling"],
+  reconnection: true,
+  reconnectionAttempts: 10,
+  reconnectionDelay: 1000
 });
 
+// =============================================
+// AUTH
+// =============================================
 const user = JSON.parse(localStorage.getItem("user") || "{}");
+const token = localStorage.getItem("token");
 
-if (!user.id) {
+if (!user.id || !token) {
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
   window.location.href = "login.html";
 }
 
-const senderId = user.id;
+const senderId = String(user.id);
 let receiverId = null;
+let onlineUsers = [];
+let selectedUserRequestId = 0;
 
-// JOIN ROOM
-socket.on("connect", () => {
-  socket.emit("joinRoom", { userId: String(senderId) });
-});
+// =============================================
+// URL PARAMS
+// =============================================
+const urlParams = new URLSearchParams(window.location.search);
+const targetUserId = urlParams.get("user");
 
-// RECEIVE MESSAGE
-socket.on("receiveMessage", (data) => {
-
-  // show in chat
-  if (data.senderId == receiverId) {
-    displayMessage(data, false);
-  }
-
-  // 🔔 notification (only when not active chat)
-  if (data.senderId != receiverId && Notification.permission === "granted") {
-    const notification = new Notification("New Message", {
-      body: data.message
-    });
-
-    notification.onclick = () => {
-      window.focus();
-    };
-  }
-});
-
-document.addEventListener("click", () => {
-  if ("Notification" in window && Notification.permission !== "granted") {
-    Notification.requestPermission();
-  }
-}, { once: true });
-
-// 🔔 UNREAD COUNT
-socket.on("unreadCount", (count) => {
-  const badge = document.getElementById("notificationBadge");
-
-  if (badge) {
-    badge.textContent = count;
-    badge.style.display = count > 0 ? "inline-block" : "none";
-  }
-});
-
-// ONLINE USERS
-socket.on("onlineUsers", (users) => {
-  users.forEach(userId => {
-    const el = document.getElementById(`status-${userId}`);
-    if (el) el.textContent = "🟢 Online";
-  });
-});
-
-// LOAD CHAT USERS
-async function loadChatUsers() {
+// =============================================
+// HELPERS
+// =============================================
+function getAuthHeaders() {
   const token = localStorage.getItem("token");
 
-  const res = await fetch(
-    `${API_URL}/chat/users/${senderId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
-
-  const users = await res.json();
-
-  const container = document.getElementById("chatUsers");
-  container.innerHTML = "";
-
-  users.forEach(u => {
-    const div = document.createElement("div");
-    div.className = "chat-user";
-
-    div.innerHTML = `
-      ${u.first_name} ${u.last_name}
-      <span id="status-${u.id}">⚫</span>
-    `;
-
-    div.onclick = () => selectUser(u);
-
-    container.appendChild(div);
-  });
-
-  if (users.length > 0) {
-    selectUser(users[0]);
-  }
-}
-
-// SELECT USER
-async function selectUser(u) {
-  receiverId = u.id;
-
-  const token = localStorage.getItem("token");
-
-  document.getElementById("chatHeader").innerHTML =
-    `${u.first_name} ${u.last_name} <span id="status-${u.id}">⚫</span>`;
-
-  document.getElementById("messages").innerHTML = "";
-
-  // mark as read
-  await fetch(
-    `${API_URL}/chat/messages/read/${receiverId}/${senderId}`,
-    {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
-
-  // load messages
-  const res = await fetch(
-    `${API_URL}/chat/messages/${senderId}/${receiverId}`,
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
-
-  const messages = await res.json();
-
-  messages.forEach(msg => {
-    displayMessage(msg, (msg.sender_id || msg.senderId) == senderId);
-    });
-
-  loadUnread();
-}
-
-// SEND MESSAGE ✅ (NOW WORKS)
-function sendMessage() {
-  const input = document.getElementById("messageInput");
-  const message = input.value;
-
-  if (!receiverId || !message.trim()) {
-    alert("Select a chat and type a message");
-    return;
+  if (!token) {
+    window.location.href = "login.html";
+    return {};
   }
 
-  const data = {
-    senderId,
-    receiverId,
-    message
+  return {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/json"
   };
-
-  socket.emit("sendMessage", data);
-  displayMessage(data, true);
-
-  input.value = "";
-}
-
-// DISPLAY MESSAGE
-function displayMessage(data, isMe) {
-  const div = document.createElement("div");
-  div.className = isMe ? "me" : "them";
-
-  const time = new Date().toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-
-  div.innerHTML = `
-    <p>${escapeHTML(data.message)}</p>
-    <small>${time}</small>
-  `;
-
-  const container = document.getElementById("messages");
-  container.appendChild(div);
-
-  container.scrollTop = container.scrollHeight;
 }
 
 function escapeHTML(str) {
@@ -194,70 +58,504 @@ function escapeHTML(str) {
   })[m]);
 }
 
-// TYPING
+function scrollMessagesToBottom() {
+  const container = document.getElementById("messages");
+
+  if (container) {
+    container.scrollTop = container.scrollHeight;
+  }
+}
+
+function updateBadge(count = 0) {
+  const badge = document.getElementById("notificationBadge");
+
+  if (!badge) return;
+
+  badge.textContent = count;
+  badge.style.display = count > 0 ? "inline-block" : "none";
+}
+
+function updateOnlineStatusUI() {
+  document.querySelectorAll("[id^='status-']").forEach(el => {
+    const id = el.id.replace("status-", "");
+
+    el.textContent = onlineUsers.includes(String(id))
+      ? "🟢 Online"
+      : "⚫ Offline";
+  });
+}
+
+// =============================================
+// SOCKET CONNECTION
+// =============================================
+socket.on("connect", () => {
+  console.log("✅ Socket connected");
+
+  socket.emit("joinRoom", {
+    userId: senderId
+  });
+
+  loadUnread();
+});
+
+socket.on("connect_error", (err) => {
+  console.error("❌ Socket connection error:", err.message);
+});
+
+socket.on("disconnect", (reason) => {
+  console.log("⚠️ Socket disconnected:", reason);
+});
+
+socket.on("reconnect", () => {
+  console.log("🔄 Socket reconnected");
+
+  socket.emit("joinRoom", {
+    userId: senderId
+  });
+
+  loadUnread();
+});
+
+// =============================================
+// RECEIVE MESSAGE
+// =============================================
+socket.on("receiveMessage", (data) => {
+  const incomingSender = String(
+    data.senderId || data.sender_id
+  );
+
+  // Message from me
+  if (data.self) {
+    displayMessage(data, true);
+    return;
+  }
+
+  // Only show if chat is currently open
+  if (incomingSender === String(receiverId)) {
+    displayMessage(data, false);
+
+    // Mark instantly as read
+    markMessagesAsRead(receiverId);
+  }
+
+  // Browser notification
+  if (
+    document.hidden &&
+    incomingSender !== String(receiverId) &&
+    "Notification" in window &&
+    Notification.permission === "granted"
+  ) {
+    const notification = new Notification("New Message", {
+      body: data.message || "You received a message"
+    });
+
+    notification.onclick = () => {
+      window.focus();
+    };
+  }
+
+  loadUnread();
+});
+
+// =============================================
+// NOTIFICATION PERMISSION
+// =============================================
+document.addEventListener("click", () => {
+  if (
+    "Notification" in window &&
+    Notification.permission !== "granted"
+  ) {
+    Notification.requestPermission();
+  }
+}, { once: true });
+
+// =============================================
+// UNREAD COUNT
+// =============================================
+socket.on("unreadCount", (count) => {
+  updateBadge(count);
+});
+
+async function loadUnread() {
+  try {
+    const res = await fetch(`${API_URL}/chat/unread`, {
+      headers: getAuthHeaders()
+    });
+
+    if (!res.ok) {
+      throw new Error("Unread fetch failed");
+    }
+
+    const data = await res.json();
+
+    updateBadge(data.unread || 0);
+
+  } catch (err) {
+    console.error("Unread count error:", err);
+  }
+}
+
+// =============================================
+// LOAD CHAT USERS
+// =============================================
+async function loadChatUsers() {
+  try {
+    const res = await fetch(
+      `${API_URL}/chat/users/${senderId}`,
+      {
+        headers: getAuthHeaders()
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to load chat users");
+    }
+
+    const users = await res.json();
+
+    const container = document.getElementById("chatUsers");
+
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    if (!Array.isArray(users) || users.length === 0) {
+      container.innerHTML = `
+        <p class="empty-chat-users">
+          No chats available yet.
+        </p>
+      `;
+      return;
+    }
+
+    users.forEach(u => {
+      const div = document.createElement("div");
+
+      div.className = "chat-user";
+
+      div.innerHTML = `
+        <div class="chat-user-name">
+          ${escapeHTML(u.first_name || "")}
+          ${escapeHTML(u.last_name || "")}
+        </div>
+
+        <span id="status-${u.id}">
+          ⚫ Offline
+        </span>
+      `;
+
+      div.addEventListener("click", () => {
+        selectUser(u);
+      });
+
+      container.appendChild(div);
+    });
+
+    updateOnlineStatusUI();
+
+    // Auto open target user
+    if (targetUserId) {
+      const target = users.find(
+        u => String(u.id) === String(targetUserId)
+      );
+
+      if (target) {
+        selectUser(target);
+        return;
+      }
+    }
+
+    // Open first user
+    selectUser(users[0]);
+
+  } catch (err) {
+    console.error("Load chat users error:", err);
+
+    const container = document.getElementById("chatUsers");
+
+    if (container) {
+      container.innerHTML = `
+        <p class="error-text">
+          Failed to load chats.
+        </p>
+      `;
+    }
+  }
+}
+
+// =============================================
+// SELECT USER
+// =============================================
+async function selectUser(u) {
+  try {
+    if (!u || !u.id) return;
+
+    receiverId = String(u.id);
+
+    // Prevent race condition
+    const requestId = ++selectedUserRequestId;
+
+    const header = document.getElementById("chatHeader");
+
+    if (header) {
+      header.innerHTML = `
+        ${escapeHTML(u.first_name || "")}
+        ${escapeHTML(u.last_name || "")}
+        <span id="status-${u.id}">
+          ${onlineUsers.includes(receiverId)
+            ? "🟢 Online"
+            : "⚫ Offline"}
+        </span>
+      `;
+    }
+
+    const messagesContainer = document.getElementById("messages");
+
+    if (messagesContainer) {
+      messagesContainer.innerHTML = `
+        <p class="loading-chat">
+          Loading messages...
+        </p>
+      `;
+    }
+
+    // Mark messages as read
+    await markMessagesAsRead(receiverId);
+
+    // Load messages
+    const res = await fetch(
+      `${API_URL}/chat/messages/${senderId}/${receiverId}`,
+      {
+        headers: getAuthHeaders()
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Failed to load messages");
+    }
+
+    const messages = await res.json();
+
+    // Ignore outdated request
+    if (requestId !== selectedUserRequestId) {
+      return;
+    }
+
+    if (messagesContainer) {
+      messagesContainer.innerHTML = "";
+    }
+
+    if (!Array.isArray(messages) || messages.length === 0) {
+      if (messagesContainer) {
+        messagesContainer.innerHTML = `
+          <p class="empty-chat">
+            No messages yet.
+          </p>
+        `;
+      }
+
+      return;
+    }
+
+    messages.forEach(msg => {
+      displayMessage(
+        msg,
+        String(msg.sender_id || msg.senderId) === senderId
+      );
+    });
+
+    scrollMessagesToBottom();
+    loadUnread();
+
+  } catch (err) {
+    console.error("Select user error:", err);
+
+    const container = document.getElementById("messages");
+
+    if (container) {
+      container.innerHTML = `
+        <p class="error-text">
+          Failed to load messages.
+        </p>
+      `;
+    }
+  }
+}
+
+// =============================================
+// MARK READ
+// =============================================
+async function markMessagesAsRead(userId) {
+  try {
+    await fetch(
+      `${API_URL}/chat/messages/read/${userId}/${senderId}`,
+      {
+        method: "PUT",
+        headers: getAuthHeaders()
+      }
+    );
+
+  } catch (err) {
+    console.error("Mark read error:", err);
+  }
+}
+
+// =============================================
+// SEND MESSAGE
+// =============================================
+function sendMessage() {
+  const input = document.getElementById("messageInput");
+
+  if (!input) return;
+
+  const message = input.value.trim();
+
+  if (!receiverId) {
+    alert("Please select a chat first.");
+    return;
+  }
+
+  if (!message) {
+    return;
+  }
+
+  socket.emit("sendMessage", {
+    senderId,
+    receiverId,
+    message
+  });
+
+  input.value = "";
+
+  socket.emit("stopTyping", {
+    senderId,
+    receiverId
+  });
+}
+
+// =============================================
+// ENTER KEY SEND
+// =============================================
+const messageInput = document.getElementById("messageInput");
+
+if (messageInput) {
+  messageInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  messageInput.addEventListener("input", () => {
+    handleTyping();
+  });
+}
+
+// =============================================
+// DISPLAY MESSAGE
+// =============================================
+function displayMessage(data, isMe) {
+  const container = document.getElementById("messages");
+
+  if (!container) return;
+
+  // Prevent duplicate messages
+  const tempId = `
+    ${data.senderId || data.sender_id}
+    ${data.message}
+    ${data.created_at}
+  `;
+
+  if (
+    document.querySelector(`[data-msg-id="${CSS.escape(tempId)}"]`)
+  ) {
+    return;
+  }
+
+  const div = document.createElement("div");
+
+  div.className = isMe ? "me" : "them";
+
+  div.setAttribute("data-msg-id", tempId);
+
+  const time = new Date(
+    data.created_at || Date.now()
+  ).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  div.innerHTML = `
+    <p>${escapeHTML(data.message || "")}</p>
+    <small>${time}</small>
+  `;
+
+  container.appendChild(div);
+
+  scrollMessagesToBottom();
+}
+
+// =============================================
+// TYPING INDICATOR
+// =============================================
 let typingTimeout;
 
 function handleTyping() {
-  socket.emit("typing", { senderId, receiverId });
+  if (!receiverId) return;
+
+  socket.emit("typing", {
+    senderId,
+    receiverId
+  });
 
   clearTimeout(typingTimeout);
 
   typingTimeout = setTimeout(() => {
-    socket.emit("stopTyping", { senderId, receiverId });
+    socket.emit("stopTyping", {
+      senderId,
+      receiverId
+    });
   }, 1000);
 }
 
-socket.on("typing", () => {
-  document.getElementById("typingIndicator").textContent = "Typing...";
-});
+socket.on("typing", ({ senderId: typingUser }) => {
+  if (String(typingUser) === String(receiverId)) {
+    const indicator = document.getElementById("typingIndicator");
 
-socket.on("stopTyping", () => {
-  document.getElementById("typingIndicator").textContent = "";
-});
-
-// ONLINE STATUS
-socket.on("userOnline", (userId) => {
-  const el = document.getElementById(`status-${userId}`);
-  if (el) el.textContent = "🟢 Online";
-});
-
-socket.on("userOffline", (userId) => {
-  const el = document.getElementById(`status-${userId}`);
-  if (el) el.textContent = "⚫ Offline";
-});
-
-// LOAD UNREAD
-async function loadUnread() {
-  const token = localStorage.getItem("token");
-
-  const res = await fetch(`${API_URL}/chat/unread`, {
-      headers: {
-      Authorization: `Bearer ${token}`
+    if (indicator) {
+      indicator.textContent = "Typing...";
     }
-  });
-
-  const data = await res.json();
-
-  const badge = document.getElementById("notificationBadge");
-
-  if (badge) {
-    badge.textContent = data.unread;
-    badge.style.display = data.unread > 0 ? "inline-block" : "none";
   }
-}
-
-// NOTIFICATION PERMISSION
-if ("Notification" in window) {
-  Notification.requestPermission();
-}
-
-socket.on("connect_error", (err) => {
-  console.error("Socket connection error:", err.message);
 });
 
-socket.on("disconnect", (reason) => {
-  console.log("Socket disconnected:", reason);
+socket.on("stopTyping", ({ senderId: typingUser }) => {
+  if (String(typingUser) === String(receiverId)) {
+    const indicator = document.getElementById("typingIndicator");
+
+    if (indicator) {
+      indicator.textContent = "";
+    }
+  }
 });
 
+// =============================================
+// ONLINE STATUS
+// =============================================
+socket.on("onlineUsers", (users) => {
+  onlineUsers = users.map(String);
+
+  updateOnlineStatusUI();
+});
+
+// =============================================
 // INIT
-loadChatUsers();
+// =============================================
+(async function initChat() {
+  try {
+    await loadUnread();
+    await loadChatUsers();
+
+  } catch (err) {
+    console.error("Chat init error:", err);
+  }
+})();

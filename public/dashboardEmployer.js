@@ -3,14 +3,19 @@ const API_URL = "https://karangcareerhub-api.onrender.com/api";
 /* ===============================
    INITIALIZATION
 ================================ */
+let allJobs = [];
+let allApplications = [];
+let currentJobApplications = [];
+let jobToDelete = null;
+let selectedApplicant = null;
+  
 document.addEventListener("DOMContentLoaded", async () => {
   const user = await protectEmployer(); 
+
   setupProfileDropdown();
   setupDarkMode();
-
-  loadEmployerJobs();
-  loadTotalApplicants();
-  loadRecentApplications();
+  await loadEmployerJobs();
+  await loadEmployerDashboardData();
   setupFilters();
 
   
@@ -24,25 +29,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (confirmBtn) {
     confirmBtn.addEventListener("click", async () => {
-      if (!jobToDelete) return;
-
+      if (!jobToDelete) {
+        showNotification("No job selected for deletion ❌");
+        return;
+      }
+    
       const token = localStorage.getItem("token");
-
+    
       try {
         const res = await fetch(`${API_URL}/jobs/${jobToDelete}`, {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${token}` }
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         });
-
-        if (!res.ok) throw new Error();
-
+    
+        const data = await res.json().catch(() => ({}));
+    
+        if (!res.ok) {
+          throw new Error(data.message || "Delete failed");
+        }
+    
         showNotification("Job deleted successfully ✅");
-
+    
         closeDeleteModal();
+        jobToDelete = null;
         loadEmployerJobs();
-
-      } catch {
-        showNotification("Failed to delete job ❌");
+    
+      } catch (err) {
+        console.error(err);
+        showNotification(err.message || "Failed to delete job ❌");
       }
     });
   }
@@ -51,7 +67,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 
-let allApplications = [];
 /* ===============================
    PROTECT EMPLOYER
 ================================ */
@@ -130,14 +145,19 @@ async function loadEmployerJobs() {
       renderJobs([]);
       return;
     }
+    
+    allJobs = jobs;
     renderJobs(jobs);
+
+    return jobs;
 
   } catch (err) {
     console.error("Error loading employer jobs:", err);
     renderJobs([]);
+    return [];
   }
 }
-/*=======================fatch user=====================*/
+/*=======================fetch user=====================*/
 async function fetchUser() {
   const token = localStorage.getItem("token");
 
@@ -237,6 +257,7 @@ async function viewApplicants(jobId, title) {
     });
 
     const data = await res.json();
+    currentJobApplications = Array.isArray(data) ? data : [];
     list.innerHTML = "";
 
     if (!Array.isArray(data) || !data.length) {
@@ -274,12 +295,14 @@ async function viewApplicants(jobId, title) {
   }
 }
 // =====================================================
-//applicants details
+//Show applicants details
 //===========================================================
 function showApplicantDetails(app) {
   const details = document.getElementById("applicantDetails");
 
-  const skillsArray = app.skills ? app.skills.split(",") : [];
+  const skillsArray = Array.isArray(app.skills)
+  ? app.skills
+  : (app.skills || "").split(",");
   const matchScore = calculateMatchScore(app);
   const isTopCandidate = matchScore >= 80;
 
@@ -287,7 +310,7 @@ function showApplicantDetails(app) {
     <div class="details-header">
       <div>
         <h2>
-          ${app.student_name}
+          ${escapeHTML(app.student_name || "")}
           ${isTopCandidate ? '<span class="top-badge">⭐ Top Candidate</span>' : ''}
         </h2>
         <p>${app.student_email}</p>
@@ -307,7 +330,7 @@ function showApplicantDetails(app) {
     </div>
 
     <div class="app-message-box">
-      ${app.message || "No message provided"}
+       ${escapeHTML(app.message || "No message provided")}
     </div>
 
     <div class="action-buttons">
@@ -341,24 +364,101 @@ function showApplicantDetails(app) {
 // CV
 //============================================
 function previewCV(url) {
-  if (!url) return showNotification("No CV available");
+  if (!url) {
+    return showNotification("No CV available");
+  }
 
-  const win = window.open("", "_blank");
+  try {
+    // ✅ Only allow http/https URLs
+    const parsedUrl = new URL(url, window.location.origin);
 
-  win.document.write(`
-    <html>
-      <head><title>CV Preview</title></head>
-      <body style="margin:0">
-        <iframe src="${url}" width="100%" height="100%"></iframe>
+    if (
+      parsedUrl.protocol !== "http:" &&
+      parsedUrl.protocol !== "https:"
+    ) {
+      throw new Error("Invalid protocol");
+    }
 
-        <a href="${url}" download
-           style="position:fixed;top:10px;right:10px;
-           background:#0b3e91;color:#fff;padding:10px;border-radius:5px;">
-           Download CV
-        </a>
+    // ✅ Open safe blank page
+    const win = window.open("", "_blank", "noopener,noreferrer");
+
+    if (!win) {
+      showNotification("Popup blocked");
+      return;
+    }
+
+    // ✅ Create HTML safely
+    const doc = win.document;
+
+    doc.open();
+
+    doc.write(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>CV Preview</title>
+
+        <style>
+          body {
+            margin: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+          }
+
+          iframe {
+            width: 100%;
+            height: 100vh;
+            border: none;
+          }
+
+          .download-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #0b3e91;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            z-index: 1000;
+          }
+
+          .download-btn:hover {
+            opacity: 0.9;
+          }
+        </style>
+      </head>
+      <body>
       </body>
-    </html>
-  `);
+      </html>
+    `);
+
+    doc.close();
+
+    // ✅ Create iframe safely
+    const iframe = doc.createElement("iframe");
+    iframe.src = parsedUrl.href;
+    iframe.setAttribute("sandbox", "allow-downloads");
+
+    // ✅ Create download link safely
+    const link = doc.createElement("a");
+    link.href = parsedUrl.href;
+    link.download = "";
+    link.textContent = "Download CV";
+    link.className = "download-btn";
+    link.rel = "noopener noreferrer";
+
+    doc.body.appendChild(link);
+    doc.body.appendChild(iframe);
+
+  } catch (err) {
+    console.error("Invalid CV URL:", err);
+    showNotification("Invalid CV file");
+  }
 }
 
 //===============================
@@ -385,8 +485,12 @@ function calculateMatchScore(app) {
   // =============================
   // SKILLS MATCH (40%)
   // =============================
-  const userSkills = (app.skills || "").toLowerCase().split(",");
-  const jobSkills = (app.job_skills || "").toLowerCase().split(",");
+  const userSkills = (app.skills || "")
+    .toLowerCase()
+    .split(",")
+    .map(s => s.trim())
+    .filter(Boolean);
+    const jobSkills = (app.job_skills || "").toLowerCase().split(",");
 
   if (userSkills.length && jobSkills.length) {
     let match = 0;
@@ -441,12 +545,19 @@ function openChat(userId) {
 ///===============================
 async function toBase64(url) {
   const res = await fetch(url);
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch image");
+  }
+
   const blob = await res.blob();
 
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
+
     reader.onloadend = () => resolve(reader.result);
     reader.onerror = reject;
+
     reader.readAsDataURL(blob);
   });
 }
@@ -598,8 +709,6 @@ function showToast(message, type = "success") {
 /* ===============================
    DELETE JOB
 ================================ */
-let jobToDelete = null;
-
 function openDeleteModal(id) {
   jobToDelete = id;
   document.getElementById("deleteModal").classList.remove("hidden");
@@ -611,18 +720,8 @@ function closeDeleteModal() {
 }
 
 //==========================
-function showNotification(message) {
-  if ("Notification" in window) {
-    if (Notification.permission === "granted") {
-      new Notification(message);
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission().then(permission => {
-        if (permission === "granted") {
-          new Notification(message);
-        }
-      });
-    }
-  }
+function showNotification(message, type = "success") {
+  showToast(message, type);
 }
 
 /* ===============================
@@ -648,45 +747,32 @@ async function loadTotalApplicants() {
 /* ===============================
    RECENT APPLICATION CARDS
 ================================ */
-async function loadRecentApplications() {
-  const token = localStorage.getItem("token");
+function loadRecentCards(apps) {
   const container = document.getElementById("applications");
 
   if (!container) return;
-  container.innerHTML = "<p>Loading applications...</p>";
 
-  try {
-    const res = await fetch(`${API_URL}/applications/employer`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+  container.innerHTML = "";
 
-    const apps = await res.json();
+  const recent = [...apps]
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
 
-    if (!Array.isArray(apps)) {
-      container.innerHTML = "<p>No applications yet.</p>";
-      return;
-    }
-
-    // ✅ STORE ALL DATA
-    allApplications = apps;
-
-    // ✅ FIRST RENDER
-    renderApplications(allApplications);
-
-  } catch (err) {
-    console.error("Failed to load applications:", err);
-    container.innerHTML = "<p>Failed to load applications.</p>";
+  if (!recent.length) {
+    container.innerHTML = "<p>No applications yet.</p>";
+    return;
   }
+
+  renderApplications(recent);
 }
 //===============================================
 // Render Applications
 //=============================================
-let selectedApplicant = null;
 function renderApplications(apps) {
   const container = document.getElementById("applications");
   container.innerHTML = "";
 
-  if (!apps.length) {
+  if (!Array.isArray(apps) || !apps.length) {
     container.innerHTML = "<p>No matching applicants found.</p>";
     return;
   }
@@ -697,7 +783,7 @@ function renderApplications(apps) {
 
     div.innerHTML = `
       <div class="clickable-card">
-        <h4>${app.student_name || "Unknown"}</h4>
+        <h4>${escapeHTML(app.student_name || "Unknown")}</h4>
 
         <p><strong>Job:</strong> ${app.job_title || "N/A"}</p>
         <p><strong>Email:</strong> ${app.student_email || "N/A"}</p>
@@ -739,7 +825,12 @@ function setupFilters() {
 }
 
 function runFilters() {
-  const filtered = applyFilters(allApplications);
+  const source =
+    currentJobApplications.length > 0
+      ? currentJobApplications
+      : allApplications;
+
+  const filtered = applyFilters(source);
   renderApplications(filtered);
 }
 
@@ -806,7 +897,7 @@ async function updateApplicationStatus(id, status) {
     }
 
     showNotification("Status updated successfully.");
-    loadRecentApplications();
+    await loadEmployerDashboardData();
 
   } catch (err) {
     console.error("Update status error:", err);
@@ -850,7 +941,7 @@ async function loadNotifications() {
 
   list.innerHTML = "";
 
-  if (!data.length) {
+  if (!Array.isArray(data) || !data.length) {
     document.getElementById("noNotifications").style.display = "block";
     badge.hidden = true;
     return;
@@ -947,7 +1038,6 @@ function formatImage(path) {
   return "https://karangcareerhub-api.onrender.com" + path;
 }
 
-
 function setProfileAvatar(user) {
   const avatar = document.getElementById("profileAvatar");
 
@@ -961,7 +1051,7 @@ function setProfileAvatar(user) {
     img = formatImage(user.profile_image);
   }
 
-  avatar.src = img + "?t=" + Date.now(); 
+  avatar.src = img + (img.includes("?") ? "&" : "?") + "t=" + Date.now();
 }
 /* ===============================
    DARK MODE
@@ -990,4 +1080,46 @@ function setupDarkMode() {
 
     darkModeToggle.textContent = isDark ? "☀️" : "🌙";
   });
+}
+
+async function loadEmployerDashboardData() {
+  const token = localStorage.getItem("token");
+
+  try {
+    const res = await fetch(`${API_URL}/applications/employer`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    const data = await res.json();
+
+    if (!Array.isArray(data)) {
+      throw new Error("Invalid data");
+    }
+
+    // GLOBAL STATE
+    allApplications = data;
+
+    // UI updates from ONE source
+    renderApplications(allApplications);
+    updateStats(allJobs || []);
+    updateTotalApplicants(allApplications);
+    loadRecentCards(allApplications);
+
+  } catch (err) {
+    console.error("Dashboard load error:", err);
+  }
+}
+function updateStats(jobs) {
+  const now = new Date();
+
+  const activeJobs = jobs.filter(job =>
+    !job.deadline || new Date(job.deadline) >= now
+  ).length;
+
+  const expiredJobs = jobs.filter(job =>
+    job.deadline && new Date(job.deadline) < now
+  ).length;
+
+  document.getElementById("activeJobs").textContent = activeJobs;
+  document.getElementById("expiredJobs").textContent = expiredJobs;
 }

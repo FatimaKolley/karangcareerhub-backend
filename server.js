@@ -4,8 +4,12 @@ import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
 import multer from "multer";
+import { createServer } from "http";
+import { Server } from "socket.io";
 
-// DB + Routes
+// =====================
+// DB + ROUTES
+// =====================
 import db from "./db.js";
 import userRoutes from "./routes/users.js";
 import jobRoutes from "./routes/jobRoutes.js";
@@ -14,106 +18,18 @@ import uploadRoutes from "./routes/uploadRoutes.js";
 import historyRoutes from "./routes/historyRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 
-
 dotenv.config();
 
+// =====================
 // PATH SETUP
+// =====================
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// APP INIT
+// =====================
+// EXPRESS APP
+// =====================
 const app = express();
-
-// MIDDLEWARES
-app.use(cors({
-  origin: "*"
-}));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
-
-// Serve uploaded files
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-/* ===============================
-   🔗 MAIN API ROUTES
-=================================*/
-app.use("/api/users", userRoutes);
-app.use("/api/jobs", jobRoutes);
-app.use("/api/applications", applicationsRoutes);
-app.use("/api/upload", uploadRoutes);
-app.use("/api/history", historyRoutes);
-app.use("/api/chat", chatRoutes);
-
-/* ===============================
-   JOB SEARCH (kept separate)
-=================================*/
-app.get("/api/jobs/search", async (req, res) => {
-  const { title, type, category } = req.query;
-
-  let sql = "SELECT * FROM jobs WHERE 1=1";
-  let params = [];
-
-  if (title) {
-    sql += " AND (title LIKE ? OR company LIKE ?)";
-    params.push(`%${title}%`, `%${title}%`);
-  }
-
-  if (type) {
-    sql += " AND type = ?";
-    params.push(type);
-  }
-
-  if (category) {
-    sql += " AND category = ?";
-    params.push(category);
-  }
-
-  sql += " ORDER BY created_at DESC";
-
-  try {
-    const [rows] = await db.execute(sql, params);
-    res.json(rows);
-  } catch (err) {
-    res.status(500).json({ error: "Error fetching jobs" });
-  }
-});
-
-/* ===============================
-   MULTER ERROR HANDLER
-=================================*/
-app.use((err, req, res, next) => {
-  if (err instanceof multer.MulterError) {
-    console.error("❌ Multer Error Code:", err.code);
-    console.error("❌ Multer Field:", err.field);
-    console.error("❌ Full Multer Error:", err);
-
-    return res.status(400).json({
-      error: `Upload error: ${err.code}${err.field ? ` (field: ${err.field})` : ""}`
-    });
-  }
-
-  if (err) {
-    console.error("❌ General Error:", err);
-    return res.status(500).json({ error: err.message || "Server error" });
-  }
-
-  next();
-});
-
-/* ===============================
-   ⚠️ SPA FALLBACK — MUST BE LAST
-=================================*/
-app.use((req, res) => {
-  res.sendFile(path.join(__dirname, "public/index.html"));
-});
-
-/* ===============================
-   START SERVER
-=================================*/
-import { createServer } from "http";
-import { Server } from "socket.io";
-
-const httpServer = createServer(app);
 
 // =====================
 // CORS
@@ -124,13 +40,105 @@ const allowedOrigins = [
   "http://127.0.0.1:5500"
 ];
 
-// Express CORS
-app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
-}));
+app.use(
+  cors({
+    origin(origin, callback) {
+      // allow server-to-server / postman / mobile webview
+      if (!origin) return callback(null, true);
 
-// Socket.IO
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true
+  })
+);
+
+// =====================
+// MIDDLEWARES
+// =====================
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static("public"));
+
+// =====================
+// STATIC UPLOADS
+// =====================
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "uploads"))
+);
+
+// =====================
+// HEALTH CHECK
+// =====================
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    message: "KarangCareerHub API running"
+  });
+});
+
+// =====================
+// API ROUTES
+// =====================
+app.use("/api/users", userRoutes);
+app.use("/api/jobs", jobRoutes);
+app.use("/api/applications", applicationsRoutes);
+app.use("/api/upload", uploadRoutes);
+app.use("/api/history", historyRoutes);
+app.use("/api/chat", chatRoutes);
+
+// =====================
+// JOB SEARCH
+// =====================
+app.get("/api/jobs/search", async (req, res) => {
+  try {
+    const { title, type, category } = req.query;
+
+    let sql = "SELECT * FROM jobs WHERE 1=1";
+    const params = [];
+
+    if (title && title.trim()) {
+      sql += " AND (title LIKE ? OR company LIKE ?)";
+      params.push(`%${title}%`, `%${title}%`);
+    }
+
+    if (type && type.trim()) {
+      sql += " AND type = ?";
+      params.push(type);
+    }
+
+    if (category && category.trim()) {
+      sql += " AND category = ?";
+      params.push(category);
+    }
+
+    sql += " ORDER BY created_at DESC";
+
+    const [rows] = await db.execute(sql, params);
+
+    res.json(rows);
+
+  } catch (err) {
+    console.error("Job search error:", err);
+
+    res.status(500).json({
+      error: "Error fetching jobs"
+    });
+  }
+});
+
+// =====================
+// HTTP SERVER
+// =====================
+const httpServer = createServer(app);
+
+// =====================
+// SOCKET.IO
+// =====================
 const io = new Server(httpServer, {
   cors: {
     origin: allowedOrigins,
@@ -139,84 +147,229 @@ const io = new Server(httpServer, {
 });
 
 // =====================
-// SOCKET.IO LOGIC
+// ONLINE USERS
+// userId => Set(socketIds)
 // =====================
 const onlineUsers = new Map();
 
-io.on("connection", (socket) => {
+// =====================
+// SOCKET HELPERS
+// =====================
+function emitOnlineUsers() {
+  io.emit(
+    "onlineUsers",
+    Array.from(onlineUsers.keys())
+  );
+}
 
-  socket.on("joinRoom", ({ userId }) => {
-    socket.join(String(userId));
-
-    // ✅ mark user online
-    onlineUsers.set(String(userId), socket.id);
-
-    // 🔔 notify others
-    io.emit("userOnline", userId);
-
-    console.log("User online:", userId);
-  });
-
-  // Send message
-  socket.on("sendMessage", async (data) => {
-    const { senderId, receiverId, message } = data;
-  
-    // save with unread
-    await db.execute(
-      "INSERT INTO messages (sender_id, receiver_id, message, is_read) VALUES (?, ?, ?, ?)",
-      [senderId, receiverId, message, false]
-    );
-  
-    // send message
-    io.to(String(receiverId)).emit("receiveMessage", {
-      ...data,
-      senderName: "User" // later fetch from DB
-    });
-    
-    // send unread count update
+async function emitUnreadCount(userId) {
+  try {
     const [rows] = await db.execute(
-      "SELECT COUNT(*) as unread FROM messages WHERE receiver_id=? AND is_read=FALSE",
-      [receiverId]
+      `
+      SELECT COUNT(*) AS unread
+      FROM messages
+      WHERE receiver_id = ?
+      AND is_read = FALSE
+      `,
+      [userId]
     );
-  
-    const unread = rows[0].unread;
-  
-    io.to(String(receiverId)).emit("unreadCount", rows[0].unread);
-  });
 
-  socket.on("disconnect", () => {
-    let disconnectedUser = null;
+    io.to(String(userId)).emit(
+      "unreadCount",
+      rows[0]?.unread || 0
+    );
 
-    for (let [userId, sockId] of onlineUsers.entries()) {
-      if (sockId === socket.id) {
-        disconnectedUser = userId;
-        onlineUsers.delete(userId);
-        break;
+  } catch (err) {
+    console.error("Unread count emit error:", err);
+  }
+}
+
+// =====================
+// SOCKET EVENTS
+// =====================
+io.on("connection", (socket) => {
+  console.log("Socket connected:", socket.id);
+
+  // =====================
+  // JOIN ROOM
+  // =====================
+  socket.on("joinRoom", async ({ userId }) => {
+    try {
+      if (!userId) return;
+
+      userId = String(userId);
+
+      socket.join(userId);
+
+      socket.userId = userId;
+
+      if (!onlineUsers.has(userId)) {
+        onlineUsers.set(userId, new Set());
       }
-    }
 
-    if (disconnectedUser) {
-      io.emit("userOffline", disconnectedUser);
-      console.log("User offline:", disconnectedUser);
+      onlineUsers.get(userId).add(socket.id);
+
+      emitOnlineUsers();
+
+      await emitUnreadCount(userId);
+
+      console.log("User online:", userId);
+
+    } catch (err) {
+      console.error("joinRoom error:", err);
     }
   });
 
+  // =====================
+  // SEND MESSAGE
+  // =====================
+  socket.on("sendMessage", async (data) => {
+    try {
+      let { senderId, receiverId, message } = data;
 
+      senderId = String(senderId);
+      receiverId = String(receiverId);
+
+      if (!senderId || !receiverId) return;
+
+      if (!message || !message.trim()) return;
+
+      message = message.trim();
+
+      // save to DB
+      const [result] = await db.execute(
+        `
+        INSERT INTO messages
+        (sender_id, receiver_id, message, is_read)
+        VALUES (?, ?, ?, ?)
+        `,
+        [senderId, receiverId, message, false]
+      );
+
+      // message payload
+      const messageData = {
+        id: result.insertId,
+        senderId,
+        receiverId,
+        message,
+        is_read: false,
+        created_at: new Date()
+      };
+
+      // receiver gets message
+      io.to(receiverId).emit(
+        "receiveMessage",
+        messageData
+      );
+
+      // sender gets own message
+      socket.emit("receiveMessage", {
+        ...messageData,
+        self: true
+      });
+
+      // refresh unread count
+      await emitUnreadCount(receiverId);
+
+    } catch (err) {
+      console.error("sendMessage error:", err);
+
+      socket.emit("chatError", {
+        message: "Failed to send message"
+      });
+    }
+  });
+
+  // =====================
+  // TYPING
+  // =====================
   socket.on("typing", ({ senderId, receiverId }) => {
-    socket.to(String(receiverId)).emit("typing");
+    if (!receiverId) return;
+
+    socket.to(String(receiverId)).emit("typing", {
+      senderId: String(senderId)
+    });
   });
-  
+
   socket.on("stopTyping", ({ senderId, receiverId }) => {
-    socket.to(String(receiverId)).emit("stopTyping");
+    if (!receiverId) return;
+
+    socket.to(String(receiverId)).emit("stopTyping", {
+      senderId: String(senderId)
+    });
   });
 
-  socket.emit("onlineUsers", Array.from(onlineUsers.keys()));
+  // =====================
+  // DISCONNECT
+  // =====================
+  socket.on("disconnect", () => {
+    try {
+      const userId = socket.userId;
 
-  
+      if (!userId) return;
+
+      const sockets = onlineUsers.get(userId);
+
+      if (sockets) {
+        sockets.delete(socket.id);
+
+        // remove user ONLY if all tabs/devices disconnected
+        if (sockets.size === 0) {
+          onlineUsers.delete(userId);
+
+          console.log("User offline:", userId);
+        }
+      }
+
+      emitOnlineUsers();
+
+    } catch (err) {
+      console.error("disconnect error:", err);
+    }
+  });
+
+  // initial online list
+  emitOnlineUsers();
 });
 
+// =====================
+// MULTER ERROR HANDLER
+// =====================
+app.use((err, req, res, next) => {
+  if (err instanceof multer.MulterError) {
+    console.error("Multer Error:", err);
 
+    return res.status(400).json({
+      error: `Upload error: ${err.code}${
+        err.field ? ` (${err.field})` : ""
+      }`
+    });
+  }
+
+  if (err) {
+    console.error("General Error:", err);
+
+    return res.status(500).json({
+      error: err.message || "Server error"
+    });
+  }
+
+  next();
+});
+
+// =====================
+// SPA FALLBACK
+// MUST BE LAST
+// =====================
+app.use((req, res) => {
+  res.sendFile(
+    path.join(__dirname, "public/index.html")
+  );
+});
+
+// =====================
 // START SERVER
+// =====================
 const PORT = process.env.PORT || 5000;
 
 httpServer.listen(PORT, "0.0.0.0", () => {

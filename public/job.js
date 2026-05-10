@@ -67,8 +67,10 @@ function setupModalControls() {
   const goBack = document.getElementById("goBack");
 
   goLogin?.addEventListener("click", () => {
-    const redirectUrl = `job.html?id=${currentJobId}`;
-    window.location.href = `login.html?redirect=${encodeURIComponent(redirectUrl)}`;
+    const redirectUrl = window.location.pathname + window.location.search;
+  
+    window.location.href =
+      `login.html?redirect=${encodeURIComponent(redirectUrl)}`;
   });
 
   goBack?.addEventListener("click", closeModal);
@@ -103,7 +105,7 @@ function isStudent() {
 // ===============================
 function isJobExpired(deadline) {
   if (!deadline) return false;
-  return new Date(deadline) < new Date();
+  return new Date(deadline).getTime() < Date.now();
 }
 
 function formatDate(dateString) {
@@ -247,16 +249,16 @@ function renderJobDetails(job) {
   const employerName = getEmployerName(job);
 
   container.innerHTML = `
-    <h2>${job.title || "Untitled Job"}</h2>
-    <p><strong>Employer:</strong> ${employerName}</p>
-    <p><strong>Location:</strong> ${job.location || "Not specified"}</p>
+    <h2>${escapeHTML(job.title || "Untitled Job")}</h2>
+    <p><strong>Employer:</strong> ${escapeHTML(employerName)}</p>
+    <p><strong>Location:</strong> ${escapeHTML(job.location || "Not specified")}</p>
     <p><strong>Salary:</strong> ${
       job.salary
         ? `${job.currency || "GMD"} ${Number(job.salary).toLocaleString()}`
         : "Not specified"
     }</p>
-    <p><strong>Category:</strong> ${job.category || "General"}</p>
-    <p><strong>Job Type:</strong> ${job.type || "Not specified"}</p>
+    <p><strong>Category:</strong> ${escapeHTML(job.category || "General")}</p>
+    <p><strong>Job Type:</strong> ${escapeHTML(job.type || "Not specified")}</p>
     <p><strong>Experience:</strong> ${
       job.experience !== undefined && job.experience !== null
         ? `${job.experience} year(s)`
@@ -271,15 +273,14 @@ function renderJobDetails(job) {
     </p>
 
     <p><strong>Description:</strong></p>
-    <p>${job.description || "No description provided."}</p>
-
+    <p>${escapeHTML(job.description || "No description provided.")}</p>
     <p><strong>Skills Required:</strong></p>
     <ul>
       ${
         job.skills
           ? job.skills
               .split(",")
-              .map((skill) => `<li>${skill.trim()}</li>`)
+              .map((skill) => `<li>${escapeHTML(skill.trim())}</li>`)
               .join("")
           : "<li>No skills listed</li>"
       }
@@ -293,9 +294,14 @@ function renderJobDetails(job) {
             ${job.files
               .map(
                 (file) => `
-                <a href="${encodeURI(file.url)}" target="_blank" class="attachment-btn">
-                  📄 View / Download: ${file.name}
-                </a>
+                <a 
+                href="${escapeHTML(encodeURI(file.url))}" 
+                target="_blank"
+                rel="noopener noreferrer"
+                class="attachment-btn"
+              >
+                📄 View / Download: ${escapeHTML(file.name)}
+              </a>
               `
               )
               .join("")}
@@ -441,6 +447,7 @@ async function saveJob() {
     isJobSaved = true;
     updateSaveButtonState();
     showToast(data.message || "Job saved successfully!", "success");
+    saveBtn?.blur();
   } catch (error) {
     console.error("Save job error FULL:", error);
 
@@ -639,4 +646,14 @@ async function downloadJobPDF() {
 
   const safeTitle = (currentJob.title || "job-details").replace(/[\\/:*?"<>|]/g, "_");
   doc.save(`${safeTitle}.pdf`);
+}
+//....................... Helper....................//
+function escapeHTML(str) {
+  return String(str).replace(/[&<>"']/g, m => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[m]);
 }

@@ -2,9 +2,7 @@ const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  const loginOverlay = document.getElementById("loginOverlay");
   const forgotPasswordOverlay = document.getElementById("forgotPasswordOverlay");
-  const resetPasswordOverlay = document.getElementById("resetPasswordOverlay");
 
   const loginForm = document.getElementById("loginForm");
   const loginMessage = document.getElementById("loginMessage");
@@ -19,12 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   const closeForgotModal = document.getElementById("closeForgotModal");
-  
-  // OPEN MODAL
-  forgotPasswordLink?.addEventListener("click", (e) => {
-    e.preventDefault();
-    forgotPasswordOverlay.style.display = "flex";
-  });
   
   // CLOSE MODAL
   closeForgotModal?.addEventListener("click", () => {
@@ -62,15 +54,19 @@ document.addEventListener("DOMContentLoaded", () => {
       if (res.ok && data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("role", data.user.role);
+              // ROLE BASED REDIRECT
+        const redirect = new URLSearchParams(window.location.search).get("redirect");
 
-        // ROLE BASED REDIRECT
-        if (data.user.role === "student") {
+          if (redirect && redirect.includes("job.html")) {
+          window.location.href = redirect;
+          } else if (data.user.role === "student") {
           window.location.href = "/dashboardStudent.html";
-        } else if (data.user.role === "employer") {
+          } else if (data.user.role === "employer") {
           window.location.href = "/dashboardEmployer.html";
-        } else {
+          } else {
           window.location.href = "/index.html";
-        }
+          }          
       } else {
         loginMessage.textContent = data.error || "Invalid login";
         loginMessage.classList.add("error");
