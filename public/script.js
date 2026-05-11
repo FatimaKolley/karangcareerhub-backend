@@ -235,14 +235,16 @@ function setupPublicAvatarUI() {
   });
 
   document.addEventListener("click", (e) => {
-    if (avatarWrap && !avatarWrap.contains(e.target)) {
-      avatarDropdown?.setAttribute("aria-hidden", "true");
+    if (!avatarWrap || !avatarDropdown) return;
+  
+    if (!avatarWrap.contains(e.target)) {
+      avatarDropdown.setAttribute("aria-hidden", "true");
     }
   });
 
   logoutBtn?.addEventListener("click", () => {
     forcePublicMode();
-    window.location.href = "/index.html";
+    window.location.href = "index.html";
   });
 }
 
@@ -273,23 +275,20 @@ function disableNotificationsInPublicMode() {
 // =====================================
 // INIT
 // =====================================
-document.addEventListener("DOMContentLoaded", async () => {
 
-  // ONLY run on homepage
-  if (window.location.pathname.endsWith("index.html") || window.location.pathname === "/" || window.location.pathname === "")   {
+document.addEventListener("DOMContentLoaded", async () => {
+  const path = window.location.pathname;
+
+  if (path === "/" || path.includes("index.html")) {
     forcePublicMode();
   }
 
   setupPublicAvatarUI();
   disableNotificationsInPublicMode();
 
-  // Maintain both sections exactly as requested
-  await loadRecentJobs();   // 4 most recent posted jobs
-  await loadPopularJobs();  // 4 most viewed jobs
+  await loadRecentJobs();
+  await loadPopularJobs();
 
-  // =====================
-  // GLOBAL PASSWORD TOGGLE
-  // =====================
   const toggles = document.querySelectorAll(".toggle-password");
 
   toggles.forEach(toggle => {
@@ -309,5 +308,3 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 });
-})();
-

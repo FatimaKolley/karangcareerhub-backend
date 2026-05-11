@@ -97,7 +97,7 @@ function isLoggedIn() {
 
 function isStudent() {
   const user = getUser();
-  return user?.role === "student" || localStorage.getItem("role") === "student";
+  return user?.role === "student";
 }
 
 // ===============================
@@ -142,8 +142,9 @@ function handleApplyClick() {
   if (!currentJob) {
     showToast("Job details are still loading.", "warning");
     return;
+    
   }
-
+    
   if (isJobExpired(currentJob.deadline)) {
     showToast("This job has expired. Applications are closed.", "warning");
     return;
@@ -211,8 +212,19 @@ async function loadJobDetails(jobId) {
 
   try {
     const res = await fetch(`${API_URL}/jobs/${jobId}`);
-    if (!res.ok) throw new Error(`Server returned ${res.status}`);
 
+    if (!res.ok) {
+      if (res.status === 404) {
+        throw new Error("Job not found");
+      }
+    
+      if (res.status === 500) {
+        throw new Error("Server error");
+      }
+    
+      throw new Error(`Server returned ${res.status}`);
+    }
+    
     const job = await res.json();
 
     if (!job || !job.title) {
@@ -236,6 +248,20 @@ async function loadJobDetails(jobId) {
       container.innerHTML = `<p>Failed to load job details. ${err.message}</p>`;
     }
   }
+}
+
+function safeFileUrl(url) {
+  if (!url) return "#";
+
+  if (
+    url.startsWith("http://") ||
+    url.startsWith("https://") ||
+    url.startsWith("/")
+  ) {
+    return encodeURI(url);
+  }
+
+  return "#";
 }
 
 // ===============================
@@ -295,7 +321,7 @@ function renderJobDetails(job) {
               .map(
                 (file) => `
                 <a 
-                href="${escapeHTML(encodeURI(file.url))}" 
+                href="${safeFileUrl(file.url)}"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="attachment-btn"
@@ -424,13 +450,19 @@ async function saveJob() {
       })
     });
 
-    const data = await res.json();
+    let data = {};
+
+    try {
+      data = await res.json();
+    } catch {
+      data = {};
+    }
     console.log("Save job response:", data);
 
     if (!res.ok) {
       if (saveBtn) {
         saveBtn.disabled = false;
-        updateActionButtons(currentJob);
+        if (currentJob) updateActionButtons(currentJob);
       }
 
       const msg = data.error || data.message || "Failed to save job";
@@ -474,7 +506,13 @@ async function checkIfJobIsSaved(jobId) {
       }
     });
 
-    const savedJobs = await res.json();
+    let savedJobs = [];
+
+    try {
+      savedJobs = await res.json();
+    } catch {
+      savedJobs = [];
+    }
 
     if (!res.ok) {
       console.error("Failed to check saved jobs:", savedJobs.error || savedJobs.message);
@@ -499,8 +537,8 @@ function updateSaveButtonState() {
   if (!saveBtn) return;
 
   if (isJobExpired(currentJob?.deadline)) {
-    saveBtn.textContent = "Expired Job";
     saveBtn.disabled = true;
+    saveBtn.textContent = "Expired Job";
     saveBtn.classList.add("disabled-btn");
     saveBtn.classList.remove("saved");
     return;

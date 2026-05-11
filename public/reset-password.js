@@ -1,13 +1,12 @@
 // config.js
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
-export default API_URL;
 
 document.addEventListener("DOMContentLoaded", () => {
 
   const form = document.getElementById("resetPasswordForm");
   const message = document.getElementById("resetMessage");
   const passwordInput = document.getElementById("resetPassword");
-
+  if (!form || !passwordInput) return;
   // =====================
   // PASSWORD TOGGLE
   // =====================
@@ -98,55 +97,52 @@ document.addEventListener("DOMContentLoaded", () => {
   });
   const strengthBar = document.getElementById("strengthBar");
   const strengthText = document.getElementById("strengthText");
-     // =====================
-  // PASSWORD STRENGTH CHECK
-  // =====================
-  passwordInput.addEventListener("input", () => {
-    const password = passwordInput.value;
-
-    let strength = 0;
-
-    if (password.length >= 8) strength++;
-    if (/[A-Z]/.test(password)) strength++;
-    if (/[a-z]/.test(password)) strength++;
-    if (/[0-9]/.test(password)) strength++;
-    if (/[^A-Za-z0-9]/.test(password)) strength++;
-
-    // Update UI
-    if (strength <= 2) {
-      strengthBar.style.background = "red";
-      strengthBar.style.width = "30%";
-      strengthText.textContent = "Weak";
-    } else if (strength <= 4) {
-      strengthBar.style.background = "orange";
-      strengthBar.style.width = "60%";
-      strengthText.textContent = "Medium";
-    } else {
-      strengthBar.style.background = "green";
-      strengthBar.style.width = "100%";
-      strengthText.textContent = "Strong";
-    }
-  });
+  if (passwordInput && strengthBar && strengthText) {
+    passwordInput.addEventListener("input", () => {
+      const password = passwordInput.value;
+  
+      let strength = 0;
+  
+      if (password.length >= 8) strength++;
+      if (/[A-Z]/.test(password)) strength++;
+      if (/[a-z]/.test(password)) strength++;
+      if (/[0-9]/.test(password)) strength++;
+      if (/[^A-Za-z0-9]/.test(password)) strength++;
+  
+      if (strength <= 2) {
+        strengthBar.style.background = "red";
+        strengthBar.style.width = "30%";
+        strengthText.textContent = "Weak";
+      } else if (strength <= 4) {
+        strengthBar.style.background = "orange";
+        strengthBar.style.width = "60%";
+        strengthText.textContent = "Medium";
+      } else {
+        strengthBar.style.background = "green";
+        strengthBar.style.width = "100%";
+        strengthText.textContent = "Strong";
+      }
+    });
+  }
       // Match Password//
-  const confirmInput = document.getElementById("resetConfirmPassword");
+      const confirmInput = document.getElementById("resetConfirmPassword");
 
-  confirmInput.addEventListener("input", () => {
-  const password = passwordInput.value;
-  const confirm = confirmInput.value;
-
-  if (!confirm) {
-    message.textContent = "";
-    return;
-  }
-
-  if (password === confirm) {
-    message.textContent = "✅ Passwords match";
-    message.className = "success";
-  } else {
-    message.textContent = "❌ Passwords do not match";
-    message.className = "error";
-  }
-});
- 
-
-});
+      if (confirmInput) {
+        confirmInput.addEventListener("input", () => {
+          const password = passwordInput.value;
+          const confirm = confirmInput.value;
+      
+          if (!confirm) {
+            message.textContent = "";
+            return;
+          }
+      
+          if (password === confirm) {
+            message.textContent = "✅ Passwords match";
+            message.className = "success";
+          } else {
+            message.textContent = "❌ Passwords do not match";
+            message.className = "error";
+          }
+        });
+      }

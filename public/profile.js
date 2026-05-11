@@ -1,4 +1,5 @@
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
+const BASE_URL = "https://karangcareerhub-api.onrender.com";
 
 document.addEventListener("DOMContentLoaded", () => {
   loadUserFromBackend();
@@ -18,7 +19,9 @@ function loadUserProfile(user) {
   document.getElementById("navStudentName").textContent = fullName || "Student";
 
   const img = user.profile_image
-  ? "http://karangcareerhub-api.onrender.com/api" + user.profile_image + "?t=" + Date.now()
+  ? (user.profile_image.startsWith("http")
+      ? user.profile_image
+      : BASE_URL + user.profile_image)
   : "image/avatar-placeholder.png";
 
   document.getElementById("userProfilePic").src = img;
@@ -49,12 +52,12 @@ function loadUserProfile(user) {
   // Resume
   const resume = document.getElementById("infoResume");
   if (user.resume) {
-    resume.href = "http://karangcareerhub-api.onrender.com/api" + user.resume;
+    resume.href = BASE_URL + user.resume;
     resume.textContent = "Download Resume";
+    resume.target = "_blank";
   } else {
     resume.textContent = "No file";
   }
-
   // Links
   setLink("infoPortfolio", user.portfolioLink);
   setLink("infoLinkedin", user.linkedinLink);
@@ -106,16 +109,18 @@ function setupDropdown() {
   const avatar = document.getElementById("userProfilePic");
   const dropdown = document.getElementById("dropdownMenu");
 
-  avatar.addEventListener("click", (e) => {
-    e.stopPropagation(); // ✅ prevents instant closing
-    dropdown.classList.toggle("show");
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!dropdown.contains(e.target)) {
-      dropdown.classList.remove("show");
-    }
-  });
+  if (avatar && dropdown) {
+    avatar.addEventListener("click", (e) => {
+      e.stopPropagation();
+      dropdown.classList.toggle("show");
+    });
+  
+    document.addEventListener("click", (e) => {
+      if (dropdown && !dropdown.contains(e.target)) {
+        dropdown.classList.remove("show");
+      }
+    });
+  }
 }
 
 
@@ -123,9 +128,10 @@ function setupDropdown() {
 // LOGOUT
 // =============================
 function setupLogout() {
-  document.getElementById("logoutBtn").addEventListener("click", () => {
-    localStorage.clear();
-    window.location.href = "index.html";
+  const logoutBtn = document.getElementById("logoutBtn");
+  logoutBtn?.addEventListener("click", () => {
+  localStorage.clear();
+  window.location.href = "index.html";
   });
 }
 
@@ -164,21 +170,16 @@ document.addEventListener("DOMContentLoaded", () => {
        // =========================
       // HEADER (CLEAN + MODERN)
       // =========================
-      doc.setFont("helvetica", "bold");
-      doc.setFontSize(20);
-      doc.text(fullName.toUpperCase(), 20, 20);
-       
       doc.setFillColor(11, 62, 145);
       doc.rect(0, 0, 210, 30, "F");
 
       doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(20);
+      doc.text(fullName.toUpperCase(), 20, 20);
 
-      doc.setTextColor(0, 0, 0);
-
-      y = 40;
-
-        
-
+       // reset color
+      doc.setTextColor(0, 0, 0); 
 
 
      // Inline contact line
