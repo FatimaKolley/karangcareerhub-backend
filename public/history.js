@@ -110,41 +110,6 @@ function renderViewedJobCard(job) {
 
   return card;
 }
-
-
-document.addEventListener("DOMContentLoaded", loadHistory);
-
-function loadHistory() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) return window.location.href = "index.html";
-
-  fetch(`http://localhost:5000/api/jobs/history/${user.id}`)
-    .then(res => res.json())
-    .then(data => renderHistory(data))
-    .catch(err => console.error(err));
-}
-
-function renderHistory(list) {
-  const box = document.getElementById("historyList");
-  box.innerHTML = "";
-
-  if (list.length === 0) {
-    box.innerHTML = "<p>No job history yet.</p>";
-    return;
-  }
-
-  list.forEach(job => {
-    box.innerHTML += `
-      <div class="history-card">
-        <h3>${job.title}</h3>
-        <p><strong>Company:</strong> ${job.employer}</p>
-        <p>${job.description.substring(0, 100)}...</p>
-        <p class="date">Viewed: ${new Date(job.viewed_at).toLocaleString()}</p>
-        <a href="job.html?id=${job.id}" class="btn">View Job</a>
-      </div>
-    `;
-  });
-}
 const historyList = document.getElementById("historyList");
 
 document.addEventListener("DOMContentLoaded", loadHistory);
