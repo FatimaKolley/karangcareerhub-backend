@@ -279,8 +279,8 @@ function disableNotificationsInPublicMode() {
 document.addEventListener("DOMContentLoaded", async () => {
   const path = window.location.pathname;
 
-  if (path === "/" || path.includes("index.html")) {
-    forcePublicMode();
+  if (path === "/" || path.endsWith("index.html") || path === "") {
+  forcePublicMode();
   }
 
   setupPublicAvatarUI();
@@ -308,3 +308,4 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 });
+})();

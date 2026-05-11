@@ -1,6 +1,5 @@
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
-const token = localStorage.getItem("token");
 const downloadBtn = document.getElementById("downloadApplicationBtn");
 
 function getApplicationIdFromUrl() {
@@ -8,9 +7,18 @@ function getApplicationIdFromUrl() {
   return params.get("applicationId");
 }
 
+function safe(value) {
+  return value ? String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;") : "";
+}
+
 async function downloadApplicationForm() {
   const applicationId = getApplicationIdFromUrl();
-
+  const token = localStorage.getItem("token");
   console.log("Application ID from URL:", applicationId);
 
   if (!applicationId) {
@@ -76,37 +84,37 @@ async function downloadApplicationForm() {
       </head>
       <body>
         <h1>KarangCareerHub - Job Application Form</h1>
-        <p><strong>Application ID:</strong> ${app.id}</p>
+        <p><strong>Application ID:</strong> ${safe(app.id)}</p>
         <p><strong>Application Date:</strong> ${app.applied_at ? new Date(app.applied_at).toLocaleString() : "N/A"}</p>
 
         <div class="section">
           <h2>Job Details</h2>
           <div class="box">
-            <p><span class="label">Job Title:</span> ${app.job_title || "N/A"}</p>
-            <p><span class="label">Employer:</span> ${app.employer || app.company_name || "N/A"}</p>
+            <p><span class="label">Job Title:</span> ${safe(app.job_title || "N/A")}</p>
+            <p><span class="label">Employer:</span> ${safe(app.employer || app.company_name || "N/A")}</p>
           </div>
         </div>
 
         <div class="section">
           <h2>Applicant Details</h2>
           <div class="box">
-            <p><span class="label">First Name:</span> ${app.first_name || ""}</p>
-            <p><span class="label">Last Name:</span> ${app.last_name || ""}</p>
-            <p><span class="label">Email:</span> ${app.email || ""}</p>
-            <p><span class="label">Primary Phone:</span> ${app.phone_primary || ""}</p>
-            <p><span class="label">Secondary Phone:</span> ${app.phone_secondary || ""}</p>
-            <p><span class="label">Location:</span> ${app.location || ""}</p>
-            <p><span class="label">Portfolio:</span> ${app.portfolio_link || ""}</p>
-            <p><span class="label">LinkedIn:</span> ${app.linkedin_link || ""}</p>
-            <p><span class="label">GitHub:</span> ${app.github_link || ""}</p>
-            <p><span class="label">Status:</span> ${app.status || "Pending"}</p>
+            <p><span class="label">First Name:</span> ${safe(app.first_name || "")}</p>
+            <p><span class="label">Last Name:</span> ${safe(app.last_name || "")}</p>
+            <p><span class="label">Email:</span> ${safe(app.email || "")}</p>
+            <p><span class="label">Primary Phone:</span> ${safe(app.phone_primary || "")}</p>
+            <p><span class="label">Secondary Phone:</span> ${safe(app.phone_secondary || "")}</p>
+            <p><span class="label">Location:</span> ${safe(app.location || "")}</p>
+            <p><span class="label">Portfolio:</span> ${safe(app.portfolio_link || "")}</p>
+            <p><span class="label">LinkedIn:</span> ${safe(app.linkedin_link || "")}</p>
+            <p><span class="label">GitHub:</span> ${safe(app.github_link || "")}</p>
+            <p><span class="label">Status:</span> ${safe(app.status || "Pending")}</p>
           </div>
         </div>
 
         <div class="section">
           <h2>Cover Letter</h2>
           <div class="box">
-            <p>${(app.message || "").replace(/\n/g, "<br>")}</p>
+          <p>${safe(app.message || "").replace(/\n/g, "<br>")}</p>
           </div>
         </div>
 
