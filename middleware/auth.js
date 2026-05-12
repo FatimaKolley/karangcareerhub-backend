@@ -11,7 +11,7 @@ const auth = async (req, res, next) => {
 
     const token = header.split(" ")[1];
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || "karang_secret");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     const [users] = await pool.execute(
       "SELECT id, role FROM users WHERE id = ?",
@@ -23,10 +23,15 @@ const auth = async (req, res, next) => {
     }
 
     req.user = users[0];
+
     next();
 
   } catch (err) {
-    return res.status(401).json({ error: "Invalid or expired token" });
+    console.error("Auth Middleware Error:", err);
+
+    return res.status(401).json({
+      error: "Invalid or expired token"
+    });
   }
 };
 

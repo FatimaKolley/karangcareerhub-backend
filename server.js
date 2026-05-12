@@ -35,6 +35,7 @@ const app = express();
 // CORS
 // =====================
 const allowedOrigins = [
+  "https://karangcareerhub.netlify.app",
   "https://karangcareerhub.onrender.com",
   "http://localhost:5500",
   "http://127.0.0.1:5500"
