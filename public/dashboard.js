@@ -764,9 +764,23 @@ function applyForJob(jobId) {
 document.addEventListener(
   "DOMContentLoaded",
   () => {
-    const user = JSON.parse(
-      localStorage.getItem("user")
-    );
+    let user = null;
+
+    try {
+      user = JSON.parse(
+        localStorage.getItem("user")
+      );
+    } catch (err) {
+      console.error(
+        "Invalid localStorage user:",
+        err
+      );
+    
+      localStorage.removeItem("user");
+    
+      window.location.href =
+        "index.html";
+    }
 
     const token =
       localStorage.getItem("token");
@@ -815,71 +829,98 @@ document.addEventListener(
     }
 
     // Avatar
-    const avatar =
+const avatar =
+document.getElementById(
+  "userProfilePic"
+);
+
+if (avatar) {
+
+// SAFE profile image check
+const profileImage =
+  user &&
+  typeof user === "object" &&
+  user.profile_image
+    ? user.profile_image
+    : null;
+
+avatar.src = profileImage
+  ? `https://karangcareerhub-api.onrender.com${profileImage}?t=${Date.now()}`
+  : "image/avatar-placeholder.png";
+  
+avatar.onerror = () => {
+  avatar.onerror = null;
+  avatar.src = "/image/avatar-placeholder.png";
+};
+
+avatar.addEventListener(
+  "click",
+  () => {
+    const dropdown =
       document.getElementById(
-        "userProfilePic"
+        "dropdownMenu"
       );
 
-    if (avatar) {
-      avatar.src = user.profile_image
-        ? `https://karangcareerhub-api.onrender.com${user.profile_image}?t=${Date.now()}`
-        : "image/avatar-placeholder.png";
+    if (!dropdown) return;
 
-      avatar.onerror = () => {
-        avatar.src =
-          "image/avatar-placeholder.png";
-      };
-
-      avatar.addEventListener(
-        "click",
-        () => {
-          const dropdown =
-            document.getElementById(
-              "dropdownMenu"
-            );
-
-          if (!dropdown) return;
-
-          const isOpen =
-            dropdown.classList.contains(
-              "show"
-            );
-
-          if (isOpen) {
-            hideDropdown();
-          } else {
-            showDropdown();
-          }
-        }
-      );
-    }
+    dropdown.classList.toggle(
+      "show"
+    );
+  }
+);
+}
 
     async function refreshUser() {
-      const res = await fetch(
-        `${API_URL}/users/me`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem(
-              "token"
-            )}`
-          }
+      try {
+        const token = localStorage.getItem("token");
+    
+        if (!token) {
+          throw new Error("No token");
         }
-      );
-
-      if (!res.ok) {
-        throw new Error(
-          "Failed to refresh user"
+    
+        const res = await fetch(
+          `${API_URL}/users/me`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+    
+        if (!res.ok) {
+          throw new Error(
+            `HTTP Error: ${res.status}`
+          );
+        }
+    
+        const data = await res.json();
+    
+        if (!data.user) {
+          throw new Error("Invalid user data");
+        }
+    
+        localStorage.setItem(
+          "user",
+          JSON.stringify(data.user)
+        );
+    
+        return data.user;
+    
+      } catch (err) {
+        console.error(
+          "refreshUser failed:",
+          err
+        );
+    
+        showToast?.(
+          "Failed to load profile",
+          "error"
+        );
+    
+        return JSON.parse(
+          localStorage.getItem("user")
         );
       }
-
-      const data = await res.json();
-
-      localStorage.setItem(
-        "user",
-        JSON.stringify(data.user)
-      );
-
-      return data.user;
     }
 
     // Initial dashboard load
@@ -887,38 +928,37 @@ document.addEventListener(
       try {
         const freshUser =
           await refreshUser();
-
+    
         const fullName =
-          (freshUser.first_name || "") +
-          (freshUser.last_name
-            ? " " + freshUser.last_name
-            : "");
-
+          `${freshUser.first_name || ""} ${freshUser.last_name || ""}`.trim();
+    
         const nameEl =
           document.getElementById(
             "navStudentName"
           );
-
+    
         if (nameEl) {
           nameEl.textContent =
-            fullName.trim() || "Student";
+            fullName || "Student";
         }
-
+    
         updateProfileProgress(
           calculateProfileCompletion(
             freshUser
           )
         );
-
+    
         displaySuggestions(
           generateProfileSuggestions(
             freshUser
           )
         );
-
+    
+        // DON'T BLOCK DASHBOARD
         loadAIRecommendations(
           freshUser
         );
+    
       } catch (err) {
         console.error(
           "Dashboard init error:",
