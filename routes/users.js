@@ -526,4 +526,24 @@ router.delete("/deactivate-account", auth, async (req, res) => {
   }
 });
 
+// logout-all//
+
+router.post("/logout-all", auth, async (req, res) => {
+  try {
+
+    // future token blacklist logic here
+
+    res.json({
+      message: "Logged out from all devices"
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: "Logout failed"
+    });
+  }
+});
+
 export default router;
