@@ -47,66 +47,8 @@
 
     <h2>Account Settings</h2>
     <p class="subtitle">
-      Manage your account preferences, security, and verification details.
+      Manage your account security, and verification details.
     </p>
-
-    <!-- ================= PROFILE SETTINGS ================= -->
-    <section class="settings-section">
-      <h3>Profile Settings</h3>
-
-      <div class="form-grid">
-        <div>
-          <label>First Name</label>
-          <input type="text" placeholder="First Name">
-        </div>
-
-        <div>
-          <label>Last Name</label>
-          <input type="text" placeholder="Last Name">
-        </div>
-
-        <div>
-          <label>Email Address</label>
-          <input type="email" disabled>
-        </div>
-
-        <div>
-          <label>Phone Number</label>
-          <input type="tel" placeholder="+220...">
-        </div>
-      </div>
-
-      <button class="save-btn">Save Changes</button>
-    </section>
-
-    <!-- ================= COMPANY SETTINGS ================= -->
-    <section class="settings-section">
-      <h3>Company Information</h3>
-
-      <div class="form-grid">
-        <div>
-          <label>Company Name</label>
-          <input type="text">
-        </div>
-
-        <div>
-          <label>Business Registration Number</label>
-          <input type="text">
-        </div>
-
-        <div>
-          <label>Company Website</label>
-          <input type="url">
-        </div>
-
-        <div>
-          <label>Company Address</label>
-          <input type="text">
-        </div>
-      </div>
-
-      <button class="save-btn">Update Company Info</button>
-    </section>
 
     <!-- ================= SECURITY SETTINGS ================= -->
     <section class="settings-section">
@@ -115,22 +57,23 @@
       <div class="form-grid">
         <div>
           <label>Current Password</label>
-          <input type="password">
+          <input type="password" id="currentPassword">
         </div>
 
         <div>
           <label>New Password</label>
-          <input type="password">
+          <input type="password" id="newPassword">
         </div>
 
         <div>
           <label>Confirm New Password</label>
-          <input type="password">
+          <input type="password" id="confirmPassword">
         </div>
       </div>
 
-      <button class="save-btn">Change Password</button>
-
+      <button class="save-btn" id="changePasswordBtn">
+        Change Password
+      </button>
       <hr>
 
       <h4>Active Sessions</h4>
@@ -144,27 +87,29 @@
 
       <div class="checkbox-group">
         <label>
-          <input type="checkbox" checked>
+          <input type="checkbox" id="jobAlerts" checked>
           New job application alerts
         </label>
 
         <label>
-          <input type="checkbox" checked>
+          <input type="checkbox" id="jobReminders" checked>
           Job expiration reminders
         </label>
 
         <label>
-          <input type="checkbox">
+          <input type="checkbox" id="platformAnnouncements">
           Platform announcements
         </label>
 
         <label>
-          <input type="checkbox" checked>
+          <input type="checkbox" id="verificationUpdates" checked>
           Employer verification updates
         </label>
       </div>
 
-      <button class="save-btn">Save Notification Settings</button>
+      <button class="save-btn" id="saveNotificationBtn">
+        Save Notification Settings
+      </button>
     </section>
 
     <!-- ================= VERIFICATION STATUS ================= -->

@@ -1,4 +1,4 @@
-resetToken: { type: String };
+/*resetToken: { type: String };
 resetTokenExpiry: { type: Date };
 
 
@@ -13,4 +13,4 @@ const userSchema = new mongoose.Schema({
   resetTokenExpiry: Date,
 });
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("User", userSchema);*/

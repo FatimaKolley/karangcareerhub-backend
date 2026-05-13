@@ -445,4 +445,85 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+/* =============================
+   CHANGE PASSWORD
+============================= */
+router.put("/change-password", auth, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        error: "All fields are required"
+      });
+    }
+
+    const [rows] = await db.execute(
+      "SELECT * FROM users WHERE id=?",
+      [req.user.id]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({
+        error: "User not found"
+      });
+    }
+
+    const user = rows[0];
+
+    const match = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
+
+    if (!match) {
+      return res.status(400).json({
+        error: "Current password incorrect"
+      });
+    }
+
+    const hashed = await bcrypt.hash(newPassword, 10);
+
+    await db.execute(
+      "UPDATE users SET password=? WHERE id=?",
+      [hashed, req.user.id]
+    );
+
+    res.json({
+      message: "Password updated successfully"
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: "Failed to change password"
+    });
+  }
+});
+
+/* =============================
+   DEACTIVATE ACCOUNT
+============================= */
+router.delete("/deactivate-account", auth, async (req, res) => {
+  try {
+
+    await db.execute(
+      "DELETE FROM users WHERE id=?",
+      [req.user.id]
+    );
+
+    res.json({
+      message: "Account deleted successfully"
+    });
+
+  } catch (err) {
+    console.error(err);
+
+    res.status(500).json({
+      error: "Failed to delete account"
+    });
+  }
+});
+
 export default router;
