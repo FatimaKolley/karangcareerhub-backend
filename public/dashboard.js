@@ -846,11 +846,11 @@ const profileImage =
 
     avatar.src = profileImage
     ? `https://karangcareerhub-api.onrender.com${profileImage}?t=${Date.now()}`
-    : "image/default-avatar.png";
+    : "/image/avatar-placeholder.png";
   
   avatar.onerror = () => {
     avatar.onerror = null;
-    avatar.src = "image/default-avatar.png";
+    avatar.src = "/image/avatar-placeholder.png";
   };
 
 avatar.addEventListener(
