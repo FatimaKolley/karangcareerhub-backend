@@ -1030,9 +1030,9 @@ function escapeHTML(str) {
   })[m]);
 }
 
-
 function formatImage(path) {
-  if (!path) return "https://via.placeholder.com/40";
+  if (!path) return "image/default-avatar.png";
+
   if (path.startsWith("http")) return path;
 
   return "https://karangcareerhub-api.onrender.com" + path;
@@ -1043,7 +1043,7 @@ function setProfileAvatar(user) {
 
   if (!user || !avatar) return;
 
-  let img = "https://via.placeholder.com/40";
+  let img = "image/default-avatar.png";
 
   if (user.company_logo) {
     img = formatImage(user.company_logo);
@@ -1051,7 +1051,7 @@ function setProfileAvatar(user) {
     img = formatImage(user.profile_image);
   }
 
-  avatar.src = img + (img.includes("?") ? "&" : "?") + "t=" + Date.now();
+  avatar.src = img + "?t=" + Date.now();
 }
 /* ===============================
    DARK MODE
