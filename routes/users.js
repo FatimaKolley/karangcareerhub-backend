@@ -187,19 +187,19 @@ router.post(
 
       // FILES
       const profile = req.files?.profile_image?.[0]
-        ? `/uploads/profile_pics/${req.files.profile_image[0].filename}`
+        ? req.files.profile_image[0].path
         : undefined;
 
       const companyLogo = req.files?.company_logo?.[0]
-        ? `/uploads/profile_pics/${req.files.company_logo[0].filename}`
+        ? req.files.company_logo[0].path
         : undefined;
 
       const resume = req.files?.resume?.[0]
-        ? `/uploads/resumes/${req.files.resume[0].filename}`
+        ? req.files.resume[0].path
         : undefined;
 
       const idDocumentFile = req.files?.id_document?.[0]
-        ? `/uploads/id_docs/${req.files.id_document[0].filename}`
+        ? req.files.id_docs[0].path
         : undefined;
 
       // BUILD QUERY

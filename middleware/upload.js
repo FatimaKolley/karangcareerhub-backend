@@ -1,37 +1,33 @@
 import multer from "multer";
-import path from "path";
-import fs from "fs";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import cloudinary from "../config/cloudinary.js";
 
-// ✅ Ensure folders exist
-const createFolder = (folder) => {
-  if (!fs.existsSync(folder)) {
-    fs.mkdirSync(folder, { recursive: true });
-  }
-};
+const storage = new CloudinaryStorage({
+  cloudinary,
 
-createFolder("uploads/profile_pics");
-createFolder("uploads/resumes");
-createFolder("uploads/id_docs");
+  params: async (req, file) => {
+    let folder = "karangcareerhub/misc";
 
-// ✅ STORAGE FIX
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    if (file.fieldname === "profile_image" || file.fieldname === "company_logo") {
-      cb(null, "uploads/profile_pics");
-    } 
-    else if (file.fieldname === "resume") {
-      cb(null, "uploads/resumes");
-    } 
-    else if (file.fieldname === "id_document") {
-      cb(null, "uploads/id_docs");
-    } 
-    else {
-      cb(null, "uploads");
+    if (
+      file.fieldname === "profile_image" ||
+      file.fieldname === "company_logo"
+    ) {
+      folder = "karangcareerhub/profile_pics";
     }
-  },
 
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-" + file.originalname);
+    if (file.fieldname === "resume") {
+      folder = "karangcareerhub/resumes";
+    }
+
+    if (file.fieldname === "id_document") {
+      folder = "karangcareerhub/id_docs";
+    }
+
+    return {
+      folder,
+      allowed_formats: ["jpg", "png", "jpeg", "webp"],
+      public_id: `${Date.now()}-${file.originalname}`
+    };
   }
 });
 
