@@ -36,8 +36,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const profileBtn = document.getElementById("profileBtn");
   if (profileBtn) profileBtn.src = img;
 
-  const dropdownImg = document.querySelector(".dropdown-profile-pic");
-  if (dropdownImg) dropdownImg.src = img;
+  const dropdownImg = document.getElementById("dropdownProfilePic");
+    if (dropdownImg) dropdownImg.src = img;
 
   const nameEl = document.getElementById("dropdownEmployerName");
   if (nameEl) {
@@ -56,8 +56,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 /*====================== IMAGE FIX =======================*/
 function formatImage(path) {
-  if (!path) return "https://via.placeholder.com/60";
-  if (path.startsWith("http")) return path;
+  if (!path) return "image/default-avatar.png";
+
+  if (path.startsWith("http")) {
+    return path;
+  }
+
   return "https://karangcareerhub-api.onrender.com" + path;
 }
 
