@@ -844,14 +844,20 @@ const profileImage =
     ? user.profile_image
     : null;
 
-    avatar.src = profileImage
-  ? `${profileImage}?t=${Date.now()}`
-  : "/image/default-avatar.png";
+  // FULL backend image URL
+ avatar.src = profileImage
+ ? `https://karangcareerhub-api.onrender.com${profileImage}?t=${Date.now()}`
+ : "https://karangcareerhub-api.onrender.com/uploads/profile_pics/default-avatar.jpg";
+
   
-  avatar.onerror = () => {
-    avatar.onerror = null;
-    avatar.src = "/image/default-avatar.png";
-  };
+  
+// Fallback if image fails
+avatar.onerror = () => {
+  avatar.onerror = null;
+
+  avatar.src =
+    "https://karangcareerhub-api.onrender.com/uploads/profile_pics/default-avatar.jpg";
+};
 
 avatar.addEventListener(
   "click",
