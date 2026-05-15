@@ -1031,11 +1031,8 @@ function escapeHTML(str) {
 }
 
 function formatImage(path) {
-  if (!path) return "image/default-avatar.png";
-
-  if (path.startsWith("http")) return path;
-
-  return "https://karangcareerhub-api.onrender.com" + path;
+  if (!path) return "/image/default-avatar.png";
+  return path;
 }
 
 function setProfileAvatar(user) {

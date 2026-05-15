@@ -2,19 +2,20 @@ import multer from "multer";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
 import cloudinary from "../config/cloudinary.js";
 
+
 const storage = new CloudinaryStorage({
   cloudinary,
 
   params: async (req, file) => {
-    let folder = "karangcareerhub/misc";
+    let folder = "karangcareerhub";
 
-    if (
-      file.fieldname === "profile_image" ||
-      file.fieldname === "company_logo"
-    ) {
+    
+    if (file.fieldname === "profile_image") {
       folder = "karangcareerhub/profile_pics";
     }
-
+    if (file.fieldname === "company_logo") {
+      folder = "karangcareerhub/company_logos";
+    }
     if (file.fieldname === "resume") {
       folder = "karangcareerhub/resumes";
     }
@@ -25,8 +26,10 @@ const storage = new CloudinaryStorage({
 
     return {
       folder,
-      allowed_formats: ["jpg", "png", "jpeg", "webp"],
-      public_id: `${Date.now()}-${file.originalname}`
+      resource_type:
+        file.fieldname === "resume"
+          ? "raw"
+          : "image"
     };
   }
 });
@@ -34,3 +37,10 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage });
 
 export default upload;
+
+
+
+
+ 
+
+

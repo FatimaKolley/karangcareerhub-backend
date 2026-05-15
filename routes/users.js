@@ -199,8 +199,9 @@ router.post(
         : undefined;
 
       const idDocumentFile = req.files?.id_document?.[0]
-        ? req.files.id_docs[0].path
+        ? req.files.id_document[0].path
         : undefined;
+        
 
       // BUILD QUERY
       let fields = [];
