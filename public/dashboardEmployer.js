@@ -1123,3 +1123,16 @@ function updateStats(jobs) {
   document.getElementById("activeJobs").textContent = activeJobs;
   document.getElementById("expiredJobs").textContent = expiredJobs;
 }
+
+function updateTotalApplicants(applications) {
+  const total = Array.isArray(applications)
+    ? applications.length
+    : 0;
+
+  const totalApplicants =
+    document.getElementById("totalApplicants");
+
+  if (totalApplicants) {
+    totalApplicants.textContent = total;
+  }
+}
