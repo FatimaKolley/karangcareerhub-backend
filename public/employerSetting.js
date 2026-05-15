@@ -110,12 +110,22 @@ async function loadEmployerProfile() {
       document.getElementById("dropdownEmployerName").textContent =
         fullName || "Employer";
     
-      const profileImg = document.getElementById("profileBtn");
-    
-      if (data.user.profile_image) {
-        profileImg.src =
-          `https://karangcareerhub-api.onrender.com${data.user.profile_image}`;
-      }
+        const profileImg = document.getElementById("profileBtn");
+        const dropdownImg = document.getElementById("dropdownProfilePic");
+        
+        const imagePath =
+          data.user.company_logo ||
+          data.user.profile_image;
+        
+        if (imagePath) {
+          const fullImage =
+            imagePath.startsWith("http")
+              ? imagePath
+              : `https://karangcareerhub-api.onrender.com${imagePath}`;
+        
+          if (profileImg) profileImg.src = fullImage;
+          if (dropdownImg) dropdownImg.src = fullImage;
+        }
     }
   } catch (err) {
     console.error("Profile load error:", err);
