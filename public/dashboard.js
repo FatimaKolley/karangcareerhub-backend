@@ -844,14 +844,14 @@ const profileImage =
     ? user.profile_image
     : null;
 
-avatar.src = profileImage
-  ? `https://karangcareerhub-api.onrender.com${profileImage}?t=${Date.now()}`
-  : "image/avatar-placeholder.png";
+    avatar.src = profileImage
+    ? `https://karangcareerhub-api.onrender.com${profileImage}?t=${Date.now()}`
+    : "image/default-avatar.png";
   
-avatar.onerror = () => {
-  avatar.onerror = null;
-  avatar.src = "/image/avatar-placeholder.png";
-};
+  avatar.onerror = () => {
+    avatar.onerror = null;
+    avatar.src = "image/default-avatar.png";
+  };
 
 avatar.addEventListener(
   "click",
