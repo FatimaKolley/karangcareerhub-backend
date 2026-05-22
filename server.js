@@ -14,7 +14,6 @@ import { setIO }
 from "./socket/socket.js";
 import rateLimit from "express-rate-limit";
 import hpp from "hpp";
-import xss from "xss-clean";
 
 
 // =====================
@@ -75,20 +74,14 @@ app.use(
     credentials: true
   })
 );
-
+app.use(hpp());
 
 const limiter = rateLimit({
-
   windowMs: 15 * 60 * 1000,
-
   max: 100,
-
-  message:
-    "Too many requests. Try again later."
+  message: "Too many requests. Try again later."
 });
 
-app.use(xss());
-app.use(hpp());
 app.use(limiter);
 // =====================
 // MIDDLEWARES
@@ -187,6 +180,8 @@ const io = new Server(httpServer, {
 });
 
 setIO(io);
+adminChatSocket(io);
+
 
 export { io };
 
@@ -276,9 +271,14 @@ io.on("connection", (socket) => {
 
       if (!senderId || !receiverId) return;
 
-      if (!message || !message.trim()) return;
-
-      message = message.trim();
+      if (
+        (!message || !message.trim()) &&
+        !fileUrl
+      ) {
+        return;
+      }
+      
+      message = message?.trim() || "";
 
       // save to DB
       const [result] = await db.execute(
