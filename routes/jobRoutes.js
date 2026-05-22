@@ -171,7 +171,7 @@ router.get("/history", auth, async (req, res) => {
         j.*, 
         v.viewed_at,
         CONCAT(u.first_name, ' ', u.last_name) AS employer_name
-      FROM job_view v
+      FROM job_views v
       JOIN jobs j ON v.job_id = j.id
       LEFT JOIN users u ON j.employer_id = u.id
       WHERE v.user_id = ?
@@ -182,6 +182,56 @@ router.get("/history", auth, async (req, res) => {
   } catch (err) {
     console.error("❌ History Error:", err);
     res.status(500).json({ error: "Failed to load history" });
+  }
+});
+
+// ===============================
+// RECORD JOB VIEW
+// ===============================
+router.post("/view", auth, async (req, res) => {
+  try {
+    if (req.user.role !== "student") {
+      return res.status(403).json({
+        error: "Only students allowed"
+      });
+    }
+
+    const { jobId } = req.body;
+
+    if (!jobId) {
+      return res.status(400).json({
+        error: "Job ID required"
+      });
+    }
+
+    // optional duplicate prevention
+    const [existing] = await db.execute(
+      `SELECT id
+       FROM job_views
+       WHERE user_id = ?
+       AND job_id = ?
+       AND viewed_at > NOW() - INTERVAL 1 HOUR`,
+      [req.user.id, jobId]
+    );
+
+    if (existing.length === 0) {
+      await db.execute(
+        `INSERT INTO job_views (user_id, job_id)
+         VALUES (?, ?)`,
+        [req.user.id, jobId]
+      );
+    }
+
+    res.json({
+      success: true
+    });
+
+  } catch (err) {
+    console.error("VIEW TRACK ERROR:", err);
+
+    res.status(500).json({
+      error: "Failed to track view"
+    });
   }
 });
 
@@ -243,21 +293,72 @@ router.delete("/save/:jobId", auth, async (req, res) => {
 });
 
 /* =============================
-   RECORD JOB VIEW (SECURE)
+   GET EMPLOYER JOBS
 ============================= */
-router.post("/view", auth, async (req, res) => {
+router.get("/my-jobs", auth, async (req, res) => {
   try {
-    const { job_id } = req.body;
 
-    await db.execute(`
-      INSERT INTO job_view (user_id, job_id, viewed_at)
-      VALUES (?, ?, NOW())
-    `, [req.user.id, job_id]);
+    if (req.user.role !== "employer") {
+      return res.status(403).json({
+        error: "Only employers allowed"
+      });
+    }
 
-    res.json({ message: "View recorded" });
+    const [rows] = await db.execute(`
+    SELECT
+    j.*,
+
+    COUNT(DISTINCT a.id) AS total_applicants,
+
+    SUM(
+      CASE
+        WHEN a.status = 'Accepted'
+        THEN 1
+        ELSE 0
+      END
+    ) AS accepted,
+
+    SUM(
+      CASE
+        WHEN a.status = 'Rejected'
+        THEN 1
+        ELSE 0
+      END
+    ) AS rejected,
+
+    SUM(
+      CASE
+        WHEN a.status = 'Reviewed'
+        THEN 1
+        ELSE 0
+      END
+    ) AS reviewed,
+
+    COUNT(DISTINCT s.id) AS saved
+
+FROM jobs j
+
+LEFT JOIN applications a
+ON j.id = a.job_id
+
+LEFT JOIN saved_jobs s
+ON j.id = s.job_id
+
+WHERE j.employer_id = ?
+
+GROUP BY j.id
+
+ORDER BY j.created_at DESC
+    `, [req.user.id]);
+
+    res.json(rows);
+
   } catch (err) {
-    console.error("❌ View Error:", err);
-    res.status(500).json({ error: "Failed to record view" });
+    console.error("❌ Employer Jobs Error:", err);
+
+    res.status(500).json({
+      error: "Failed to load employer jobs"
+    });
   }
 });
 

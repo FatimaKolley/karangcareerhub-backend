@@ -1,0 +1,21 @@
+body{
+    font-family: Arial;
+    padding: 20px;
+  }
+  
+  .cards{
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 20px;
+  }
+  
+  .card{
+    background: #f4f4f4;
+    padding: 20px;
+    border-radius: 10px;
+  }
+  
+  canvas{
+    max-width: 900px;
+    margin-top: 20px;
+  }

@@ -39,6 +39,20 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+import validator from "validator";
+
+if (!validator.isEmail(email)) {
+
+  return res.status(400).json({
+    error: "Invalid email"
+  });
+}
+if (password.length < 6) {
+
+  return res.status(400).json({
+    error: "Password too short"
+  });
+}
 
 export const login = async (req, res) => {
   try {

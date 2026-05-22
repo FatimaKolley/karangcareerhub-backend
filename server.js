@@ -6,6 +6,16 @@ import dotenv from "dotenv";
 import multer from "multer";
 import { createServer } from "http";
 import { Server } from "socket.io";
+import adminChatSocket
+from "./socket/adminChatSocket.js";
+import adminChatRoutes
+from "./routes/adminChatRoutes.js";
+import { setIO }
+from "./socket/socket.js";
+import rateLimit from "express-rate-limit";
+import hpp from "hpp";
+import xss from "xss-clean";
+
 
 // =====================
 // DB + ROUTES
@@ -15,8 +25,15 @@ import userRoutes from "./routes/users.js";
 import jobRoutes from "./routes/jobRoutes.js";
 import applicationsRoutes from "./routes/applicationRoutes.js";
 import uploadRoutes from "./routes/uploadRoutes.js";
-import historyRoutes from "./routes/historyRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
+import notificationRoutes from "./routes/notifications.js";
+import adminAuthRoutes from "./routes/adminAuthRoutes.js";
+import superAdminRoutes from "./routes/superAdminRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
+import reportRoutes from "./routes/reportRoutes.js";
+import chatUploadRoutes from "./routes/chatUploadRoutes.js";
+import helmet from "helmet";
+
 
 dotenv.config();
 
@@ -30,6 +47,8 @@ const __dirname = path.dirname(__filename);
 // EXPRESS APP
 // =====================
 const app = express();
+app.use(helmet());
+
 
 // =====================
 // CORS
@@ -57,6 +76,20 @@ app.use(
   })
 );
 
+
+const limiter = rateLimit({
+
+  windowMs: 15 * 60 * 1000,
+
+  max: 100,
+
+  message:
+    "Too many requests. Try again later."
+});
+
+app.use(xss());
+app.use(hpp());
+app.use(limiter);
 // =====================
 // MIDDLEWARES
 // =====================
@@ -89,9 +122,14 @@ app.use("/api/users", userRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationsRoutes);
 app.use("/api/upload", uploadRoutes);
-app.use("/api/history", historyRoutes);
 app.use("/api/chat", chatRoutes);
-
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/admin-auth", adminAuthRoutes);
+app.use("/api/super-admin", superAdminRoutes);
+app.use("/api/admin-chat", adminChatRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/reports", reportRoutes);
+app.use("/api/chat-upload", chatUploadRoutes);
 // =====================
 // JOB SEARCH
 // =====================
@@ -132,6 +170,7 @@ app.get("/api/jobs/search", async (req, res) => {
   }
 });
 
+
 // =====================
 // HTTP SERVER
 // =====================
@@ -146,6 +185,10 @@ const io = new Server(httpServer, {
     credentials: true
   }
 });
+
+setIO(io);
+
+export { io };
 
 // =====================
 // ONLINE USERS
@@ -226,7 +269,7 @@ io.on("connection", (socket) => {
   // =====================
   socket.on("sendMessage", async (data) => {
     try {
-      let { senderId, receiverId, message } = data;
+      let { senderId, receiverId, message,  fileUrl, fileType } = data;
 
       senderId = String(senderId);
       receiverId = String(receiverId);
@@ -241,19 +284,40 @@ io.on("connection", (socket) => {
       const [result] = await db.execute(
         `
         INSERT INTO messages
-        (sender_id, receiver_id, message, is_read)
-        VALUES (?, ?, ?, ?)
+        (
+        sender_id,
+        receiver_id,
+        message,
+        file_url,
+        file_type,
+        is_read
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
         `,
-        [senderId, receiverId, message, false]
+        [
+          senderId,
+          receiverId,
+          message,
+          fileUrl || null,
+          fileType || null,
+          false
+        ]
       );
 
       // message payload
       const messageData = {
+
         id: result.insertId,
+      
         senderId,
         receiverId,
         message,
+      
+        fileUrl,
+        fileType,
+      
         is_read: false,
+      
         created_at: new Date()
       };
 
@@ -358,16 +422,21 @@ app.use((err, req, res, next) => {
   next();
 });
 
+
+
 // =====================
 // SPA FALLBACK
 // MUST BE LAST
 // =====================
-app.use((req, res) => {
-  res.sendFile(
-    path.join(__dirname, "public/index.html")
-  );
-});
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api")) {
+    return res.status(404).json({
+      error: "API route not found"
+    });
+  }
 
+  res.sendFile(path.join(__dirname, "public/index.html"));
+});
 // =====================
 // START SERVER
 // =====================

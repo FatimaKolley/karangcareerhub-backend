@@ -202,6 +202,30 @@ function handleSaveClick() {
 }
 
 // ===============================
+// RECORD JOB VIEW
+// ===============================
+async function recordJobView(jobId) {
+  const token = getToken();
+
+  // only logged in students
+  if (!token || !isStudent()) return;
+
+  try {
+    await fetch(`${API_URL}/jobs/view`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ jobId })
+    });
+
+  } catch (err) {
+    console.error("View tracking failed:", err);
+  }
+}
+
+// ===============================
 // LOAD JOB DETAILS
 // ===============================
 async function loadJobDetails(jobId) {
@@ -233,6 +257,7 @@ async function loadJobDetails(jobId) {
 
     currentJob = job;
     renderJobDetails(job);
+    recordJobView(jobId);
 
     // Only check saved state if NOT public from index and user is logged in student
     if (!isPublicFromIndex && isLoggedIn() && isStudent()) {

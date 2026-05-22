@@ -53,6 +53,67 @@ function setupEmployerProfileDropdown() {
 
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
+/* ===============================
+   CUSTOM TOAST
+================================ */
+function showToast(message, type = "info") {
+  const container = document.getElementById("toastContainer");
+
+  if (!container) return;
+
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(20px)";
+
+    setTimeout(() => {
+      toast.remove();
+    }, 300);
+
+  }, 3000);
+}
+
+/* ===============================
+   CUSTOM CONFIRM
+================================ */
+function showConfirm(message, title = "Confirm Action") {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("confirmModal");
+    const msg = document.getElementById("confirmMessage");
+    const titleEl = document.getElementById("confirmTitle");
+
+    const okBtn = document.getElementById("confirmOkBtn");
+    const cancelBtn = document.getElementById("confirmCancelBtn");
+
+    titleEl.textContent = title;
+    msg.textContent = message;
+
+    modal.classList.add("show");
+
+    const cleanup = () => {
+      modal.classList.remove("show");
+
+      okBtn.onclick = null;
+      cancelBtn.onclick = null;
+    };
+
+    okBtn.onclick = () => {
+      cleanup();
+      resolve(true);
+    };
+
+    cancelBtn.onclick = () => {
+      cleanup();
+      resolve(false);
+    };
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   applyEmployerTheme();
   setupEmployerThemeToggle();
@@ -70,6 +131,8 @@ function setupSettingsActions() {
   const saveNotificationBtn = document.getElementById("saveNotificationBtn");
   const logoutAllBtn = document.getElementById("logoutAllBtn");
   const deactivateBtn = document.getElementById("deactivateAccountBtn");
+
+  setupPasswordStrength();
 
   if (changePasswordBtn) {
     changePasswordBtn.addEventListener("click", changePassword);
@@ -141,11 +204,24 @@ async function changePassword() {
   const confirmPassword = document.getElementById("confirmPassword").value;
 
   if (!currentPassword || !newPassword || !confirmPassword) {
-    return alert("Please fill all password fields");
+    return showToast("Please fill all password fields", "warning");
   }
 
   if (newPassword !== confirmPassword) {
-    return alert("New passwords do not match");
+    return showToast("New passwords do not match");
+  }
+  const strongPassword =
+  newPassword.length >= 8 &&
+  /[A-Z]/.test(newPassword) &&
+  /[a-z]/.test(newPassword) &&
+  /[0-9]/.test(newPassword) &&
+  /[^A-Za-z0-9]/.test(newPassword);
+
+  if (!strongPassword) {
+  return showToast(
+    "Password must contain uppercase, lowercase, number and special character",
+    "warning"
+  );
   }
 
   try {
@@ -166,16 +242,16 @@ async function changePassword() {
     const data = await res.json();
 
     if (res.ok) {
-      alert("Password changed successfully");
+      showToast("Password changed successfully", "success");
       document.getElementById("currentPassword").value = "";
       document.getElementById("newPassword").value = "";
       document.getElementById("confirmPassword").value = "";
     } else {
-      alert(data.message || "Failed to change password");
+      showToast(data.message || "Failed to change password");
     }
   } catch (err) {
     console.error(err);
-    alert("Server error");
+    showToast("Server error", "error");
   }
 }
 
@@ -187,8 +263,17 @@ async function saveNotifications() {
     const token = localStorage.getItem("token");
 
     const settings = {
-      email_notif: document.getElementById("jobAlerts").checked,
-      sms_notif: document.getElementById("jobReminders").checked
+      new_application_alerts:
+        document.getElementById("jobAlerts").checked,
+    
+      job_expiry_reminders:
+        document.getElementById("jobReminders").checked,
+    
+      platform_announcements:
+        document.getElementById("platformAnnouncements").checked,
+    
+      verification_updates:
+        document.getElementById("verificationUpdates").checked
     };
 
     const res = await fetch(`${API_URL}/users/update-settings`, {
@@ -207,15 +292,14 @@ async function saveNotifications() {
         "employerNotifications",
         JSON.stringify(settings)
       );
-
-      alert("Notification settings saved");
+      showToast("Notification settings saved");
     } else {
-      alert(data.error || "Failed to save settings");
+      showToast(data.error || "Failed to save settings");
     }
 
   } catch (err) {
     console.error(err);
-    alert("Server error");
+    showToast("Server error", "error");
   }
 }
 
@@ -223,7 +307,12 @@ async function saveNotifications() {
    LOGOUT ALL DEVICES
 ================================ */
 async function logoutAllDevices() {
-  const confirmLogout = confirm("Logout from all devices?");
+
+  const confirmLogout = await showConfirm(
+    "Logout from all devices?",
+    "Logout All Devices"
+  );
+  
   if (!confirmLogout) return;
 
   try {
@@ -240,7 +329,7 @@ async function logoutAllDevices() {
       localStorage.clear();
       window.location.href = "login.html";
     } else {
-      alert("Failed to logout all devices");
+      showToast("Failed to logout all devices");
     }
   } catch (err) {
     console.error(err);
@@ -251,10 +340,11 @@ async function logoutAllDevices() {
    DEACTIVATE ACCOUNT
 ================================ */
 async function deactivateAccount() {
-  const confirmDelete = confirm(
-    "This will permanently delete your account. Continue?"
+  const confirmDelete = await showConfirm(
+    "This will permanently delete your account. Continue?",
+    "Delete Account"
   );
-
+  
   if (!confirmDelete) return;
 
   try {
@@ -271,9 +361,78 @@ async function deactivateAccount() {
       localStorage.clear();
       window.location.href = "index.html";
     } else {
-      alert("Failed to deactivate account");
+      showToast("Failed to deactivate account");
     }
   } catch (err) {
     console.error(err);
   }
 }
+
+/* ===============================
+   PASSWORD STRENGTH
+================================ */
+function setupPasswordStrength() {
+  const passwordInput = document.getElementById("newPassword");
+  const strengthFill = document.getElementById("strengthFill");
+  const strengthText = document.getElementById("strengthText");
+
+  if (!passwordInput) return;
+
+  passwordInput.addEventListener("input", () => {
+    const password = passwordInput.value;
+
+    let score = 0;
+
+    // length
+    if (password.length >= 8) score++;
+
+    // uppercase
+    if (/[A-Z]/.test(password)) score++;
+
+    // lowercase
+    if (/[a-z]/.test(password)) score++;
+
+    // number
+    if (/[0-9]/.test(password)) score++;
+
+    // special char
+    if (/[^A-Za-z0-9]/.test(password)) score++;
+
+    // EMPTY
+    if (password.length === 0) {
+      strengthFill.style.width = "0%";
+      strengthText.textContent = "Password strength";
+      strengthText.style.color = "#6b7280";
+      return;
+    }
+
+    // WEAK
+    if (score <= 2) {
+      strengthFill.style.width = "33%";
+      strengthFill.style.background = "#dc2626";
+
+      strengthText.textContent = "Weak Password";
+      strengthText.style.color = "#dc2626";
+    }
+
+    // GOOD
+    else if (score <= 4) {
+      strengthFill.style.width = "66%";
+      strengthFill.style.background = "#d97706";
+
+      strengthText.textContent = "Good Password";
+      strengthText.style.color = "#d97706";
+    }
+
+    // STRONG
+    else {
+      strengthFill.style.width = "100%";
+      strengthFill.style.background = "#16a34a";
+
+      strengthText.textContent = "Strong Password";
+      strengthText.style.color = "#16a34a";
+    }
+  });
+}
+
+

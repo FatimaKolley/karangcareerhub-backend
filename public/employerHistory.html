@@ -55,7 +55,7 @@
     
       <!-- Dynamic Jobs Container -->
       <div id="historyJobs" class="history-jobs-container">
-        <!-- Jobs will be injected here by pesteJob.js -->
+      <!-- Jobs will be injected here by employerHistory.js -->
       </div>
     </section>
     
@@ -113,9 +113,8 @@
           </tr>
         </thead>
 
-        <tbody>
-          <!-- Loaded dynamically -->
-        </tbody>
+        <tbody id="jobsTable"></tbody>
+
       </table>
     </section>
 
@@ -134,9 +133,7 @@
           </tr>
         </thead>
 
-        <tbody>
-          <!-- Loaded dynamically -->
-        </tbody>
+        <tbody id="applicationsTable"></tbody>
       </table>
     </section>
     <!--analytics-->
@@ -182,6 +179,7 @@
     </section>
 
   </main>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="employerTheme.js"></script>
 <script src="employerHistory.js"></script>
 </body>

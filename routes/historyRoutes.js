@@ -1,4 +1,4 @@
-import express from "express";
+/*import express from "express";
 import db from "../db.js";
 import auth from "../middleware/auth.js";
 
@@ -8,7 +8,7 @@ const router = express.Router();
 /* ===============================
    RECORD JOB VIEW
 ================================ */
-router.post("/record-view", auth, async (req, res) => {
+/*router.post("/record-view", auth, async (req, res) => {
   try {
     const userId = req.user.id;
     const { job_id } = req.body;
@@ -29,7 +29,7 @@ router.post("/record-view", auth, async (req, res) => {
 /* ===============================
    GET USER HISTORY
 ================================ */
-router.get("/my-history", auth, async (req, res) => {
+/*router.get("/my-history", auth, async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -57,4 +57,4 @@ router.get("/my-history", auth, async (req, res) => {
   }
 });
 
-export default router;
+export default router;*/

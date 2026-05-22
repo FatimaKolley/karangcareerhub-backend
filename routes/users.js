@@ -1,15 +1,20 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import db from "../db.js";
 import auth from "../middleware/auth.js";
 import upload from "../middleware/upload.js";
 import dotenv from "dotenv";
 import nodemailer from "nodemailer";
+import { authLimiter } from "../middleware/rateLimiter.js";
 
 dotenv.config();
 
 const router = express.Router();
+
+const strongPassword =
+/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&]).{8,}$/;
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -23,9 +28,17 @@ const transporter = nodemailer.createTransport({
 ============================= */
 function generateToken(user) {
   return jwt.sign(
-    { id: user.id, role: user.role },
+    {
+      id: user.id,
+      role: user.role,
+      tokenVersion: user.token_version || 0
+    },
     process.env.JWT_SECRET,
-    { expiresIn: "2h" }
+    {
+      expiresIn: "2h",
+      issuer: "karangcareerhub",
+      audience: "karangcareerhub-users"
+    }
   );
 }
 
@@ -43,20 +56,73 @@ router.post("/signup", async (req, res) => {
       role
     } = req.body;
 
-    // DEBUG (keep temporarily)
-    console.log("SIGNUP BODY:", req.body);
+    const normalizedEmail = email?.trim().toLowerCase();
 
-    if (!first_name || !last_name || !date_of_birth || !email || !password || !role) {
-      return res.status(400).json({ error: "All fields are required" });
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    /*console.log("SIGNUP BODY:", req.body);*/
+
+    if (
+      !first_name ||
+      !last_name ||
+      !date_of_birth ||
+      !email ||
+      !password ||
+      !role
+    ) {
+      return res.status(400).json({
+        error: "All fields are required"
+      });
+    }
+
+    if (!emailRegex.test(normalizedEmail)) {
+      return res.status(400).json({
+        error: "Invalid email format"
+      });
+    }
+    if (!strongPassword.test(password)) {
+      return res.status(400).json({
+        error:
+          "Password must contain uppercase, lowercase, number and be at least 8 characters."
+      });
     }
 
     const [existing] = await db.execute(
       "SELECT id FROM users WHERE email = ?",
-      [email]
+      [normalizedEmail]
     );
 
     if (existing.length > 0) {
       return res.status(400).json({ error: "Email already registered" });
+    }
+      
+    const allowedRoles = ["student", "employer"];
+
+    if (!allowedRoles.includes(role)) {
+      return res.status(400).json({
+        error: "Invalid role"
+      });
+    }
+
+     
+    const birthDate = new Date(date_of_birth);
+    const today = new Date();
+    
+    let age = today.getFullYear() - birthDate.getFullYear();
+    
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (
+      monthDiff < 0 ||
+      (monthDiff === 0 && today.getDate() < birthDate.getDate())
+    ) {
+      age--;
+    }  
+    if (age < 16) {
+
+    return res.status(400).json({
+      error: "You must be at least 16 years old"
+    });
     }
 
     const hashed = await bcrypt.hash(password, 10);
@@ -64,7 +130,7 @@ router.post("/signup", async (req, res) => {
       `INSERT INTO users 
        (first_name, last_name, date_of_birth, email, password, role)
        VALUES (?, ?, ?, ?, ?, ?)`,
-      [first_name, last_name, date_of_birth, email, hashed, role]
+      [first_name, last_name, date_of_birth, normalizedEmail, hashed, role]
     );
 
     const user = {
@@ -93,13 +159,15 @@ router.post("/signup", async (req, res) => {
 /* =============================
     LOGIN
 ============================= */
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    const normalizedEmail = email?.trim().toLowerCase();
+
     const [rows] = await db.execute(
       "SELECT * FROM users WHERE email = ?",
-      [email]
+      [normalizedEmail]
     );
 
     if (!rows.length)
@@ -107,6 +175,11 @@ router.post("/login", async (req, res) => {
 
     const user = rows[0];
 
+    if (user.is_active === 0) {
+      return res.status(403).json({
+        error: "Account has been deactivated"
+      });
+    }
     const match = await bcrypt.compare(password, user.password);
 
     if (!match)
@@ -116,6 +189,7 @@ router.post("/login", async (req, res) => {
 
     // ✅ FINAL CLEAN RESPONSE
     const { password: _, ...safeUser } = user;
+    
 
     res.json({
       message: "Login successful",
@@ -187,7 +261,7 @@ router.post(
 
       // FILES
       const profile = req.files?.profile_image?.[0]
-        ? req.files.profile_image[0].path
+        ? req.files.profile_image[0].path.replace(/\\/g, "/")
         : undefined;
 
       const companyLogo = req.files?.company_logo?.[0]
@@ -213,21 +287,25 @@ router.post(
           values.push(value);
         }
       };
-      if (email) {
+      const normalizedEmail = clean(email)?.toLowerCase();
+
+      if (normalizedEmail) {
         const [existing] = await db.execute(
           "SELECT id FROM users WHERE email=? AND id != ?",
-          [email, id]
+          [normalizedEmail, id]
         );
       
         if (existing.length > 0) {
-          return res.status(400).json({ error: "Email already in use" });
+          return res.status(400).json({
+            error: "Email already in use"
+          });
         }
       }
 
       // TEXT
       addField("first_name", clean(first_name));
       addField("last_name", clean(last_name));
-      addField("email", clean(email));
+      addField("email", normalizedEmail);
       addField("phone", clean(phone));
       addField("optional_phone", clean(optional_phone));
       addField("gender", clean(gender));
@@ -260,7 +338,7 @@ router.post(
         values.push(profile);
       }
 
-      if (companyLogo !== undefined) {
+      if (companyLogo) {
         fields.push("company_logo = ?");
         values.push(companyLogo);
       }
@@ -317,7 +395,12 @@ router.get("/me", auth, async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const { password, ...safeUser } = rows[0];
+    const {
+      password,
+      reset_token,
+      reset_token_expiry,
+      ...safeUser
+    } = rows[0];
 
     res.json({ user: safeUser }); // ✅ ALWAYS WRAP
 
@@ -331,33 +414,66 @@ router.get("/me", auth, async (req, res) => {
 ============================= */
 router.post("/update-settings", auth, async (req, res) => {
   try {
-    const { email_notif, sms_notif } = req.body;
+
+    const {
+      saved_job_reminder_notif,
+      platform_notif,
+      chat_notif,
+      application_notif,
+      weekly_job_notif,
+      email_notif,
+      sms_notif
+    } = req.body;
 
     await db.execute(
-      "UPDATE users SET email_notif=?, sms_notif=? WHERE id=?",
-      [email_notif, sms_notif, req.user.id]
+      `UPDATE users SET
+        saved_job_reminder_notif = ?,
+        platform_notif = ?,
+        chat_notif = ?,
+        application_notif = ?,
+        weekly_job_notif = ?,
+        email_notif = ?,
+        sms_notif = ?
+      WHERE id = ?`,
+      [
+        saved_job_reminder_notif,
+        platform_notif,
+        chat_notif,
+        application_notif,
+        weekly_job_notif,
+        email_notif,
+        sms_notif,
+        req.user.id
+      ]
     );
 
-    res.json({ message: "Settings updated successfully" });
+    res.json({
+      message: "Settings updated successfully"
+    });
 
   } catch (err) {
+
     console.error("UPDATE SETTINGS ERROR:", err);
-    res.status(500).json({ error: "Failed to update settings" });
+
+    res.status(500).json({
+      error: "Failed to update settings"
+    });
   }
 });
 
 /* =============================
     UPDATE PASSWORD
 ============================= */
-import crypto from "crypto";
 
-router.post("/forgot-password", async (req, res) => {
-  try {
+router.post("/forgot-password", authLimiter, async (req, res) => {
+    try {
     const { email } = req.body;
 
-    const [users] = await db.execute(
+    const normalizedEmail = email?.trim().toLowerCase();
+
+     const [users] = await db.execute(
       "SELECT * FROM users WHERE email = ?",
-      [email]
+     [normalizedEmail]
     );
 
     if (!users.length) {
@@ -367,15 +483,21 @@ router.post("/forgot-password", async (req, res) => {
     const user = users[0];
 
     // CREATE TOKEN
-    const token = crypto.randomBytes(32).toString("hex");
+    const rawToken = crypto.randomBytes(32).toString("hex");
+
+    const hashedToken = crypto
+      .createHash("sha256")
+      .update(rawToken)
+      .digest("hex");
     const expiry = new Date(Date.now() + 1000 * 60 * 30); // 30 mins
 
     await db.execute(
       "UPDATE users SET reset_token=?, reset_token_expiry=? WHERE id=?",
-      [token, expiry, user.id]
+      [hashedToken, expiry, user.id]
     );
 
-    const resetLink = `${process.env.FRONTEND_URL}/reset-password.html?token=${token}`;
+    const resetLink =
+    `${process.env.FRONTEND_URL}/reset-password.html?token=${rawToken}`;
 
     // 📧 SEND EMAIL
     await transporter.sendMail({
@@ -407,18 +529,29 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 // reset password//
-router.post("/reset-password", async (req, res) => {
-  try {
+router.post("/reset-password", authLimiter, async (req, res) => {
+    try {
     const { token, password } = req.body;
 
     if (!token || !password) {
       return res.status(400).json({ error: "Missing token or password" });
     }
+    if (!strongPassword.test(password)) {
+      return res.status(400).json({
+        error:
+          "Password must contain uppercase, lowercase, number and be at least 8 characters."
+      });
+    }
 
     // FIND USER WITH TOKEN
+    const hashedToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex");
+  
     const [rows] = await db.execute(
-      "SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()",
-      [token]
+    "SELECT * FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()",
+    [hashedToken]
     );
 
     if (!rows.length) {
@@ -433,7 +566,10 @@ router.post("/reset-password", async (req, res) => {
     // UPDATE PASSWORD + CLEAR TOKEN
     await db.execute(
       `UPDATE users 
-       SET password=?, reset_token=NULL, reset_token_expiry=NULL 
+       SET password=?,
+           reset_token=NULL,
+           reset_token_expiry=NULL,
+           token_version = token_version + 1
        WHERE id=?`,
       [hashed, user.id]
     );
@@ -482,11 +618,20 @@ router.put("/change-password", auth, async (req, res) => {
         error: "Current password incorrect"
       });
     }
+    if (!strongPassword.test(newPassword)) {
+      return res.status(400).json({
+        error:
+          "Password must contain uppercase, lowercase, number and be at least 8 characters."
+      });
+    }
 
     const hashed = await bcrypt.hash(newPassword, 10);
 
     await db.execute(
-      "UPDATE users SET password=? WHERE id=?",
+      `UPDATE users
+       SET password=?,
+           token_version = token_version + 1
+       WHERE id=?`,
       [hashed, req.user.id]
     );
 
@@ -502,7 +647,6 @@ router.put("/change-password", auth, async (req, res) => {
     });
   }
 });
-
 /* =============================
    DEACTIVATE ACCOUNT
 ============================= */
@@ -510,19 +654,19 @@ router.delete("/deactivate-account", auth, async (req, res) => {
   try {
 
     await db.execute(
-      "DELETE FROM users WHERE id=?",
+      "UPDATE users SET is_active = 0 WHERE id = ?",
       [req.user.id]
     );
 
     res.json({
-      message: "Account deleted successfully"
+      message: "Account deactivated successfully"
     });
 
   } catch (err) {
     console.error(err);
 
     res.status(500).json({
-      error: "Failed to delete account"
+      error: "Failed to deactivate account"
     });
   }
 });
@@ -532,7 +676,12 @@ router.delete("/deactivate-account", auth, async (req, res) => {
 router.post("/logout-all", auth, async (req, res) => {
   try {
 
-    // future token blacklist logic here
+    await db.execute(
+      `UPDATE users
+       SET token_version = token_version + 1
+       WHERE id = ?`,
+      [req.user.id]
+    );
 
     res.json({
       message: "Logged out from all devices"

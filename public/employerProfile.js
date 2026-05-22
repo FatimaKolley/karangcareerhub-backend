@@ -56,8 +56,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 /*====================== IMAGE FIX =======================*/
 function formatImage(path) {
-  if (!path) return "/image/default-avatar.png";
-  return path;
+
+  if (!path) {
+    return "image/default-avatar.png";
+  }
+
+  if (path.startsWith("http")) {
+    return path;
+  }
+
+  return `https://karangcareerhub-api.onrender.com/${path.replace(/^\/+/, "")}`;
 }
 
 /*====================== GET PROFILE IMAGE =======================*/

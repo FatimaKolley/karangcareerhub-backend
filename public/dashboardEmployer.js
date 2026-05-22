@@ -1,5 +1,5 @@
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
-
+const socket = io("https://karangcareerhub-api.onrender.com");
 /* ===============================
    INITIALIZATION
 ================================ */
@@ -14,14 +14,33 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   setupProfileDropdown();
   setupDarkMode();
-  await loadEmployerJobs();
+  const jobs = await loadEmployerJobs();
+   allJobs = jobs || [];
   await loadEmployerDashboardData();
   setupFilters();
+  await loadNotifications();
+  setInterval(loadNotifications, 30000);
 
   
   if (user) {
     setEmployerInfo(user);
     setProfileAvatar(user);
+  
+    socket.emit("join", user.id);
+
+    socket.off("new_notification");
+  
+    socket.on("new_notification", (notification) => {
+  
+      console.log("🔔 New notification:", notification);
+  
+      loadNotifications();
+  
+      showToast(notification.title + " 🔔");
+    });
+    window.addEventListener("beforeunload", () => {
+      socket.disconnect();
+    });
   }
 
   // ✅ MOVE DELETE BUTTON HERE
@@ -54,7 +73,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     
         closeDeleteModal();
         jobToDelete = null;
-        loadEmployerJobs();
+        const jobs = await loadEmployerJobs();
+        allJobs = jobs || [];
+        updateStats(allJobs);
     
       } catch (err) {
         console.error(err);
@@ -85,7 +106,7 @@ async function protectEmployer() {
 
     const data = await res.json();
 
-    if (!res.ok || data.user.role !== "employer") {
+    if (!res.ok || !data.user || data.user.role !== "employer") {
       throw new Error();
     }
 
@@ -107,7 +128,7 @@ function setEmployerInfo(user) {
   const displayName = 
     (user.first_name && user.last_name)
       ? `${user.first_name} ${user.last_name}`
-      : user.first_name || user.last_name || user.email.split("@")[0] || "Employer";
+      : user.first_name || user.last_name || (user.email?.split("@")[0]) || "Employer";
 
   const empName = document.getElementById("empName");
   const profileEmployerName = document.getElementById("profileEmployerName");
@@ -179,6 +200,9 @@ async function fetchUser() {
 ================================ */
 function renderJobs(jobs) {
   const tbody = document.getElementById("jobsTableBody");
+
+  if (!tbody) return;
+  
   tbody.innerHTML = "";
 
   const now = new Date();
@@ -207,13 +231,13 @@ function renderJobs(jobs) {
    tr.innerHTML = `
     <td>${escapeHTML(job.title || "Untitled Job")}</td>
     <td>${escapeHTML(category)}</td>
-    <td>${views}</td>
+    <td>${escapeHTML(String(views))}</td>
     <td>
-      <button class="mini-btn" onclick="viewApplicants(${job.id}, '${escapeSingleQuotes(job.title || "Untitled Job")}')">
-        View (${applicantsCount})
+      <button class="mini-btn" onclick="viewApplicants(${Number(job.id)}, '${escapeSingleQuotes(job.title || "Untitled Job")}')">
+        View (${Number(applicantsCount)})
       </button>
     </td>
-    <td>${deadline}</td>
+    <td>${escapeHTML(deadline)}</td>
     <td>
       <span class="${calculateStatus(job.deadline) === 'Active' ? 'status-active' : 'status-expired'}">
         ${calculateStatus(job.deadline)}
@@ -270,11 +294,11 @@ async function viewApplicants(jobId, title) {
       div.className = "applicant-item";
     
       div.innerHTML = `
-        <div class="applicant-name">${app.student_name}</div>
-        <div>${app.student_email}</div>
+        <div class="applicant-name">${escapeHTML(app.student_name)}</div>
+        <div>${escapeHTML(app.student_email)}</div>
     
-        <span class="status-badge ${(app.status || "").toLowerCase()}">
-          ${app.status}
+        <span class="status-badge ${escapeHTML(app.status || "").toLowerCase()}">
+          ${escapeHTML(app.status)}
         </span>
       `;
     
@@ -302,62 +326,75 @@ function showApplicantDetails(app) {
 
   const skillsArray = Array.isArray(app.skills)
   ? app.skills
-  : (app.skills || "").split(",");
+  : (app.skills || "")
+      .split(",")
+      .map(s => s.trim())
+      .filter(Boolean);
+
   const matchScore = calculateMatchScore(app);
   const isTopCandidate = matchScore >= 80;
+
+  const safeResume = encodeURIComponent(app.resume_url || "");
 
   details.innerHTML = `
     <div class="details-header">
       <div>
         <h2>
           ${escapeHTML(app.student_name || "")}
-          ${isTopCandidate ? '<span class="top-badge">⭐ Top Candidate</span>' : ''}
+          ${isTopCandidate ? '<span class="top-badge">⭐ Top Candidate</span>' : ""}
         </h2>
-        <p>${app.student_email}</p>
+
+        <p>${escapeHTML(app.student_email || "")}</p>
       </div>
-      <p><strong>Match Score:</strong> ${matchScore}%</p>
-      <span class="status-badge ${(app.status || "").toLowerCase()}">
-      ${app.status || "Pending"}
+
+      <p><strong>Match Score:</strong> ${escapeHTML(matchScore)}%</p>
+
+      <span class="status-badge ${escapeHTML(app.status || "").toLowerCase()}">
+        ${escapeHTML(app.status || "Pending")}
       </span>
     </div>
 
-    <p><strong>Location:</strong> ${app.location || "N/A"}</p>
-    <p><strong>Education:</strong> ${app.education || "N/A"}</p>
-    <p><strong>Experience:</strong> ${app.experience || "N/A"}</p>
+    <p><strong>Location:</strong> ${escapeHTML(app.location || "N/A")}</p>
+    <p><strong>Education:</strong> ${escapeHTML(app.education || "N/A")}</p>
+    <p><strong>Experience:</strong> ${escapeHTML(app.experience || "N/A")}</p>
 
     <div class="skills">
-      ${skillsArray.map(s => `<span class="skill-tag">${s}</span>`).join("")}
+      ${skillsArray
+        .map(s => `<span class="skill-tag">${escapeHTML(s)}</span>`)
+        .join("")}
     </div>
 
     <div class="app-message-box">
-       ${escapeHTML(app.message || "No message provided")}
+      ${escapeHTML(app.message || "No message provided")}
     </div>
 
     <div class="action-buttons">
 
-    <button onclick="previewCV('${app.resume_url}')">📄 View CV</button>
-  
-    <button onclick="downloadApplicantProfile(${app.application_id})">
-      📥 Download Profile
-    </button>
+      <button onclick="previewCV(decodeURIComponent('${safeResume}'))">
+        📄 View CV
+      </button>
 
-    <button onclick="openChat(${app.student_id})">
-      💬 Chat
-    </button>
-  
-    <button onclick="updateApplicationStatus(${app.application_id}, 'shortlisted')">
-      ⭐ Shortlist
-    </button>
-  
-    <button onclick="updateApplicationStatus(${app.application_id}, 'accepted')">
-      ✅ Accept
-    </button>
-  
-    <button onclick="updateApplicationStatus(${app.application_id}, 'rejected')">
-      ❌ Reject
-    </button>
-  
-  </div>
+      <button onclick="downloadApplicantProfile(${Number(app.application_id)})">
+        📥 Download Profile
+      </button>
+
+      <button onclick="openChat(${Number(app.student_id)})">
+        💬 Chat
+      </button>
+
+      <button onclick="updateApplicationStatus(${Number(app.application_id)}, 'shortlisted')">
+        ⭐ Shortlist
+      </button>
+
+      <button onclick="updateApplicationStatus(${Number(app.application_id)}, 'accepted')">
+        ✅ Accept
+      </button>
+
+      <button onclick="updateApplicationStatus(${Number(app.application_id)}, 'rejected')">
+        ❌ Reject
+      </button>
+
+    </div>
   `;
 }
 //============================================
@@ -369,22 +406,30 @@ function previewCV(url) {
   }
 
   try {
-    // ✅ Only allow http/https URLs
-    const parsedUrl = new URL(url, window.location.origin);
+    const parsedUrl = new URL(url);
 
+    const win = window.open("", "_blank", "noopener,noreferrer");
+
+    
+    if (!win) {
+      showNotification("Popup blocked");
+      return;
+    }
+    // ✅ Only allow http/https URLs
     if (
       parsedUrl.protocol !== "http:" &&
       parsedUrl.protocol !== "https:"
     ) {
       throw new Error("Invalid protocol");
     }
-
-    // ✅ Open safe blank page
-    const win = window.open("", "_blank", "noopener,noreferrer");
-
-    if (!win) {
-      showNotification("Popup blocked");
-      return;
+    
+    const allowedHosts = [
+      "karangcareerhub-api.onrender.com"
+    ];
+    
+    if (!allowedHosts.includes(parsedUrl.hostname))
+     {
+      throw new Error("Untrusted file source");
     }
 
     // ✅ Create HTML safely
@@ -537,7 +582,7 @@ function calculateMatchScore(app) {
 // Chat
 //========================================
 function openChat(userId) {
-  window.location.href = `chat.html?user=${userId}`;
+  window.location.href = `chat.html?user=${Number(userId)}`;
 }
 
 //=============================
@@ -785,14 +830,14 @@ function renderApplications(apps) {
       <div class="clickable-card">
         <h4>${escapeHTML(app.student_name || "Unknown")}</h4>
 
-        <p><strong>Job:</strong> ${app.job_title || "N/A"}</p>
-        <p><strong>Email:</strong> ${app.student_email || "N/A"}</p>
-        <p><strong>Phone:</strong> ${app.phone || "N/A"}</p>
-        <p><strong>Location:</strong> ${app.address || "N/A"}</p>
-        <p><strong>Skills:</strong> ${app.skills || "Not provided"}</p>
+        <p><strong>Job:</strong> ${escapeHTML(app.job_title || "N/A")}</p>
+        <p><strong>Email:</strong> ${escapeHTML(app.student_email || "N/A")}</p>
+        <p><strong>Phone:</strong> ${escapeHTML(app.phone || "N/A")}</p>
+        <p><strong>Location:</strong> ${escapeHTML(app.address || "N/A")}</p>
+        <p><strong>Skills:</strong> ${escapeHTML(app.skills || "Not provided")}</p>
 
-        <span class="status ${app.status}">
-          ${app.status || "Pending"}
+        <span class="status ${escapeHTML((app.status || "").toLowerCase())}">
+         ${escapeHTML(app.status || "Pending")}
         </span>
       </div>
     `;
@@ -897,7 +942,17 @@ async function updateApplicationStatus(id, status) {
     }
 
     showNotification("Status updated successfully.");
-    await loadEmployerDashboardData();
+
+    const target = allApplications.find(
+      a => Number(a.application_id) === Number(id)
+    );
+    
+    if (target) {
+      target.status = status;
+      showApplicantDetails(target);
+    }
+    
+    renderApplications(allApplications);
 
   } catch (err) {
     console.error("Update status error:", err);
@@ -917,46 +972,16 @@ function filterApplicantStatus() {
     .value
     .toLowerCase();
 
-  const filtered = allApplications.filter(app =>
-    (app.status || "").toLowerCase().includes(value)
-  );
-
-  renderApplications(filtered);
-}
-
-/*=========================================
-Notification
-================================================*/
-async function loadNotifications() {
-  const token = localStorage.getItem("token");
-
-  const res = await fetch(`${API_URL}/notifications`, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
-  const data = await res.json();
-
-  const list = document.getElementById("notificationList");
-  const badge = document.getElementById("notificationCount");
-
-  list.innerHTML = "";
-
-  if (!Array.isArray(data) || !data.length) {
-    document.getElementById("noNotifications").style.display = "block";
-    badge.hidden = true;
+  if (!value) {
+    renderApplications(allApplications);
     return;
   }
 
-  document.getElementById("noNotifications").style.display = "none";
+  const filtered = allApplications.filter(app =>
+    (app.status || "").toLowerCase() === value
+  );
 
-  badge.textContent = data.length;
-  badge.hidden = false;
-
-  data.forEach(n => {
-    const li = document.createElement("li");
-    li.textContent = n.message;
-    list.appendChild(li);
-  });
+  renderApplications(filtered);
 }
 
 /* ===============================
@@ -1021,6 +1046,8 @@ function escapeSingleQuotes(str) {
 }
 
 function escapeHTML(str) {
+  if (str === null || str === undefined) return "";
+
   return String(str).replace(/[&<>"']/g, m => ({
     "&": "&amp;",
     "<": "&lt;",
@@ -1031,8 +1058,16 @@ function escapeHTML(str) {
 }
 
 function formatImage(path) {
-  if (!path) return "/image/default-avatar.png";
-  return path;
+
+  if (!path) {
+    return "image/default-avatar.png";
+  }
+
+  if (path.startsWith("http")) {
+    return path;
+  }
+
+  return `https://karangcareerhub-api.onrender.com/${path.replace(/^\/+/, "")}`;
 }
 
 function setProfileAvatar(user) {
@@ -1119,6 +1154,7 @@ function updateStats(jobs) {
 
   document.getElementById("activeJobs").textContent = activeJobs;
   document.getElementById("expiredJobs").textContent = expiredJobs;
+  document.getElementById("totalJobs").textContent = jobs.length;
 }
 
 function updateTotalApplicants(applications) {
@@ -1132,4 +1168,100 @@ function updateTotalApplicants(applications) {
   if (totalApplicants) {
     totalApplicants.textContent = total;
   }
+}
+
+/*=========================================
+Notification
+================================================*/
+async function loadNotifications() {
+
+  try {
+
+    const token = localStorage.getItem("token");
+
+    const res = await fetch(
+      `${API_URL}/notifications`,     
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    const notifications = await res.json();
+
+    const list = document.getElementById("notificationList");
+    const count = document.getElementById("notificationCount");
+    const empty = document.getElementById("noNotifications");
+    list.innerHTML = "";
+
+    const notificationsData = Array.isArray(notifications)
+      ? notifications
+      : [];
+    
+    const unread = notificationsData.filter(n => !n.is_read);
+    
+    count.textContent = unread.length;
+    count.hidden = unread.length === 0;
+    
+    if (!notificationsData.length) {
+      empty.hidden = false;
+      return;
+    }
+    
+    empty.hidden = true;
+    
+    notificationsData.forEach(n => {
+      const li = document.createElement("li");
+    
+      li.className = n.is_read ? "" : "unread";
+    
+      li.innerHTML = `
+        <strong>${escapeHTML(n.title)}</strong><br>
+        <small>${escapeHTML(n.message)}</small>
+      `;
+    
+      li.onclick = async () => {
+        await fetch(
+          `${API_URL}/notifications/${n.id}/read`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+    
+        if (n.link && n.link.startsWith("/")) {
+          window.location.href = n.link;
+        }
+      };
+    
+      list.appendChild(li);
+    });
+    
+    } catch (err) {
+      console.error("Notification error:", err);
+    }
+    }
+    
+  async function authFetch(url, options = {}) { 
+
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(url, {
+    ...options,
+    headers: {
+      ...(options.headers || {}),
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  if (res.status === 401) {
+    localStorage.clear();
+    window.location.href = "login.html";
+    return;
+  }
+
+  return res;
 }

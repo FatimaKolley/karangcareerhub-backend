@@ -20,11 +20,12 @@ async function loadApplications(token) {
   container.innerHTML = `<p class="loading">Loading...</p>`;
 
   try {
-    const res = await fetch(`${API_URL}/history/applications`, {
+    const res = await fetch(`${API_URL}/applications/history`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     const data = await res.json();
+    document.getElementById("applicationsCount").textContent = data.length;
 
     if (!res.ok) {
       return (container.innerHTML = `<p class="error">${data.error}</p>`);
@@ -50,11 +51,12 @@ async function loadViewedJobs(token) {
   container.innerHTML = `<p class="loading">Loading...</p>`;
 
   try {
-    const res = await fetch(`${API_URL}/history/views`, {
+    const res = await fetch(`${API_URL}/applications/viewed`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
     const data = await res.json();
+    document.getElementById("viewsCount").textContent = data.length;
 
     if (!res.ok) {
       return (container.innerHTML = `<p class="error">${data.error}</p>`);
@@ -109,33 +111,4 @@ function renderViewedJobCard(job) {
   `;
 
   return card;
-}
-const historyList = document.getElementById("historyList");
-
-document.addEventListener("DOMContentLoaded", loadHistory);
-
-async function loadHistory() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (!user) return;
-
-  const res = await fetch(`${API_URL}/jobs/history/${user.id}`);
-  const data = await res.json();
-
-  historyList.innerHTML = "";
-
-  if (!data.length) {
-    historyList.innerHTML = "<p>No job views yet.</p>";
-    return;
-  }
-
-  data.forEach(job => {
-    historyList.innerHTML += `
-      <div class="history-card">
-        <h3>${job.title}</h3>
-        <p>${job.employer}</p>
-        <p><strong>Viewed:</strong> ${new Date(job.viewed_at).toLocaleString()}</p>
-        <a href="job.html?id=${job.id}" class="btn">Open Job</a>
-      </div>
-    `;
-  });
 }

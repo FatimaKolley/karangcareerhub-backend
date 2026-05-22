@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Chat</title>
+</head>
+<body>
+
+<h1>Admin Chat</h1>
+
+<div id="onlineUsers"></div>
+
+<div
+  id="messages"
+  style="
+    height:400px;
+    overflow-y:scroll;
+    border:1px solid #ccc;
+  "
+></div>
+
+<p id="typing"></p>
+
+<input
+  type="text"
+  id="messageInput"
+  placeholder="Type message"
+/>
+
+<button id="sendBtn">
+  Send
+</button>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script src="help-chat.js"></script>
+
+</body>
+</html>

@@ -35,32 +35,103 @@
 
     <h2 class="page-title">Settings ⚙️</h2>
 
-    <!-- Notification Settings -->
+      <!-- Notification Settings -->
     <section class="settings-card">
+
       <h3>Notifications</h3>
 
+      <p class="settings-info">
+         Important notifications like application decisions and strong job matches
+         are always enabled.
+      </p>
+
       <label class="toggle-row">
-        <span>Email Notifications</span>
-        <input type="checkbox" id="emailNotif">
+        <span>Saved Job Expiration Reminders</span>
+        <input type="checkbox" id="savedJobReminderNotif">
       </label>
 
       <label class="toggle-row">
-        <span>SMS Notifications</span>
-        <input type="checkbox" id="smsNotif">
+        <span>Platform Announcements</span>
+        <input type="checkbox" id="platformNotif">
       </label>
 
-      <button id="saveSettings" class="save-btn">Save Notification Settings</button>
+      <label class="toggle-row">
+        <span>New Chat Messages</span>
+        <input type="checkbox" id="chatNotif">
+      </label>
+
+      <label class="toggle-row">
+       <span>Application Updates</span>
+       <input type="checkbox" id="applicationNotif">
+      </label>
+
+      <label class="toggle-row">
+       <span>Weekly Job Recommendations</span>
+       <input type="checkbox" id="weeklyJobNotif">
+      </label>
+
+      <label class="toggle-row">
+       <span>Email Notifications</span>
+       <input type="checkbox" id="emailNotif">
+      </label>
+
+      <label class="toggle-row">
+       <span>SMS Notifications</span>
+      <input type="checkbox" id="smsNotif">
+      </label>
+
+      <button id="saveSettings" class="save-btn">
+       Save Notification Settings
+      </button>
+
     </section>
 
     <!-- Change Password -->
     <section class="settings-card">
+
       <h3>Change Password</h3>
 
+      <div class="password-rules">
+        Password must contain:
+        <ul>
+          <li>At least 8 characters</li>
+          <li>Uppercase letter</li>
+          <li>Lowercase letter</li>
+          <li>Number</li>
+          <li>Special character</li>
+        </ul>
+      </div>
+
       <input type="password" id="oldPass" placeholder="Old Password">
+
       <input type="password" id="newPass" placeholder="New Password">
 
-      <button id="changePasswordBtn" class="save-btn red">Update Password</button>
-      
+      <input type="password" id="confirmPass" placeholder="Confirm New Password">
+
+      <div class="password-strength">
+        <div id="strengthBar"></div>
+      </div>
+
+      <small id="strengthText"></small>
+
+      <button id="changePasswordBtn" class="save-btn red">
+        Update Password
+      </button>
+
+    </section>
+
+      <!-- Active Sessions -->
+    <section class="settings-card">
+
+      <h3>Active Sessions</h3>
+
+      <div id="activeSessionsList">
+        <p>You are currently logged in on 1 device.</p>
+        <button type="button" class="danger-btn" id="logoutAllBtn">
+          Log out from all devices
+        </button>
+      </div>
+
     </section>
 
   </main>

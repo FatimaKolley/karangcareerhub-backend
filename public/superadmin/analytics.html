@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Super Admin Analytics</title>
+
+  <link rel="stylesheet" href="analytics.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <h1>Super Admin Analytics</h1>
+
+  <div class="cards">
+
+    <div class="card">
+      <h2>Total Users</h2>
+      <p id="totalUsers">0</p>
+    </div>
+
+    <div class="card">
+      <h2>Total Jobs</h2>
+      <p id="totalJobs">0</p>
+    </div>
+
+    <div class="card">
+      <h2>Total Applications</h2>
+      <p id="totalApplications">0</p>
+    </div>
+
+    <div class="card">
+      <h2>Admin Activities</h2>
+      <p id="adminActivities">0</p>
+    </div>
+
+  </div>
+
+  <h2>Job Performance</h2>
+
+  <canvas id="jobsChart"></canvas>
+
+  <h2>Most Active Users</h2>
+
+  <ul id="activeUsersList"></ul>
+
+  <script src="analytics.js"></script>
+
+</body>
+</html>

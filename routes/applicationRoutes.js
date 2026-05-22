@@ -1,10 +1,8 @@
 import express from "express";
 import db from "../db.js";
-import jwt from "jsonwebtoken";
 import auth from "../middleware/auth.js";
 import uploadResume from "../middleware/uploadResume.js";
 import { notifyUser } from "../utils/notify.js";
-
 
 const router = express.Router();
 //==========================
@@ -123,7 +121,6 @@ const [result] = await db.execute(
 });
 
 
-
 /* ==========================================================
     🧑‍🎓 GET ALL APPLICATIONS OF LOGGED-IN STUDENT
 ========================================================== */
@@ -211,9 +208,9 @@ router.get("/employer", auth, async (req, res) => {
 /* ==========================================================
    🤖 AI MATCH: Return best job recommendations for a user
 ========================================================== */
-router.get("/recommendations/:userId", async (req, res) => {
+router.get("/recommendations", auth, async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const userId = req.user.id;
 
     // 1️⃣ Get user skills from database
     const [userRows] = await db.execute(
@@ -271,15 +268,15 @@ router.get("/recommendations/:userId", async (req, res) => {
 /* ==========================================
    GET Application History (applied jobs)
 ========================================== */
-router.get("/history/:userId", auth, async (req, res) => {
+router.get("/history", auth, async (req, res) => {
   try {
-    const userId = req.params.userId;
+   const userId = req.user.id;
 
     const [rows] = await db.execute(`
       SELECT 
         a.id AS application_id,
         a.status,
-        a.applied_at,
+        a.created_at AS applied_at,
         j.id AS job_id,
         j.title,
         j.employer,
@@ -287,8 +284,8 @@ router.get("/history/:userId", auth, async (req, res) => {
       FROM applications a
       JOIN jobs j ON a.job_id = j.id
       WHERE a.user_id = ?
-      ORDER BY a.applied_at DESC
-    `, [userId]);
+      ORDER BY a.created_at DESC
+      `, [userId]);
 
     res.json(rows);
 
@@ -302,10 +299,9 @@ router.get("/history/:userId", auth, async (req, res) => {
 /* ==========================================
    GET Viewed Jobs History
 ========================================== */
-router.get("/viewed/:userId", auth, async (req, res) => {
+router.get("/viewed", auth, async (req, res) => {
   try {
-    const userId = req.params.userId;
-
+    const userId = req.user.id;
     const [rows] = await db.execute(`
       SELECT 
         v.id AS view_id,
@@ -346,12 +342,13 @@ router.put("/:id/status", auth, async (req, res) => {
     // Get application + student + job
     const [rows] = await db.execute(
       `SELECT 
-         a.user_id,
-         j.title AS job_title
+          a.user_id,
+          j.title AS job_title
        FROM applications a
        JOIN jobs j ON a.job_id = j.id
-       WHERE a.id = ?`,
-      [applicationId]
+       WHERE a.id = ?
+       AND j.employer_id = ?`,
+      [applicationId, req.user.id]
     );
 
     if (rows.length === 0) {
@@ -388,35 +385,39 @@ router.put("/:id/status", auth, async (req, res) => {
 // applicant frofile download
 //====================================
 router.get("/:id/download", auth, async (req, res) => {
+  if (req.user.role !== "employer") {
+    return res.status(403).json({ error: "Access denied" });
+  }
   try {
     const applicationId = req.params.id;
 
-    const [rows] = await db.execute(
-      `SELECT 
-        a.first_name,
-        a.last_name,
-        a.email,
-        a.phone_primary,
-        a.location,
-        a.message,
-        a.resume_url,
-        a.created_at,
-
-        j.title AS job_title,
-
-        u.profile_image,
-        u.education,
-        u.experience,
-        u.date_of_birth, 
-        u.skills  
-
-      FROM applications a
-      JOIN jobs j ON a.job_id = j.id
-      JOIN users u ON a.user_id = u.id   -- ✅ THIS IS THE FIX
-
-      WHERE a.id = ?`,
-      [applicationId]
-    );
+      const [rows] = await db.execute(
+        `SELECT 
+            a.first_name,
+            a.last_name,
+            a.email,
+            a.phone_primary,
+            a.location,
+            a.message,
+            a.resume_url,
+            a.created_at,
+      
+            j.title AS job_title,
+      
+            u.profile_image,
+            u.education,
+            u.experience,
+            u.date_of_birth, 
+            u.skills  
+      
+         FROM applications a
+         JOIN jobs j ON a.job_id = j.id
+         JOIN users u ON a.user_id = u.id
+      
+         WHERE a.id = ?
+         AND j.employer_id = ?`,
+        [applicationId, req.user.id]
+      );
 
     if (!rows.length) {
       return res.status(404).json({ error: "Application not found" });

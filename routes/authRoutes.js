@@ -1,4 +1,4 @@
-router.post("/update-password", auth, async (req, res) => {
+/*router.post("/update-password", auth, async (req, res) => {
     try {
       const { oldPassword, newPassword } = req.body;
   
@@ -18,7 +18,7 @@ router.post("/update-password", auth, async (req, res) => {
       console.error(err);
       res.status(500).json({ error: "Server error" });
     }
-  });
+  });*/
 
   
   
