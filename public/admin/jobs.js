@@ -1,63 +1,68 @@
+const API_URL =
+  "https://karangcareerhub-api.onrender.com/api";
+
 const token =
-  localStorage.getItem("token");
+  localStorage.getItem("adminToken");
 
 async function loadJobs() {
 
-  const response = await fetch(
-    "http://localhost:5000/api/admin/jobs",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
+  try {
+
+    const response = await fetch(
+      `${API_URL}/admin/jobs`,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${token}`
+        }
       }
-    }
-  );
+    );
 
-  const jobs = await response.json();
+    const jobs =
+      await response.json();
 
-  const container =
-    document.getElementById("jobsContainer");
+    const container =
+      document.getElementById(
+        "jobsContainer"
+      );
 
-  container.innerHTML = "";
+    container.innerHTML = "";
 
-  jobs.forEach(job => {
+    jobs.forEach(job => {
 
-    container.innerHTML += `
-      <div
-        style="
-          border:1px solid #ccc;
-          margin:10px;
-          padding:10px;
-        "
-      >
+      container.innerHTML += `
+        <div class="job-card">
 
-        <h3>${job.title}</h3>
+          <h3>${job.title}</h3>
 
-        <p>${job.company}</p>
+          <p>${job.company}</p>
 
-        <button
-          onclick="deleteJob(${job.id})"
-        >
-          Delete Job
-        </button>
+          <button
+            onclick="deleteJob(${job.id})"
+          >
+            Delete Job
+          </button>
 
-      </div>
-    `;
-  });
+        </div>
+      `;
+    });
+
+  } catch(error) {
+
+    console.log(error);
+  }
 }
 
-
-// =====================
-// DELETE JOB
-// =====================
 async function deleteJob(id) {
 
   await fetch(
-    `http://localhost:5000/api/admin/jobs/${id}`,
+    `${API_URL}/admin/jobs/${id}`,
     {
-      method: "DELETE",
+      method:"DELETE",
 
-      headers: {
-        Authorization: `Bearer ${token}`
+      headers:{
+        Authorization:
+          `Bearer ${token}`
       }
     }
   );

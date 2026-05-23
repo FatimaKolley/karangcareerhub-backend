@@ -1,46 +1,55 @@
+const API_URL = "https://karangcareerhub-api.onrender.com/api";
+
 const token =
-  localStorage.getItem("token");
+  localStorage.getItem("adminToken");
 
 async function loadLogs() {
 
-  const response = await fetch(
-    "http://localhost:5000/api/super-admin/admin-activities",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
+  try {
+
+    const response = await fetch(
+      `${API_URL}/super-admin/admin-activities`,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${token}`
+        }
       }
-    }
-  );
+    );
 
-  const logs = await response.json();
+    const logs =
+      await response.json();
 
-  const container =
-    document.getElementById("logsContainer");
+    const container =
+      document.getElementById(
+        "logsContainer"
+      );
 
-  container.innerHTML = "";
+    container.innerHTML = "";
 
-  logs.forEach(log => {
+    logs.forEach(log => {
 
-    container.innerHTML += `
-      <div
-        style="
-          border:1px solid #ccc;
-          margin:10px;
-          padding:10px;
-        "
-      >
+      container.innerHTML += `
+        <div class="card">
 
-        <h3>${log.fullname}</h3>
+          <h3>${log.fullname}</h3>
 
-        <p>${log.action}</p>
+          <p>${log.action}</p>
 
-        <small>
-          ${log.created_at}
-        </small>
+          <small>
+            ${new Date(
+              log.created_at
+            ).toLocaleString()}
+          </small>
 
-      </div>
-    `;
-  });
+        </div>
+      `;
+    });
+
+  } catch(error) {
+
+    console.log(error);
+  }
 }
 
 loadLogs();

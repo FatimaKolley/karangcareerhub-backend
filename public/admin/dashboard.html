@@ -1,13 +1,107 @@
-<h1>Admin Dashboard</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-<div>
-  <a href="users.html">Users</a>
-  <a href="jobs.html">Jobs</a>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Admin Dashboard</title>
+
+  <link
+    rel="stylesheet"
+    href="dashboard.css"
+  >
+
+</head>
+
+<body>
+
+<div class="sidebar">
+
+  <h2>KarangCareerHub</h2>
+
+  <a href="users.html">
+    Users
+  </a>
+
+  <a href="jobs.html">
+    Jobs
+  </a>
+
   <a href="applications.html">
     Applications
   </a>
-  <a href="reports.html">Reports</a>
-  <a href="notifications.html">
-    Notifications
+
+  <a href="reports.html">
+    Reports
   </a>
+
+  <a href="help-chat.html">
+    Help Chat
+  </a>
+
+  <button id="logoutBtn">
+    Logout
+  </button>
+
 </div>
+
+<div class="main-content">
+
+  <h1>Admin Dashboard</h1>
+
+  <div class="cards">
+
+    <div class="card">
+      <h3>Users</h3>
+      <p>Manage platform users</p>
+    </div>
+
+    <div class="card">
+      <h3>Jobs</h3>
+      <p>Manage job listings</p>
+    </div>
+
+    <div class="card">
+      <h3>Applications</h3>
+      <p>Review applications</p>
+    </div>
+
+    <div class="card">
+      <h3>Reports</h3>
+      <p>Handle reports</p>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+
+document.getElementById(
+  "logoutBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    localStorage.removeItem(
+      "adminToken"
+    );
+
+    localStorage.removeItem(
+      "adminData"
+    );
+
+    window.location.href =
+      "login.html";
+  }
+);
+
+</script>
+
+</body>
+</html>

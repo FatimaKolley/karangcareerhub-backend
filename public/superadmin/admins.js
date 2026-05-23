@@ -1,72 +1,87 @@
+const API_URL =
+  "https://karangcareerhub-api.onrender.com/api";
+
 const token =
-  localStorage.getItem("token");
+  localStorage.getItem("adminToken");
 
 async function loadAdmins() {
 
-  const response = await fetch(
-    "http://localhost:5000/api/super-admin/admins",
-    {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    }
-  );
+  try {
 
-  const admins = await response.json();
-
-  const container =
-    document.getElementById("adminsContainer");
-
-  container.innerHTML = "";
-
-  admins.forEach(admin => {
-
-    container.innerHTML += `
-      <div
-        style="
-          border:1px solid #ccc;
-          margin:10px;
-          padding:10px;
-        "
-      >
-
-        <h3>${admin.fullname}</h3>
-
-        <p>${admin.email}</p>
-
-        <p>${admin.role}</p>
-
-        <p>${admin.status}</p>
-
-        ${
-          admin.role !== "super_admin"
-          ?
-          `
-          <button
-            onclick="suspendAdmin(${admin.id})"
-          >
-            Suspend
-          </button>
-
-          <button
-            onclick="activateAdmin(${admin.id})"
-          >
-            Activate
-          </button>
-
-          <button
-            onclick="deleteAdmin(${admin.id})"
-          >
-            Delete
-          </button>
-          `
-          :
-          `<strong>Protected</strong>`
+    const response = await fetch(
+      `${API_URL}/super-admin/admins`,
+      {
+        headers: {
+          Authorization:
+            `Bearer ${token}`
         }
+      }
+    );
 
-      </div>
-    `;
-  });
+    const admins =
+      await response.json();
+
+    const container =
+      document.getElementById(
+        "adminsContainer"
+      );
+
+    container.innerHTML = "";
+
+    admins.forEach(admin => {
+
+      container.innerHTML += `
+        <div class="card">
+
+          <h3>${admin.fullname}</h3>
+
+          <p>${admin.email}</p>
+
+          <p>Role: ${admin.role}</p>
+
+          <p>Status: ${admin.status}</p>
+
+          ${
+            admin.role !== "super_admin"
+            ?
+            `
+            <div class="buttons">
+
+              <button
+                onclick="suspendAdmin(${admin.id})"
+                class="suspend"
+              >
+                Suspend
+              </button>
+
+              <button
+                onclick="activateAdmin(${admin.id})"
+                class="activate"
+              >
+                Activate
+              </button>
+
+              <button
+                onclick="deleteAdmin(${admin.id})"
+                class="delete"
+              >
+                Delete
+              </button>
+
+            </div>
+            `
+            :
+            `<strong>Protected</strong>`
+          }
+
+        </div>
+      `;
+    });
+
+  } catch(error) {
+
+    console.log(error);
+  }
 }
 
 
@@ -76,12 +91,13 @@ async function loadAdmins() {
 async function suspendAdmin(id) {
 
   await fetch(
-    `http://localhost:5000/api/super-admin/suspend/${id}`,
+    `${API_URL}/super-admin/suspend/${id}`,
     {
       method: "PUT",
 
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization:
+          `Bearer ${token}`
       }
     }
   );
@@ -96,12 +112,13 @@ async function suspendAdmin(id) {
 async function activateAdmin(id) {
 
   await fetch(
-    `http://localhost:5000/api/super-admin/activate/${id}`,
+    `${API_URL}/super-admin/activate/${id}`,
     {
       method: "PUT",
 
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization:
+          `Bearer ${token}`
       }
     }
   );
@@ -116,12 +133,13 @@ async function activateAdmin(id) {
 async function deleteAdmin(id) {
 
   await fetch(
-    `http://localhost:5000/api/super-admin/delete/${id}`,
+    `${API_URL}/super-admin/delete/${id}`,
     {
       method: "DELETE",
 
       headers: {
-        Authorization: `Bearer ${token}`
+        Authorization:
+          `Bearer ${token}`
       }
     }
   );

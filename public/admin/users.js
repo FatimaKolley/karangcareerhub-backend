@@ -1,12 +1,12 @@
 const token =
-  localStorage.getItem("token");
+  localStorage.getItem("adminToken");
 
 async function loadUsers() {
 
   try {
 
     const response = await fetch(
-      "http://localhost:5000/api/admin/users",
+      "https://karangcareerhub-api.onrender.com/api/admin/users",
       {
         headers: {
           Authorization: `Bearer ${token}`
@@ -62,7 +62,7 @@ async function loadUsers() {
 async function suspendUser(id) {
 
   await fetch(
-    `http://localhost:5000/api/admin/users/suspend/${id}`,
+    `https://karangcareerhub-api.onrender.com/api/admin/users/suspend/${id}`,
     {
       method: "PUT",
 
@@ -82,7 +82,7 @@ async function suspendUser(id) {
 async function activateUser(id) {
 
   await fetch(
-    `http://localhost:5000/api/admin/users/activate/${id}`,
+    `https://karangcareerhub-api.onrender.com/api/admin/users/activate/${id}`,
     {
       method: "PUT",
 

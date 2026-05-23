@@ -1,17 +1,21 @@
-const socket =
-  io("http://localhost:5000");
+const API_URL ="https://karangcareerhub-api.onrender.com/api";
+const socket = io("https://karangcareerhub-api.onrender.com");
 
 const token =
-  localStorage.getItem("token");
+  localStorage.getItem("adminToken");
 
 const admin =
-  JSON.parse(localStorage.getItem("admin"));
+  JSON.parse(
+    localStorage.getItem("adminData")
+  );
 
 
 // Example receiver
 const receiverId = 2;
 
-socket.emit("join", admin.id);
+socket.emit("joinRoom", {
+  userId: admin.id
+});
 
 const messagesDiv =
   document.getElementById("messages");
@@ -89,7 +93,7 @@ document.getElementById(
 
     // Save to DB
     await fetch(
-      "http://localhost:5000/api/admin-chat/send",
+      `${API_URL}/admin-chat/send`,
       {
         method: "POST",
 

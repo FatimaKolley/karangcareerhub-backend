@@ -1,19 +1,102 @@
-<h1>Super Admin Dashboard</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
-<div>
-  <a href="admins.html">
-    Manage Admins
-  </a>
+  <meta charset="UTF-8" />
 
-  <a href="analytics.html">
-    Analytics
-  </a>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-  <a href="admin-logs.html">
-    Admin Logs
-  </a>
+  <title>Super Admin Dashboard</title>
 
-  <a href="notifications.html">
-    Notifications
-  </a>
-</div>
+  <link rel="stylesheet" href="dashboard.css">
+
+</head>
+
+<body>
+
+  <div class="sidebar">
+
+    <h2>KarangCareerHub</h2>
+
+    <a href="admins.html">
+      Manage Admins
+    </a>
+
+    <a href="analytics.html">
+      Analytics
+    </a>
+
+    <a href="admin-logs.html">
+      Admin Logs
+    </a>
+
+    <a href="help-chat.html">
+      Help Chat
+    </a>
+
+    <button id="logoutBtn">
+      Logout
+    </button>
+
+  </div>
+
+  <div class="main-content">
+
+    <h1>
+      Super Admin Dashboard
+    </h1>
+
+    <div class="cards">
+
+      <div class="card">
+        <h3>Admins</h3>
+        <p>Manage platform admins</p>
+      </div>
+
+      <div class="card">
+        <h3>Analytics</h3>
+        <p>View platform statistics</p>
+      </div>
+
+      <div class="card">
+        <h3>Logs</h3>
+        <p>Track admin activities</p>
+      </div>
+
+      <div class="card">
+        <h3>Help Chat</h3>
+        <p>Support users directly</p>
+      </div>
+
+    </div>
+
+  </div>
+
+<script>
+
+document.getElementById(
+  "logoutBtn"
+).addEventListener(
+  "click",
+  () => {
+
+    localStorage.removeItem(
+      "adminToken"
+    );
+
+    localStorage.removeItem(
+      "adminData"
+    );
+
+    window.location.href =
+      "../admin/login.html";
+  }
+);
+
+</script>
+
+</body>
+</html>

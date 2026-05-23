@@ -1,1 +1,83 @@
-<input type="file" id="chatFile">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Help Chat</title>
+
+  <link
+    rel="stylesheet"
+    href="help-chat.css"
+  >
+
+</head>
+
+<body>
+
+<div class="chat-container">
+
+  <!-- SIDEBAR -->
+  <div class="chat-sidebar">
+
+    <h2>Help Chat</h2>
+
+    <div id="onlineUsers">
+      Online Users
+    </div>
+
+  </div>
+
+  <!-- CHAT AREA -->
+  <div class="chat-main">
+
+    <div class="chat-header">
+      Support Conversation
+    </div>
+
+    <div id="messages"></div>
+
+    <p id="typing"></p>
+
+    <!-- INPUT AREA -->
+    <div class="chat-input-area">
+
+      <input
+        type="text"
+        id="messageInput"
+        placeholder="Type message..."
+      >
+
+      <label
+        for="chatFile"
+        class="file-label"
+      >
+        📎
+      </label>
+
+      <input
+        type="file"
+        id="chatFile"
+      >
+
+      <button id="sendBtn">
+        Send
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+<script src="help-chat.js"></script>
+
+</body>
+</html>

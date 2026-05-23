@@ -1,51 +1,70 @@
-const token = localStorage.getItem("token");
+const API_URL =
+  "https://karangcareerhub-api.onrender.com/api";
+
+const token =
+  localStorage.getItem("adminToken");
 
 async function loadAnalytics() {
 
   try {
 
     const response = await fetch(
-      "http://localhost:5000/api/super-admin/analytics",
+      `${API_URL}/super-admin/analytics`,
       {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization:
+            `Bearer ${token}`
         }
       }
     );
 
-    const data = await response.json();
+    const data =
+      await response.json();
 
-    // Cards
-    document.getElementById("totalUsers")
-      .innerText = data.totalUsers;
+    document.getElementById(
+      "totalUsers"
+    ).innerText =
+      data.totalUsers;
 
-    document.getElementById("totalJobs")
-      .innerText = data.totalJobs;
+    document.getElementById(
+      "totalJobs"
+    ).innerText =
+      data.totalJobs;
 
-    document.getElementById("totalApplications")
-      .innerText = data.totalApplications;
+    document.getElementById(
+      "totalApplications"
+    ).innerText =
+      data.totalApplications;
 
-    document.getElementById("adminActivities")
-      .innerText = data.adminActivities;
+    document.getElementById(
+      "adminActivities"
+    ).innerText =
+      data.adminActivities;
 
-    // Active users
     const list =
-      document.getElementById("activeUsersList");
+      document.getElementById(
+        "activeUsersList"
+      );
+
+    list.innerHTML = "";
 
     data.mostActiveUsers.forEach(user => {
 
-      const li = document.createElement("li");
+      const li =
+        document.createElement("li");
 
       li.innerText =
-        `${user.fullname} - ${user.totalApplications} applications`;
+        `${user.fullname}
+        - ${user.totalApplications} applications`;
 
       list.appendChild(li);
 
     });
 
-    // Job performance chart
     const labels =
-      data.jobPerformance.map(job => job.title);
+      data.jobPerformance.map(
+        job => job.title
+      );
 
     const applications =
       data.jobPerformance.map(
@@ -53,24 +72,26 @@ async function loadAnalytics() {
       );
 
     new Chart(
-      document.getElementById("jobsChart"),
+      document.getElementById(
+        "jobsChart"
+      ),
       {
-        type: "bar",
+        type:"bar",
 
-        data: {
+        data:{
           labels,
 
-          datasets: [
+          datasets:[
             {
-              label: "Applications",
-              data: applications
+              label:"Applications",
+              data:applications
             }
           ]
         }
       }
     );
 
-  } catch (error) {
+  } catch(error) {
 
     console.log(error);
   }
