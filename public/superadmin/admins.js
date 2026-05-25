@@ -1,8 +1,13 @@
-const API_URL =
+  const API_URL =
   "https://karangcareerhub-api.onrender.com/api";
 
 const token =
   localStorage.getItem("adminToken");
+
+if (!token) {
+  window.location.href =
+    "../admin/login.html";
+}
 
 async function loadAdmins() {
 
@@ -47,28 +52,42 @@ async function loadAdmins() {
             `
             <div class="buttons">
 
-              <button
-                onclick="suspendAdmin(${admin.id})"
-                class="suspend"
-              >
-                Suspend
-              </button>
-
-              <button
-                onclick="activateAdmin(${admin.id})"
-                class="activate"
-              >
-                Activate
-              </button>
-
-              <button
-                onclick="deleteAdmin(${admin.id})"
-                class="delete"
-              >
-                Delete
-              </button>
-
-            </div>
+            <button
+              onclick="suspendAdmin(${admin.id})"
+              class="suspend"
+            >
+              Suspend
+            </button>
+          
+            <button
+              onclick="activateAdmin(${admin.id})"
+              class="activate"
+            >
+              Activate
+            </button>
+          
+            <button
+              onclick="resetPassword(${admin.id})"
+              class="reset"
+            >
+              Reset Password
+            </button>
+          
+            <button
+              onclick="lockAdmin(${admin.id})"
+              class="lock"
+            >
+              Lock
+            </button>
+          
+            <button
+              onclick="deleteAdmin(${admin.id})"
+              class="delete"
+            >
+              Delete
+            </button>
+          
+          </div>
             `
             :
             `<strong>Protected</strong>`
@@ -126,7 +145,6 @@ async function activateAdmin(id) {
   loadAdmins();
 }
 
-
 // =====================
 // DELETE
 // =====================
@@ -138,6 +156,67 @@ async function deleteAdmin(id) {
       method: "DELETE",
 
       headers: {
+        Authorization:
+          `Bearer ${token}`
+      }
+    }
+  );
+
+  loadAdmins();
+}
+// ===============================
+// RESET SUPER ADMIN PASSWORD
+// ===============================
+async function resetPassword(id) {
+
+  const newPassword =
+    prompt(
+      "Enter new password"
+    );
+
+  if (!newPassword) return;
+
+  const response = await fetch(
+    `${API_URL}/super-admin/reset-password/${id}`,
+    {
+      method:"PUT",
+      headers:{
+        "Content-Type":"application/json",
+        Authorization:`Bearer ${token}`
+      },
+      body:JSON.stringify({
+        newPassword
+      })
+    }
+  );
+  
+  const data = await response.json();
+  
+  if (!response.ok) {
+    alert(data.message);
+    return;
+  }
+  
+  alert(data.message);
+}
+// =====================
+// LOCK ADMIN ACCOUNT
+// =====================
+async function lockAdmin(id) {
+
+  const confirmLock =
+    confirm(
+      "Are you sure you want to lock this admin?"
+    );
+
+  if (!confirmLock) return;
+
+  await fetch(
+    `${API_URL}/super-admin/lock/${id}`,
+    {
+      method:"PUT",
+
+      headers:{
         Authorization:
           `Bearer ${token}`
       }

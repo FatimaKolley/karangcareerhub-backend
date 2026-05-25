@@ -38,8 +38,12 @@
   
   .buttons{
     display:flex;
+    flex-wrap:wrap;
     gap:10px;
     margin-top:15px;
+  }
+  button:hover{
+    opacity:0.9;
   }
   
   button{
@@ -60,4 +64,13 @@
   
   .delete{
     background:#dc2626;
+  }
+  .reset{
+    background:#2563eb;
+    color:white;
+  }
+  
+  .lock{
+    background:#111827;
+    color:white;
   }

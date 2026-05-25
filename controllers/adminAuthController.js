@@ -31,9 +31,23 @@ export const adminLogin = async (req, res) => {
       });
     }
 
-    if (admin.status === "suspended") {
+    if (
+      admin.status === "suspended"
+    ) {
+    
       return res.status(403).json({
-        message: "Account suspended",
+        message:
+          "Account suspended"
+      });
+    }
+    
+    if (
+      admin.status === "locked"
+    ) {
+    
+      return res.status(403).json({
+        message:
+          "Account locked"
       });
     }
 

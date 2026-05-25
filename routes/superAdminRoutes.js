@@ -1,6 +1,7 @@
 import express from "express";
 
-import superAdminAuth from "../middleware/superAdminAuth.js";
+import superAdminAuth
+from "../middleware/superAdminAuth.js";
 
 import {
   createAdmin,
@@ -8,43 +9,85 @@ import {
   suspendAdmin,
   activateAdmin,
   deleteAdmin,
-} from "../controllers/superAdminController.js";
-import {
-    getAnalytics,
-    getAdminActivities
-  } from "../controllers/superAdminController.js";
+  getAnalytics,
+  getAdminActivities,
+  resetAdminPassword,
+  lockAdmin
+}
+from "../controllers/superAdminController.js";
 
 const router = express.Router();
 
-// Create admin
-router.post("/create-admin", superAdminAuth, createAdmin);
 
-// Get all admins
-router.get("/admins", superAdminAuth, getAllAdmins);
+// CREATE ADMIN
+router.post(
+  "/create-admin",
+  superAdminAuth,
+  createAdmin
+);
 
-// Suspend admin
-router.put("/suspend/:id", superAdminAuth, suspendAdmin);
 
-// Activate admin
-router.put("/activate/:id", superAdminAuth, activateAdmin);
-
-// Delete admin
-router.delete("/delete/:id", superAdminAuth, deleteAdmin);
-
-// Analytics
+// GET ADMINS
 router.get(
-    "/analytics",
-    superAdminAuth,
-    getAnalytics
-  );
-  
-  // Admin activities
-  router.get(
-    "/admin-activities",
-    superAdminAuth,
-    getAdminActivities
-  );
+  "/admins",
+  superAdminAuth,
+  getAllAdmins
+);
+
+
+// SUSPEND
+router.put(
+  "/suspend/:id",
+  superAdminAuth,
+  suspendAdmin
+);
+
+
+// ACTIVATE
+router.put(
+  "/activate/:id",
+  superAdminAuth,
+  activateAdmin
+);
+
+
+// DELETE
+router.delete(
+  "/delete/:id",
+  superAdminAuth,
+  deleteAdmin
+);
+
+
+// ANALYTICS
+router.get(
+  "/analytics",
+  superAdminAuth,
+  getAnalytics
+);
+
+
+// ADMIN LOGS
+router.get(
+  "/admin-activities",
+  superAdminAuth,
+  getAdminActivities
+);
+
+
+// RESET PASSWORD
+router.put(
+  "/reset-password/:id",
+  superAdminAuth,
+  resetAdminPassword
+);
+
+
+// LOCK ACCOUNT
+router.put(
+  "/lock/:id",
+  superAdminAuth,
+  lockAdmin
+);
 
 export default router;
-
-

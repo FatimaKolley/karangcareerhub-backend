@@ -115,10 +115,14 @@ export const suspendAdmin = async (req, res) => {
     }
 
     const admin = admins[0];
-
     if (admin.role === "super_admin") {
       return res.status(403).json({
-        message: "Cannot suspend super admin",
+        message: "Cannot suspend super admin"
+      });
+    }
+    if (req.admin.id === parseInt(adminId)) {
+      return res.status(403).json({
+        message: "You cannot suspend yourself"
       });
     }
 
@@ -160,38 +164,58 @@ export const suspendAdmin = async (req, res) => {
 export const activateAdmin = async (req, res) => {
   try {
 
-    const adminId = req.params.id;
+    const adminId = parseInt(req.params.id);
 
-    await db.query(
-      `UPDATE admins
-      SET status = 'active'
-      WHERE id = ?`,
+    const [admins] = await db.query(
+      "SELECT * FROM admins WHERE id = ?",
       [adminId]
     );
 
-    // Log action
+    if (admins.length === 0) {
+      return res.status(404).json({
+        message: "Admin not found"
+      });
+    }
+
+    const admin = admins[0];
+
+    if (admin.role === "super_admin") {
+      return res.status(403).json({
+        message: "Cannot modify super admin"
+      });
+    }
+
+    await db.query(
+      `UPDATE admins
+       SET status = 'active'
+       WHERE id = ?`,
+      [adminId]
+    );
+
     await db.query(
       `INSERT INTO admin_logs
-      (admin_id, action)
-      VALUES (?, ?)`,
+       (admin_id, action)
+       VALUES (?, ?)`,
       [
         req.admin.id,
-        `Activated admin ID ${adminId}`
+        `Activated admin ${admin.fullname}`
       ]
     );
 
     res.status(200).json({
-      message: "Admin activated",
+      message: "Admin activated"
     });
 
   } catch (error) {
+
     console.log(error);
 
     res.status(500).json({
-      message: "Server error",
+      message: "Server error"
     });
   }
 };
+
 
 
 // ==============================
@@ -216,10 +240,17 @@ export const deleteAdmin = async (req, res) => {
 
     const admin = admins[0];
 
+    // Prevent deleting yourself
+    if (req.admin.id === parseInt(adminId)) {
+      return res.status(403).json({
+        message: "You cannot delete yourself"
+      });
+    }
+    
     // Prevent deleting super admin
     if (admin.role === "super_admin") {
       return res.status(403).json({
-        message: "Super admin cannot be deleted",
+        message: "Super admin cannot be deleted"
       });
     }
 
@@ -371,3 +402,187 @@ export const getAnalytics = async (req, res) => {
       });
     }
   };
+
+// ==============================
+// RESET ADMIN PASSWORD
+// ==============================
+export const resetAdminPassword =
+async (req, res) => {
+
+  try {
+
+    const adminId =
+      parseInt(req.params.id);
+
+    const {
+      newPassword
+    } = req.body;
+
+    if (!newPassword) {
+
+      return res.status(400).json({
+        message:
+          "New password required"
+      });
+    }
+
+    // Find admin
+    const [admins] = await db.query(
+      "SELECT * FROM admins WHERE id = ?",
+      [adminId]
+    );
+
+    if (admins.length === 0) {
+
+      return res.status(404).json({
+        message:
+          "Admin not found"
+      });
+    }
+
+    const admin = admins[0];
+
+    // Prevent resetting your own password here
+    if (req.admin.id === adminId) {
+      return res.status(403).json({
+        message:
+          "Use profile settings to change your own password"
+      });
+    }
+
+    // Prevent resetting super admin password
+    if (admin.role === "super_admin") {
+
+      return res.status(403).json({
+        message:
+          "Cannot reset super admin password"
+      });
+    }
+
+    const hashedPassword =
+      await bcrypt.hash(
+        newPassword,
+        10
+      );
+
+    await db.query(
+      `
+      UPDATE admins
+      SET password = ?
+      WHERE id = ?
+      `,
+      [
+        hashedPassword,
+        adminId
+      ]
+    );
+
+    // LOG
+    await db.query(
+      `
+      INSERT INTO admin_logs
+      (admin_id, action)
+      VALUES (?, ?)
+      `,
+      [
+        req.admin.id,
+        `Reset password for admin ${admin.fullname}`
+      ]
+    );
+
+    res.status(200).json({
+      message:
+        "Password reset successful"
+    });
+
+  } catch(error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message:
+        "Server error"
+    });
+  }
+};
+
+// ==============================
+// CREATE LOCK ACCOUNT
+// ==============================
+export const lockAdmin =
+async (req, res) => {
+
+  try {
+
+    const adminId =
+      parseInt(req.params.id);
+
+    // Prevent locking yourself
+    if (req.admin.id === adminId) {
+
+      return res.status(403).json({
+        message:
+          "You cannot lock yourself"
+      });
+    }
+
+    // Find admin
+    const [admins] = await db.query(
+      "SELECT * FROM admins WHERE id = ?",
+      [adminId]
+    );
+
+    if (admins.length === 0) {
+
+      return res.status(404).json({
+        message:
+          "Admin not found"
+      });
+    }
+
+    const admin = admins[0];
+
+    // Prevent locking super admin
+    if (admin.role === "super_admin") {
+
+      return res.status(403).json({
+        message:
+          "Cannot lock super admin"
+      });
+    }
+
+    await db.query(
+      `
+      UPDATE admins
+      SET status = 'locked'
+      WHERE id = ?
+      `,
+      [adminId]
+    );
+
+    // LOG
+    await db.query(
+      `
+      INSERT INTO admin_logs
+      (admin_id, action)
+      VALUES (?, ?)
+      `,
+      [
+        req.admin.id,
+        `Locked admin ${admin.fullname}`
+      ]
+    );
+
+    res.status(200).json({
+      message:"Admin locked"
+    });
+
+  } catch(error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      message:"Server error"
+    });
+  }
+};

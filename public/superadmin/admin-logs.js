@@ -1,5 +1,8 @@
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
-
+if (!token) {
+  window.location.href =
+    "../admin/login.html";
+}
 const token =
   localStorage.getItem("adminToken");
 
