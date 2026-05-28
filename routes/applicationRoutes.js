@@ -8,7 +8,7 @@ const router = express.Router();
 //==========================
 // APPLY FOR A JOB (Student)
 //======================================
-router.post("/", auth, uploadResume.single("resume"), async (req, res) => {
+  router.post("/", auth(["student"]), uploadResume.single("resume"), async (req, res) => {
   
 
   try {
@@ -124,7 +124,8 @@ const [result] = await db.execute(
 /* ==========================================================
     🧑‍🎓 GET ALL APPLICATIONS OF LOGGED-IN STUDENT
 ========================================================== */
-router.get("/my-applications", auth, async (req, res) => {
+
+router.get("/my-applications", auth(["student"]), async (req, res) => {
   try {
     const user_id = req.user.id;
 
@@ -153,7 +154,7 @@ router.get("/my-applications", auth, async (req, res) => {
 /* ==========================================================
     GET ALL APPLICANTS FOR EMPLOYER'S JOBS
 ========================================================== */
-router.get("/employer", auth, async (req, res) => {
+router.get("/employer", auth(["employer"]), async (req, res) => {
   try {
     if (req.user.role !== "employer") {
       return res.status(403).json({ error: "Access denied" });
@@ -208,7 +209,8 @@ router.get("/employer", auth, async (req, res) => {
 /* ==========================================================
    🤖 AI MATCH: Return best job recommendations for a user
 ========================================================== */
-router.get("/recommendations", auth, async (req, res) => {
+
+router.get("/recommendations", auth(["student"]), async (req, res) => {
   try {
     const userId = req.user.id;
 
@@ -232,8 +234,15 @@ router.get("/recommendations", auth, async (req, res) => {
 
     // 2️⃣ Get all jobs
     const [jobs] = await db.execute(
-      `SELECT id, title, description, employer, skills
-       FROM jobs`
+      `SELECT 
+      j.id,
+      j.title,
+      j.description,
+      j.skills,
+      CONCAT(u.first_name,' ',u.last_name) AS employer
+    FROM jobs j
+    LEFT JOIN users u
+    ON j.employer_id = u.id`
     );
 
     // 3️⃣ Score jobs
@@ -268,7 +277,7 @@ router.get("/recommendations", auth, async (req, res) => {
 /* ==========================================
    GET Application History (applied jobs)
 ========================================== */
-router.get("/history", auth, async (req, res) => {
+  router.get("/history", auth(["student"]), async (req, res) => {
   try {
    const userId = req.user.id;
 
@@ -299,7 +308,7 @@ router.get("/history", auth, async (req, res) => {
 /* ==========================================
    GET Viewed Jobs History
 ========================================== */
-router.get("/viewed", auth, async (req, res) => {
+  router.get("/viewed", auth(["student"]), async (req, res) => {
   try {
     const userId = req.user.id;
     const [rows] = await db.execute(`
@@ -330,7 +339,7 @@ router.get("/viewed", auth, async (req, res) => {
 /* ==========================================================
     UPDATE APPLICATION STATUS (Employer)
 ========================================================== */
-router.put("/:id/status", auth, async (req, res) => {
+router.put("/:id/status", auth(["employer"]), async (req, res) => {
   try {
     if (req.user.role !== "employer") {
       return res.status(403).json({ error: "Only employers can do this" });
@@ -384,7 +393,7 @@ router.put("/:id/status", auth, async (req, res) => {
 ///==========================================
 // applicant frofile download
 //====================================
-router.get("/:id/download", auth, async (req, res) => {
+router.get("/:id/download", auth(["employer"]), async (req, res) => {
   if (req.user.role !== "employer") {
     return res.status(403).json({ error: "Access denied" });
   }

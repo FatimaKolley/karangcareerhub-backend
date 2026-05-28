@@ -27,7 +27,7 @@ function auth(req, res, next) {
 /* =============================
    ENSURE FOLDER EXISTS
 ============================= */
-const uploadDir = "uploads/profile_pics";
+const uploadDir = path.join(process.cwd(), "uploads/profile_pics");
 
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -102,7 +102,7 @@ router.post(
       // ✅ DELETE OLD IMAGE (optional but recommended)
       if (oldImage && oldImage !== filePath) {
         const oldPath = oldImage.replace("/uploads/", "uploads/");
-        if (fs.existsSync(oldPath)) {
+          if (fs.existsSync(oldPath)) {
           fs.unlinkSync(oldPath);
         }
       }
@@ -118,8 +118,12 @@ router.post(
       if (err.message.includes("Only image")) {
         return res.status(400).json({ error: err.message });
       }
-
       res.status(500).json({ error: "Upload failed" });
+      if (err instanceof multer.MulterError) {
+        return res.status(400).json({
+          error: err.message
+        });
+      }
     }
   }
 );

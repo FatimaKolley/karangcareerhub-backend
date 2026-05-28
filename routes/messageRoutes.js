@@ -1,4 +1,4 @@
-import express from "express";
+/*import express from "express";
 import db from "../db.js";
 import auth from "../middleware/auth.js";
 
@@ -31,4 +31,4 @@ router.get("/:userId", auth, async (req, res) => {
   res.json(rows);
 });
 
-export default router;
+export default router;*/

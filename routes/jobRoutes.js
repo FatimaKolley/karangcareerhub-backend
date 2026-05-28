@@ -11,6 +11,14 @@ const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
 /* ===============================
    MULTER CONFIG
 ================================ */
+import fs from "fs";
+
+const jobsDir = "uploads/jobs";
+
+if (!fs.existsSync(jobsDir)) {
+  fs.mkdirSync(jobsDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "uploads/jobs");
@@ -188,7 +196,7 @@ router.get("/history", auth, async (req, res) => {
 // ===============================
 // RECORD JOB VIEW
 // ===============================
-router.post("/view", auth, async (req, res) => {
+router.post("/view", auth(["student"]), async (req, res) => {
   try {
     if (req.user.role !== "student") {
       return res.status(403).json({
@@ -295,7 +303,7 @@ router.delete("/save/:jobId", auth, async (req, res) => {
 /* =============================
    GET EMPLOYER JOBS
 ============================= */
-router.get("/my-jobs", auth, async (req, res) => {
+router.get("/my-jobs", auth(["employer"]), async (req, res) => {
   try {
 
     if (req.user.role !== "employer") {
@@ -363,43 +371,9 @@ ORDER BY j.created_at DESC
 });
 
 /* =============================
-   GET SINGLE JOB
-============================= */
-router.get("/:id", async (req, res) => {
-  try {
-    const [rows] = await db.execute(`
-      SELECT j.*, 
-      CONCAT(u.first_name, ' ', u.last_name) AS employer_name
-      FROM jobs j
-      LEFT JOIN users u ON j.employer_id = u.id
-      WHERE j.id = ?
-      LIMIT 1
-    `, [req.params.id]);
-
-    if (!rows.length) {
-      return res.status(404).json({ error: "Job not found" });
-    }
-
-    const job = rows[0];
-
-    job.files = job.file
-      ? [{
-          name: job.file,
-          url: `${BASE_URL}/uploads/jobs/${job.file}`
-        }]
-      : [];
-
-    res.json(job);
-  } catch (err) {
-    console.error("❌ Single Job Error:", err);
-    res.status(500).json({ error: "Failed to load job" });
-  }
-});
-
-/* =============================
    POST JOB (EMPLOYER)
 ============================= */
-router.post("/", auth, upload.single("jobFile"), async (req, res) => {
+router.post("/", auth(["employer"]), upload.single("jobFile"), async (req, res) => {
   try {
     if (req.user.role !== "employer") {
       return res.status(403).json({ error: "Only employers allowed" });
@@ -445,6 +419,40 @@ router.post("/", auth, upload.single("jobFile"), async (req, res) => {
   } catch (err) {
     console.error("❌ Post Job Error:", err);
     res.status(500).json({ error: "Failed to post job" });
+  }
+});
+
+/* =============================
+   GET SINGLE JOB
+============================= */
+router.get("/:id", async (req, res) => {
+  try {
+    const [rows] = await db.execute(`
+      SELECT j.*, 
+      CONCAT(u.first_name, ' ', u.last_name) AS employer_name
+      FROM jobs j
+      LEFT JOIN users u ON j.employer_id = u.id
+      WHERE j.id = ?
+      LIMIT 1
+    `, [req.params.id]);
+
+    if (!rows.length) {
+      return res.status(404).json({ error: "Job not found" });
+    }
+
+    const job = rows[0];
+
+    job.files = job.file
+      ? [{
+          name: job.file,
+          url: `${BASE_URL}/uploads/jobs/${job.file}`
+        }]
+      : [];
+
+    res.json(job);
+  } catch (err) {
+    console.error("❌ Single Job Error:", err);
+    res.status(500).json({ error: "Failed to load job" });
   }
 });
 
