@@ -68,7 +68,7 @@ router.get("/popular/limit", async (req, res) => {
       SELECT j.*, CONCAT(u.first_name, ' ', u.last_name) AS employer_name
       FROM jobs j
       LEFT JOIN users u ON j.employer_id = u.id
-      ORDER BY j.views DESC
+      ORDER BY COALESCE(j.views,0) DESC
       LIMIT 4
     `);
 
@@ -105,17 +105,67 @@ router.get("/", async (req, res) => {
   try {
     const [rows] = await db.execute(`
       SELECT 
-        j.*,
+        j.id,
+        j.title,
+        j.description,
+        j.employer,
+        j.category,
+        j.type,
+        j.views,
+        j.created_at,
+        j.deadline,
+        j.location,
+        j.skills,
+        j.employer_id,
+        j.experience,
+        j.salary,
+        j.file,
+        j.status,
+        j.currency,
+        j.file_name,
+        j.file_url,
+        j.experience_level,
+
         CONCAT(u.first_name, ' ', u.last_name) AS employer_name,
+
         COUNT(a.id) AS applicants_count
+
       FROM jobs j
-      LEFT JOIN users u ON j.employer_id = u.id
-      LEFT JOIN applications a ON j.id = a.job_id
-      GROUP BY j.id
+
+      LEFT JOIN users u
+      ON j.employer_id = u.id
+
+      LEFT JOIN applications a
+      ON j.id = a.job_id
+
+      GROUP BY
+        j.id,
+        j.title,
+        j.description,
+        j.employer,
+        j.category,
+        j.type,
+        j.views,
+        j.created_at,
+        j.deadline,
+        j.location,
+        j.skills,
+        j.employer_id,
+        j.experience,
+        j.salary,
+        j.file,
+        j.status,
+        j.currency,
+        j.file_name,
+        j.file_url,
+        j.experience_level,
+        employer_name
+
       ORDER BY j.created_at DESC
     `);
 
     res.json(rows);
+
   } catch (err) {
     console.error("❌ Fetch Jobs Error:", err);
     res.status(500).json({ error: "Failed to load jobs" });

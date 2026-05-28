@@ -114,16 +114,22 @@ router.post(
 
     } catch (err) {
       console.error("❌ Upload Error:", err);
-
-      if (err.message.includes("Only image")) {
-        return res.status(400).json({ error: err.message });
-      }
-      res.status(500).json({ error: "Upload failed" });
+    
       if (err instanceof multer.MulterError) {
         return res.status(400).json({
           error: err.message
         });
       }
+    
+      if (err.message.includes("Only image")) {
+        return res.status(400).json({
+          error: err.message
+        });
+      }
+    
+      res.status(500).json({
+        error: "Upload failed"
+      });
     }
   }
 );

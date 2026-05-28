@@ -265,11 +265,11 @@ router.post(
         : undefined;
 
       const companyLogo = req.files?.company_logo?.[0]
-        ? req.files.company_logo[0].path
+        ? req.files.company_logo[0].path.replace(/\\/g, "/")
         : undefined;
 
       const resume = req.files?.resume?.[0]
-        ? req.files.resume[0].path
+        ? req.files.resume[0].path.replace(/\\/g, "/")
         : undefined;
 
       const idDocumentFile = req.files?.id_document?.[0]
