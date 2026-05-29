@@ -20,6 +20,14 @@ import hpp from "hpp";
 // DB + ROUTES
 // =====================
 import db from "./db.js";
+setInterval(async () => {
+  try {
+    await db.query("SELECT 1");
+    console.log("✅ DB Keep Alive");
+  } catch (err) {
+    console.error("❌ DB Keep Alive Error:", err);
+  }
+}, 30000);
 import userRoutes from "./routes/users.js";
 import jobRoutes from "./routes/jobRoutes.js";
 import applicationsRoutes from "./routes/applicationRoutes.js";
@@ -46,6 +54,7 @@ const __dirname = path.dirname(__filename);
 // EXPRESS APP
 // =====================
 const app = express();
+app.set("trust proxy", 1);
 app.use(helmet());
 
 
