@@ -16,6 +16,17 @@ export const saveMessage = async (
       receiverId,
       message
     } = req.body;
+    
+    if (
+      !senderId ||
+      !receiverId ||
+      !message
+    ) {
+      return res.status(400).json({
+        message:
+          "senderId, receiverId and message are required"
+      });
+    }
 
     await db.query(
       `INSERT INTO admin_chats

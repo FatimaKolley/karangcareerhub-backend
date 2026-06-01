@@ -1,0 +1,168 @@
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:Arial;
+  background:#ece5dd;
+}
+
+.dashboard{
+  display:flex;
+  height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+  width:300px;
+  background:#fff;
+  border-right:1px solid #ddd;
+  display:flex;
+  flex-direction:column;
+}
+
+.sidebar-header{
+  background:#043972;
+  color:white;
+  padding:20px;
+}
+
+.admin-list{
+  overflow-y:auto;
+  flex:1;
+}
+
+.admin-item{
+  display:block;
+  padding:18px;
+  text-decoration:none;
+  color:black;
+  border-bottom:1px solid #eee;
+  transition:0.3s;
+}
+
+.admin-item:hover{
+  background:#f5f5f5;
+}
+
+/* CHAT */
+
+.chat-section{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+.chat-header{
+  background:#043972;
+  color:white;
+  padding:20px;
+}
+
+#onlineUsers{
+  margin-top:5px;
+  font-size:13px;
+}
+
+#messages{
+  flex:1;
+  overflow-y:auto;
+  padding:20px;
+  background:#efeae2;
+}
+
+#typing{
+  padding-left:20px;
+  height:20px;
+  color:#555;
+}
+
+.chat-input{
+  display:flex;
+  background:white;
+  padding:10px;
+  border-top:1px solid #ddd;
+}
+
+.chat-input input{
+  flex:1;
+  padding:14px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  outline:none;
+}
+
+.chat-input button{
+  width:120px;
+  margin-left:10px;
+  border:none;
+  border-radius:8px;
+  background:#043972;
+  color:white;
+  cursor:pointer;
+}
+
+#toastContainer{
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.toast{
+  background: #1f2937;
+  color: white;
+  padding: 12px 18px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  min-width: 250px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+
+  animation: slideIn 0.3s ease;
+}
+
+.toast.success{
+  border-left: 5px solid #22c55e;
+}
+
+.toast.error{
+  border-left: 5px solid #ef4444;
+}
+
+.toast.info{
+  border-left: 5px solid #3b82f6;
+}
+
+@keyframes slideIn{
+  from{
+    opacity:0;
+    transform:translateX(100%);
+  }
+  to{
+    opacity:1;
+    transform:translateX(0);
+  }
+}
+#notificationBadge{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+
+  min-width:22px;
+  height:22px;
+
+  padding:0 6px;
+
+  border-radius:50%;
+
+  background:#ef4444;
+  color:white;
+
+  font-size:12px;
+  font-weight:bold;
+
+  margin-left:8px;
+}

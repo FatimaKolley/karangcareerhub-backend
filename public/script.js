@@ -1,5 +1,7 @@
 (() => {
   const API_URL = "https://karangcareerhub-api.onrender.com/api";
+  /*const API_URL =
+"http://localhost:5000/api";*/
 
 const JOBS_API = `${API_URL}/jobs`;
 

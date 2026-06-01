@@ -1,4 +1,6 @@
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
+/*const API_URL = "http://localhost:5000/api";*/
+
 
 // =============================
 // Helper: compute profile %
@@ -1148,8 +1150,17 @@ function openChatInbox() {
   window.location.href = "chat.html";
 }
 
-const socket = io(
+/*const socket = io(
   "https://karangcareerhub-api.onrender.com",
+  {
+    transports: [
+      "websocket",
+      "polling"
+    ]
+  }
+);*/
+const socket = io(
+  "http://localhost:5000",
   {
     transports: [
       "websocket",

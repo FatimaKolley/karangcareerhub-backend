@@ -1,4 +1,6 @@
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
+/*const API_URL = "http://localhost:5000/api";*/
+
 
 let allJobs = [];
 let filteredJobs = [];
@@ -114,11 +116,18 @@ function renderJobs(jobs) {
       }
 
       <div class="browse-job-actions">
-        <button class="browse-details-btn">Job Details</button>
-        <button class="browse-apply-btn" ${expired ? "disabled" : ""}>
-          ${expired ? "Expired" : "Apply Now"}
-        </button>
-      </div>
+      <button class="browse-details-btn">
+        Job Details
+      </button>
+    
+      <button class="browse-apply-btn">
+        Apply Now
+      </button>
+    
+      <button class="browse-report-btn">
+        Report
+      </button>
+       </div>
     `;
 
     // APPLY BUTTON -> go to apply page
@@ -136,6 +145,32 @@ function renderJobs(jobs) {
     detailsBtn?.addEventListener("click", (e) => {
       e.stopPropagation();
       goToJobDetails(jobId);
+    });
+
+    // report
+    const reportBtn = card.querySelector(".browse-report-btn");
+
+    reportBtn?.addEventListener("click", async (e) => {
+      e.stopPropagation();
+    
+      const token = localStorage.getItem("token");
+    
+      if (!token) {
+        showToast("Please login first", "error");
+        return;
+      }
+    
+      const reason = await showCustomPrompt("Why are you reporting this job?");
+      if (!reason) return;
+    
+      try {
+        await reportJob(jobId, reason);
+    
+        showToast("Report submitted successfully", "success");
+      } catch (err) {
+        console.error(err);
+        showToast(err.message || "Report failed", "error");
+      }
     });
 
 
@@ -181,6 +216,7 @@ function goToJobDetails(jobId) {
 
   window.location.href = `job.html?id=${jobId}`;
 }
+
 
 // =============================
 // RECORD JOB VIEW
@@ -471,3 +507,47 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("searchInput")?.addEventListener("input", applySearchAndSort);
   document.getElementById("sortSelect")?.addEventListener("change", applySearchAndSort);
 });
+
+async function reportJob(jobId, reason) {
+  const res = await fetch(`${API_URL}/reports`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${getToken()}`
+    },
+    body: JSON.stringify({
+      reported_job_id: jobId,
+      reason
+    })
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to report job");
+  }
+
+  return data;
+}
+
+function showCustomPrompt(message) {
+  return new Promise((resolve) => {
+    const modal = document.getElementById("reportModal");
+    const input = document.getElementById("reportReason");
+    const cancelBtn = document.getElementById("cancelReport");
+    const submitBtn = document.getElementById("submitReport");
+
+    input.value = "";
+    modal.classList.remove("hidden");
+
+    cancelBtn.onclick = () => {
+      modal.classList.add("hidden");
+      resolve(null);
+    };
+
+    submitBtn.onclick = () => {
+      modal.classList.add("hidden");
+      resolve(input.value.trim());
+    };
+  });
+}

@@ -3,6 +3,7 @@
 // ===============================
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
 
+
 let currentJobId = null;
 let currentJob = null;
 let isJobSaved = false;

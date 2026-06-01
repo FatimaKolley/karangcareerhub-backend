@@ -3,37 +3,67 @@
 <head>
   <meta charset="UTF-8">
   <title>Admin Chat</title>
+  <link rel="stylesheet" href="help-chat.css">
 </head>
 <body>
 
-<h1>Admin Chat</h1>
+  <div class="dashboard">
+  
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+  
+      <div class="sidebar-header">
+        <h2>Super Admin</h2>
+      </div>
+  
+      <div id="adminList" class="admin-list"></div>
+  
+    </div>
+    <div id="toastContainer"></div>
 
-<div id="onlineUsers"></div>
-
-<div
-  id="messages"
-  style="
-    height:400px;
-    overflow-y:scroll;
-    border:1px solid #ccc;
-  "
-></div>
-
-<p id="typing"></p>
-
-<input
-  type="text"
-  id="messageInput"
-  placeholder="Type message"
-/>
-
-<button id="sendBtn">
-  Send
-</button>
-
-<script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
-
-<script src="help-chat.js"></script>
-
-</body>
+    <!-- CHAT AREA -->
+    <div class="chat-section">
+  
+      <div class="chat-header">
+  
+        <div>
+          <h2>
+            Help Chat
+            <span id="notificationBadge" style="display:none;">
+            </span>
+          
+          </h2>
+  
+          <div id="onlineUsers"></div>
+        </div>
+  
+      </div>
+  
+      <div id="messages"></div>
+  
+      <p id="typing"></p>
+  
+      <div class="chat-input">
+  
+        <input
+          type="text"
+          id="messageInput"
+          placeholder="Type message"
+        />
+  
+        <button id="sendBtn">
+          Send
+        </button>
+  
+      </div>
+  
+    </div>
+  
+  </div>
+  
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  
+  <script src="help-chat.js"></script>
+  
+  </body>
 </html>

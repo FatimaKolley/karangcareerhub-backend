@@ -2,6 +2,10 @@ import express from "express";
 
 import adminAuth
 from "../middleware/adminAuth.js";
+import auth from "../middleware/auth.js";
+import {
+  getReportedJobs
+} from "../controllers/reportController.js";
 
 import {
   getAllUsers,
@@ -9,9 +13,12 @@ import {
   activateUser,
   getAllJobs,
   deleteJob,
-  getAllApplications
-}
-from "../controllers/adminController.js";
+  getAllApplications,
+  requestSuperAdminHelp,
+  flagJob,
+  unflagJob,
+  getJobById   
+} from "../controllers/adminController.js";
 
 const router = express.Router();
 
@@ -37,11 +44,8 @@ router.put(
 
 
 // JOBS
-router.get(
-  "/jobs",
-  adminAuth,
-  getAllJobs
-);
+router.get("/jobs", adminAuth, getAllJobs);
+
 
 router.delete(
   "/jobs/:id",
@@ -56,5 +60,23 @@ router.get(
   adminAuth,
   getAllApplications
 );
+
+// help request
+router.post(
+  "/request-help",
+  adminAuth,
+  requestSuperAdminHelp
+);
+router.put("/jobs/flag/:id", adminAuth, flagJob);
+router.put("/jobs/unflag/:id", adminAuth, unflagJob);
+router.get("/jobs/:id", adminAuth, getJobById);
+
+// reported jobs (admin)
+router.get(
+  "/reported-jobs",
+  adminAuth,
+  getReportedJobs
+);
+
 
 export default router;

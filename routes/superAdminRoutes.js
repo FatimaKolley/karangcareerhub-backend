@@ -2,6 +2,9 @@ import express from "express";
 
 import superAdminAuth
 from "../middleware/superAdminAuth.js";
+import adminAuth
+from "../middleware/adminAuth.js";
+import { getSuperAdmin } from "../controllers/superAdminController.js";
 
 import {
   createAdmin,
@@ -12,7 +15,8 @@ import {
   getAnalytics,
   getAdminActivities,
   resetAdminPassword,
-  lockAdmin
+  lockAdmin,
+  getAllUserChats
 }
 from "../controllers/superAdminController.js";
 
@@ -88,6 +92,41 @@ router.put(
   "/lock/:id",
   superAdminAuth,
   lockAdmin
+);
+
+// chat
+router.get(
+  "/all-user-chats",
+  superAdminAuth,
+  getAllUserChats
+);
+
+router.get(
+  "/super-admin-info",
+  adminAuth,
+  async (req, res) => {
+
+    const [rows] =
+      await db.query(
+        `
+        SELECT id,
+               fullname,
+               role
+        FROM admins
+        WHERE role='super_admin'
+        LIMIT 1
+        `
+      );
+
+    res.json(rows[0] || null);
+  }
+);
+
+
+router.get(
+  "/super-admin",
+  adminAuth,
+  getSuperAdmin
 );
 
 export default router;

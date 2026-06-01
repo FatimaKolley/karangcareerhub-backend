@@ -8,7 +8,9 @@ from "../middleware/adminAuth.js";
 import {
   createReport,
   getReports,
-  resolveReport
+  resolveReport,
+  getReportedJobs,
+  unreportJob
 }
 from "../controllers/reportController.js";
 
@@ -42,6 +44,16 @@ router.put(
   "/resolve/:id",
   adminAuth,
   resolveReport
+);
+// =======================
+// GET REPORTED JOBS
+// =======================
+router.get("/reported-jobs", adminAuth, getReportedJobs);
+
+router.put(
+  "/unreport/:jobId",
+  adminAuth,
+  unreportJob
 );
 
 export default router;

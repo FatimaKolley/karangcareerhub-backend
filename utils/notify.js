@@ -16,7 +16,7 @@ async function createNotification({
     const [result] = await db.execute(
       `
       INSERT INTO notifications
-      (user_id, title, message, link, type)
+      (title, message, link, type)
       VALUES (?, ?, ?, ?, ?)
       `,
       [user_id, title, message, link, type]

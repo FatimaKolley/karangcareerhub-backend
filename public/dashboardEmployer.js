@@ -1,3 +1,9 @@
+c/*onst socket =
+io("http://localhost:5000");
+
+const API_URL =
+"http://localhost:5000/api";*/
+
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
 const socket = io("https://karangcareerhub-api.onrender.com");
 /* ===============================
@@ -1058,16 +1064,18 @@ function escapeHTML(str) {
 }
 
 function formatImage(path) {
-
-  if (!path) {
-    return "image/default-avatar.png";
-  }
+  if (!path) return "image/default-avatar.png";
 
   if (path.startsWith("http")) {
     return path;
   }
 
-  return `https://karangcareerhub-api.onrender.com/${path.replace(/^\/+/, "")}`;
+  // fallback only if you still support legacy uploads
+  if (path.includes("uploads")) {
+    return `https://karangcareerhub-api.onrender.com/${path.replace(/^\/+/, "")}`;
+  }
+
+  return "image/default-avatar.png";
 }
 
 function setProfileAvatar(user) {

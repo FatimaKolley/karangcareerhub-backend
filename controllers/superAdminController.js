@@ -285,95 +285,82 @@ export const deleteAdmin = async (req, res) => {
 };
 
 export const getAnalytics = async (req, res) => {
-    try {
-  
-      // =========================
-      // TOTAL USERS
-      // =========================
-      const [users] = await db.query(`
-        SELECT COUNT(*) AS totalUsers
-        FROM users
-      `);
-  
-      // =========================
-      // TOTAL JOBS
-      // =========================
-      const [jobs] = await db.query(`
-        SELECT COUNT(*) AS totalJobs
-        FROM jobs
-      `);
-  
-      // =========================
-      // TOTAL APPLICATIONS
-      // =========================
-      const [applications] = await db.query(`
-        SELECT COUNT(*) AS totalApplications
-        FROM applications
-      `);
-  
-      // =========================
-      // MOST ACTIVE USERS
-      // =========================
-      const [activeUsers] = await db.query(`
-        SELECT
-          users.id,
-          users.fullname,
-          COUNT(applications.id) AS totalApplications
-        FROM applications
-        JOIN users
-        ON applications.user_id = users.id
-        GROUP BY users.id
-        ORDER BY totalApplications DESC
-        LIMIT 5
-      `);
-  
-      // =========================
-      // JOB PERFORMANCE
-      // =========================
-      const [jobPerformance] = await db.query(`
-        SELECT
-          jobs.id,
-          jobs.title,
-          COUNT(applications.id) AS totalApplications
-        FROM jobs
-        LEFT JOIN applications
-        ON applications.job_id = jobs.id
-        GROUP BY jobs.id
-        ORDER BY totalApplications DESC
-        LIMIT 10
-      `);
-  
-      // =========================
-      // ADMIN ACTIVITIES COUNT
-      // =========================
-      const [adminActivities] = await db.query(`
-        SELECT COUNT(*) AS totalActivities
-        FROM admin_logs
-      `);
-  
-      res.status(200).json({
-        totalUsers: users[0].totalUsers,
-        totalJobs: jobs[0].totalJobs,
-        totalApplications:
-          applications[0].totalApplications,
-  
-        mostActiveUsers: activeUsers,
-  
-        jobPerformance,
-  
-        adminActivities:
-          adminActivities[0].totalActivities
-      });
-  
-    } catch (error) {
-  
-      console.log(error);
-  
-      res.status(500).json({
-        message: "Server error"
-      });
-    }
-  };
+  try {
+
+    // TOTAL USERS
+    const [users] = await db.query(`
+      SELECT COUNT(*) AS totalUsers
+      FROM users
+    `);
+
+    // TOTAL JOBS
+    const [jobs] = await db.query(`
+      SELECT COUNT(*) AS totalJobs
+      FROM jobs
+    `);
+
+    // TOTAL APPLICATIONS
+    const [applications] = await db.query(`
+      SELECT COUNT(*) AS totalApplications
+      FROM applications
+    `);
+
+    // MOST ACTIVE USERS
+    const [activeUsers] = await db.query(`
+      SELECT
+        users.id,
+        CONCAT(users.first_name, ' ', users.last_name) AS fullname,
+        COUNT(applications.id) AS totalApplications
+      FROM applications
+      JOIN users
+      ON applications.user_id = users.id
+      GROUP BY
+        users.id,
+        users.first_name,
+        users.last_name
+      ORDER BY totalApplications DESC
+      LIMIT 5
+    `);
+
+    // JOB PERFORMANCE
+    const [jobPerformance] = await db.query(`
+      SELECT
+        jobs.id,
+        jobs.title,
+        COUNT(applications.id) AS totalApplications
+      FROM jobs
+      LEFT JOIN applications
+      ON applications.job_id = jobs.id
+      GROUP BY jobs.id, jobs.title
+      ORDER BY totalApplications DESC
+      LIMIT 10
+    `);
+
+    // ADMIN ACTIVITIES
+    const [adminActivities] = await db.query(`
+      SELECT COUNT(*) AS totalActivities
+      FROM admin_logs
+    `);
+
+    res.status(200).json({
+      totalUsers: users[0].totalUsers,
+      totalJobs: jobs[0].totalJobs,
+      totalApplications: applications[0].totalApplications,
+      mostActiveUsers: activeUsers,
+      jobPerformance,
+      adminActivities: adminActivities[0].totalActivities
+    });
+
+  } catch (error) {
+
+    console.log("ANALYTICS ERROR:", error);
+
+    res.status(500).json({
+      message: "Server error",
+      error: error.message
+    });
+  }
+};
 
   export const getAdminActivities = async (req, res) => {
     try {
@@ -400,6 +387,37 @@ export const getAnalytics = async (req, res) => {
       res.status(500).json({
         message: "Server error"
       });
+    }
+  };
+
+
+  export const getAllUserChats = async (req, res) => {
+    try {
+      const [messages] = await db.query(`
+        SELECT
+          messages.*,
+  
+          CASE
+            WHEN messages.sender_id IN (SELECT id FROM admins)
+            THEN (SELECT fullname FROM admins WHERE admins.id = messages.sender_id)
+            ELSE (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE users.id = messages.sender_id)
+          END AS sender_name,
+  
+          CASE
+            WHEN messages.receiver_id IN (SELECT id FROM admins)
+            THEN (SELECT fullname FROM admins WHERE admins.id = messages.receiver_id)
+            ELSE (SELECT CONCAT(first_name, ' ', last_name) FROM users WHERE users.id = messages.receiver_id)
+          END AS receiver_name
+  
+        FROM messages
+        ORDER BY messages.created_at DESC
+      `);
+  
+      res.json(messages);
+  
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Server error" });
     }
   };
 
@@ -583,6 +601,33 @@ async (req, res) => {
 
     res.status(500).json({
       message:"Server error"
+    });
+  }
+};
+
+
+
+export const getSuperAdmin = async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT id, fullname, role
+      FROM admins
+      WHERE role = 'super_admin'
+      LIMIT 1
+    `);
+
+    if (rows.length === 0) {
+      return res.status(404).json({
+        message: "No super admin found"
+      });
+    }
+
+    res.json(rows[0]);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Server error"
     });
   }
 };

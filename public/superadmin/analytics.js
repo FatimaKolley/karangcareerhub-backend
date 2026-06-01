@@ -1,5 +1,7 @@
 const API_URL =
   "https://karangcareerhub-api.onrender.com/api";
+  /*const API_URL =
+  "http://localhost:5000/api";*/
 
   const token =
   localStorage.getItem("adminToken");
@@ -53,7 +55,7 @@ async function loadAnalytics() {
 
     list.innerHTML = "";
 
-    data.mostActiveUsers.forEach(user => {
+    (data.mostActiveUsers || []).forEach(user => {
 
       const li =
         document.createElement("li");
@@ -67,12 +69,12 @@ async function loadAnalytics() {
     });
 
     const labels =
-      data.jobPerformance.map(
+  (data.jobPerformance || []).map(
         job => job.title
       );
 
-    const applications =
-      data.jobPerformance.map(
+      const applications =
+      (data.jobPerformance || []).map(
         job => job.totalApplications
       );
 

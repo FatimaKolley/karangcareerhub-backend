@@ -10,8 +10,8 @@ async (req, res) => {
   try {
 
     const {
-      reported_user_id,
-      reported_job_id,
+      reported_user_id = null,
+      reported_job_id = null,
       reason
     } = req.body;
 
@@ -128,6 +128,76 @@ async (req, res) => {
 
     res.status(500).json({
       error: "Failed"
+    });
+  }
+};
+
+// =======================
+// GET REPORTED JOBS
+// =======================
+export const getReportedJobs =
+async (req, res) => {
+
+  try {
+
+    const [jobs] =
+      await db.execute(
+        `
+        SELECT
+        j.*,
+        COUNT(r.id) AS report_count,
+        GROUP_CONCAT(r.reason SEPARATOR ' | ') AS report_reasons
+      FROM jobs j
+      LEFT JOIN reports r ON j.id = r.reported_job_id
+      GROUP BY j.id
+      HAVING report_count > 0
+      ORDER BY report_count DESC;
+        `
+      );
+
+    res.json(jobs);
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      error: "Failed to load reported jobs"
+    });
+  }
+};
+
+
+// =======================
+// UNREPORT JOB
+// =======================
+export const unreportJob =
+async (req, res) => {
+
+  try {
+
+    const jobId = req.params.jobId;
+
+    await db.execute(
+      `
+      UPDATE reports
+      SET status = 'resolved'
+      WHERE reported_job_id = ?
+      `,
+      [jobId]
+    );
+
+    res.json({
+      success: true,
+      message: "Job reports cleared"
+    });
+
+  } catch (err) {
+
+    console.log(err);
+
+    res.status(500).json({
+      error: "Failed to clear reports"
     });
   }
 };

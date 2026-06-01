@@ -1,8 +1,6 @@
 import db from "../db.js";
 
 import { io } from "../server.js";
-
-
 // ===========================
 // CREATE NOTIFICATION
 // ===========================

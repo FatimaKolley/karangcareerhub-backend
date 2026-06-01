@@ -1,5 +1,7 @@
 const API_URL =
   "https://karangcareerhub-api.onrender.com/api";
+  /*const API_URL =
+"http://localhost:5000/api";*/
 
 const token =
   localStorage.getItem("adminToken");
@@ -32,17 +34,41 @@ async function loadJobs() {
 
       container.innerHTML += `
         <div class="job-card">
-
+    
           <h3>${job.title}</h3>
+    
+          <p class="company">${job.employer}</p>
+    
+          <p class="desc">
+            ${job.description.slice(0, 120)}...
+          </p>
+    
+          <p class="skills">
+            Skills: ${job.skills}
+          </p>
+          
+          <p class="status">
+          Status: ${job.status}
+          </p>
 
-          <p>${job.company}</p>
+          <div class="buttons">
 
-          <button
-            onclick="deleteJob(${job.id})"
-          >
-            Delete Job
-          </button>
+          <div class="buttons">
 
+          <button onclick="deleteJob(${job.id})">Delete</button>
+
+          <button onclick="viewJob(${job.id})">View</button>
+
+         ${
+           job.status === "flagged"
+            ? `<button onclick="unflagJob(${job.id})">Unflag</button>`
+           : `<button onclick="flagJob(${job.id})">Flag</button>`
+          }
+
+         </div>
+    
+          </div>
+    
         </div>
       `;
     });
@@ -50,6 +76,8 @@ async function loadJobs() {
   } catch(error) {
 
     console.log(error);
+    console.log("JOBS FROM API:", jobs);
+
   }
 }
 
@@ -68,6 +96,32 @@ async function deleteJob(id) {
   );
 
   loadJobs();
+}
+
+async function flagJob(id) {
+  await fetch(`${API_URL}/admin/jobs/flag/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  loadJobs();
+}
+
+async function unflagJob(id) {
+  await fetch(`${API_URL}/admin/jobs/unflag/${id}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  });
+
+  loadJobs();
+}
+
+function viewJob(id) {
+  window.location.href = `job-details.html?id=${id}`;
 }
 
 loadJobs();

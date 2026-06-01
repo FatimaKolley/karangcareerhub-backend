@@ -6,15 +6,12 @@ import dotenv from "dotenv";
 import multer from "multer";
 import { createServer } from "http";
 import { Server } from "socket.io";
-import adminChatSocket
-from "./socket/adminChatSocket.js";
 import adminChatRoutes
 from "./routes/adminChatRoutes.js";
 import { setIO }
 from "./socket/socket.js";
 import rateLimit from "express-rate-limit";
 import hpp from "hpp";
-
 
 // =====================
 // DB + ROUTES
@@ -97,15 +94,15 @@ app.use(limiter);
 // =====================
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static("public"));
+/*app.use(express.static("public"));*/
 
 // =====================
 // STATIC UPLOADS
 // =====================
-app.use(
+/*app.use(
   "/uploads",
   express.static(path.join(__dirname, "uploads"))
-);
+);*/
 
 // =====================
 // HEALTH CHECK
@@ -189,10 +186,6 @@ const io = new Server(httpServer, {
 });
 
 setIO(io);
-adminChatSocket(io);
-
-
-export { io };
 
 // =====================
 // ONLINE USERS
@@ -313,6 +306,52 @@ io.on("connection", (socket) => {
         ]
       );
 
+         // detect admin / superadmin roles
+const [sender] = await db.execute(
+  "SELECT role FROM admins WHERE id = ?",
+  [senderId]
+);
+
+const [receiver] = await db.execute(
+  "SELECT role FROM admins WHERE id = ?",
+  [receiverId]
+);
+
+// if admin → superadmin
+// or superadmin → admin
+if (sender[0]?.role || receiver[0]?.role) {
+
+  const notification = {
+    sender_id: senderId,
+    receiver_id: receiverId,
+    type: "chat",
+    title: "New Message",
+    message: message || "You have a new message",
+    createdAt: new Date()
+  };
+
+  // SAVE TO DB
+  await db.execute(
+    `INSERT INTO notifications
+    (sender_id, receiver_id, type, title, message)
+    VALUES (?, ?, ?, ?, ?, ?)`,
+    [
+      senderId,
+      receiverId,
+      "chat",
+      "New Message",
+      message || "You have a new message",
+      receiverId
+    ]
+  );
+  await emitUnreadCount(receiverId);
+  // REALTIME EMIT
+  io.to(String(receiverId)).emit(
+    "newNotification",
+    notification
+  );
+}
+
       // message payload
       const messageData = {
 
@@ -351,6 +390,23 @@ io.on("connection", (socket) => {
       socket.emit("chatError", {
         message: "Failed to send message"
       });
+    }
+  });
+
+  socket.on("sendNotification", async (data) => {
+    try {
+      const { senderId, receiverId, message, type } = data;
+  
+      // emit realtime
+      io.to(String(receiverId)).emit("notification", {
+        senderId,
+        message,
+        type,
+        createdAt: new Date()
+      });
+  
+    } catch (err) {
+      console.error("Notification error:", err);
     }
   });
 
@@ -454,3 +510,4 @@ const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
+export { io, emitUnreadCount };

@@ -1,3 +1,8 @@
+/*const socket =
+io("http://localhost:5000");
+
+const API_URL =
+"http://localhost:5000/api";*/
 const API_URL =
   "https://karangcareerhub-api.onrender.com/api";
 
@@ -12,18 +17,15 @@ const admin =
     localStorage.getItem("adminData")
   );
 
-const receiverId = 2;
+  let receiverId = null;
 
 const messagesDiv =
   document.getElementById("messages");
 
 // JOIN ROOM
-socket.emit(
-  "joinRoom",
-  {
-    userId: admin.id
-  }
-);
+socket.emit("joinRoom", {
+  userId: admin.id
+});
 
 // ==========================
 // ONLINE USERS
@@ -46,16 +48,16 @@ socket.on(
 // ==========================
 // RECEIVE MESSAGE
 // ==========================
-socket.on(
-  "receiveMessage",
-  (data) => {
+socket.on("receiveMessage", (data) => {
 
-    addMessage(
-      data.message,
-      "received"
-    );
-  }
-);
+  if(Number(data.senderId) === Number(admin.id)) return;
+
+  addMessage(
+    data.message,
+    "received",
+    data.created_at
+  );
+});
 
 // ==========================
 // TYPING
@@ -74,6 +76,54 @@ socket.on("stopTyping", () => {
     "typing"
   ).innerText = "";
 });
+
+
+// ==========================
+// LOAD SUPER ADMIN
+// ==========================
+async function loadSuperAdmin() {
+  try {
+    const response = await fetch(
+      `${API_URL}/super-admin/super-admin`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      console.log("Auth failed:", response.status);
+      return;
+    }
+
+    const superAdmin = await response.json();
+
+    console.log("Super Admin:", superAdmin);
+
+    if (!superAdmin?.id) {
+      showToast("Super admin not found");
+      return;
+    }
+
+    receiverId = superAdmin.id;
+
+    console.log("Receiver ID set:", receiverId);
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+async function init() {
+
+  await loadSuperAdmin();
+
+  await loadMessages();
+
+}
+
+init();
 
 // ==========================
 // FILE UPLOAD
@@ -155,14 +205,30 @@ document.getElementById(
         uploadedFile?.fileType || null
     };
 
-    socket.emit(
-      "sendMessage",
-      data
+        // SAVE TO DATABASE
+    await fetch(
+      `${API_URL}/admin-chat/send`,
+      {
+        method:"POST",
+
+        headers:{
+          "Content-Type":
+            "application/json",
+
+          Authorization:
+            `Bearer ${token}`
+        },
+
+        body:JSON.stringify(data)
+      }
     );
+
+    // REALTIME SOCKET
 
     addMessage(
       message,
-      "sent"
+      "sent",
+      new Date()
     );
 
     input.value = "";
@@ -187,24 +253,21 @@ document.getElementById(
   "input",
   () => {
 
-    socket.emit(
-      "typing",
-      {
+    if(receiverId){
+      socket.emit("typing", {
         senderId: admin.id,
         receiverId
-      }
-    );
-
+      });
+    }
     setTimeout(() => {
 
-      socket.emit(
-        "stopTyping",
-        {
+      if(receiverId){
+        socket.emit("stopTyping", {
           senderId: admin.id,
           receiverId
-        }
-      );
-
+        });
+      }
+    
     }, 1000);
   }
 );
@@ -214,7 +277,8 @@ document.getElementById(
 // ==========================
 function addMessage(
   message,
-  type
+  type,
+  createdAt = null
 ) {
 
   const div =
@@ -225,10 +289,148 @@ function addMessage(
     type
   );
 
-  div.innerHTML = message;
+  let time = "";
+
+  if (createdAt) {
+
+    const date =
+      new Date(createdAt);
+
+    time =
+      date.toLocaleString();
+  }
+
+  div.innerHTML = `
+    <div>
+      ${message}
+    </div>
+
+    <small
+      style="
+        display:block;
+        margin-top:5px;
+        opacity:0.7;
+        font-size:11px;
+      "
+    >
+      ${time}
+    </small>
+  `;
 
   messagesDiv.appendChild(div);
 
   messagesDiv.scrollTop =
     messagesDiv.scrollHeight;
+}
+
+
+// ==========================
+// LOAD OLD MESSAGES
+// ==========================
+
+async function loadMessages() {
+
+  if (!receiverId) return;
+
+  try {
+
+    const response = await fetch(
+      `${API_URL}/admin-chat/${receiverId}`,
+      {
+        headers:{
+          Authorization:
+            `Bearer ${token}`
+        }
+      }
+    );
+
+    const messages =
+      await response.json();
+
+    messagesDiv.innerHTML = "";
+
+    messages.forEach(msg => {
+
+      addMessage(
+        msg.message,
+
+        Number(msg.sender_id) ===
+        Number(admin.id)
+          ? "sent"
+          : "received",
+
+        msg.created_at
+      );
+    });
+
+  } catch(error) {
+
+    console.log(error);
+  }
+}
+
+socket.on("notification", (data) => {
+  showToast(
+    "New message from admin!",
+    "success"
+  );});
+
+  socket.on("newNotification", (data) => {
+
+    showToast(
+      `${data.title}: ${data.message}`,
+      "info"
+    );
+  
+  });
+  
+  socket.on("unreadCount", (count) => {
+    updateBadge(count);
+  });
+
+ function updateBadge(count){
+
+  const badge =
+    document.getElementById(
+      "notificationBadge"
+    );
+
+  if(count <= 0){
+
+    badge.style.display =
+      "none";
+
+    return;
+  }
+
+  badge.style.display =
+    "inline-flex";
+
+  badge.innerText =
+    count;
+}
+
+
+
+ function showToast(message, type = "info") {
+
+  const container =
+    document.getElementById(
+      "toastContainer"
+    );
+
+  const toast =
+    document.createElement("div");
+
+  toast.className =
+    `toast ${type}`;
+
+  toast.innerText =
+    message;
+
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 4000);
 }

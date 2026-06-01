@@ -1,4 +1,6 @@
 const API_URL = "https://karangcareerhub-api.onrender.com/api";
+/*const API_URL = "http://localhost:5000/api";*/
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -61,11 +63,11 @@ document.addEventListener("DOMContentLoaded", () => {
           if (redirect && redirect.includes("job.html")) {
           window.location.href = redirect;
           } else if (data.user.role === "student") {
-          window.location.href = "/dashboardStudent.html";
+          window.location.href = "dashboardStudent.html";
           } else if (data.user.role === "employer") {
-          window.location.href = "/dashboardEmployer.html";
+          window.location.href = "dashboardEmployer.html";
           } else {
-          window.location.href = "/index.html";
+          window.location.href = "index.html";
           }          
       } else {
         loginMessage.textContent = data.error || "Invalid login";

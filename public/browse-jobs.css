@@ -294,8 +294,7 @@ body {
   margin-top: 12px;
 }
 
-.browse-details-btn,
-.browse-apply-btn {
+.browse-details-btn {
   padding: 10px 14px;
   border: none;
   border-radius: 6px;
@@ -473,4 +472,49 @@ body.dark .browse-empty {
 body.dark .browse-footer {
   background: #0f172a;
   color: #f3f4f6;
+}
+
+.browse-report-btn {
+  background: #dc2626;
+  color: white;
+}
+
+.browse-unreport-btn {
+  background: #16a34a;
+  color: white;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 350px;
+}
+
+.modal-box textarea {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
 }
