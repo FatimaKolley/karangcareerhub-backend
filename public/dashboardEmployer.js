@@ -1,4 +1,4 @@
-c/*onst socket =
+/*const socket =
 io("http://localhost:5000");
 
 const API_URL =
